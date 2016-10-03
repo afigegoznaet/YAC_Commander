@@ -22,7 +22,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="tabs">
       <item>
        <widget class="QTabWidget" name="leftTabWidget">
         <property name="acceptDrops">
@@ -114,7 +114,7 @@
      </layout>
     </item>
     <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="buttons">
       <item>
        <widget class="QPushButton" name="F3">
         <property name="toolTip">
