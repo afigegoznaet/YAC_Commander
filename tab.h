@@ -3,18 +3,25 @@
 
 #include <QWidget>
 #include <QListView>
+#include <QFileSystemModel>
+#include <QDir>
+#include <QStandardPaths>
+#include <QDebug>
 
 class Tab : public QListView
 {
 	Q_OBJECT
 public:
-	explicit Tab(QString diretory, QWidget *parent = 0);
-
+    explicit Tab(QDir diretory, QWidget *parent = 0);
+    explicit Tab(QWidget *parent) : Tab(QDir::homePath(),parent){};
+    QString GetDirectory(){return directory.dirName();};
 signals:
+
 
 public slots:
 private:
-	QString directory;
+    QDir directory;
+    QFileSystemModel* model;
 };
 
 #endif // TAB_H
