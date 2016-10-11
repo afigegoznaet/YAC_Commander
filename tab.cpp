@@ -15,3 +15,20 @@ Tab::Tab(QDir directory, QWidget *parent) : QListView(parent), directory(directo
         qDebug() << model->fileName(node);
      }
 }
+
+
+void Tab::on_doubleClicked(const QModelIndex &index){
+    QFileInfo info=model->fileInfo(index);
+    model->setRootPath(info.absoluteFilePath());
+    setRootIndex(model->index(model->rootPath()));
+}
+
+void Tab::keyPressEvent(QKeyEvent *event){
+    qDebug()<<event->key();
+
+
+}
+
+void Tab::init(){
+    connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
+}

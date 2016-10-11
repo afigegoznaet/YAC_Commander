@@ -16,6 +16,8 @@ public:
 	~MainWindow();
 	bool init();
 
+private slots:
+
 private:
 	Ui::MainWindow *ui;
 
