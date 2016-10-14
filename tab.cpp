@@ -25,7 +25,17 @@ void Tab::on_doubleClicked(const QModelIndex &index){
 
 void Tab::keyPressEvent(QKeyEvent *event){
     qDebug()<<event->key();
-
+    QModelIndex index = *selectedIndexes().begin();
+    QFileInfo info=model->fileInfo(index);
+    auto key = event->key();
+    switch (key) {
+    case Qt::Key_Return:
+        model->setRootPath(info.absoluteFilePath());
+        setRootIndex(model->index(model->rootPath()));
+        break;
+    default:
+        break;
+    }
 
 }
 
