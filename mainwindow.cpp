@@ -8,8 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
     init();
-    Tab* tab = new Tab(this);
-    Tab* rightTab = new Tab(tab);
+    Tab* tab = new Tab(ui->leftTabWidget);
+    Tab* rightTab = new Tab(ui->rightTabWidget);
     tab->init();
     rightTab->init();
     ui->leftTabWidget->addTab(tab, tab->GetDirectory());

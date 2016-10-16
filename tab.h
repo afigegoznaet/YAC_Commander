@@ -8,6 +8,8 @@
 #include <QStandardPaths>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QDesktopServices>
+#include <QItemSelectionModel>
 
 class Tab : public QListView
 {
@@ -24,10 +26,12 @@ public slots:
     void on_doubleClicked(const QModelIndex &index);
 protected:
     virtual void keyPressEvent(QKeyEvent * event);
+    void chDir(const QModelIndex &index, bool in_out);
 
 private:
     QDir directory;
     QFileSystemModel* model;
+
 };
 
 #endif // TAB_H
