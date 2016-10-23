@@ -3,18 +3,20 @@
 #define IN 1
 #define OUT 0
 
-Tab::Tab(QDir directory, QWidget *parent) : QListView(parent), directory(directory){
+TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QListView(parent){
+    this->directory=directory.absolutePath();
     this->setLayoutMode(QListView::Batched);
     model = new QFileSystemModel(this);
-    model->setRootPath(directory.absolutePath());
-    //model->setFilter(QDir::NoDot);
+    model->setRootPath(this->directory);
+    model->setFilter(QDir::AllDirs | QDir::NoDot);
     setModel(model);
     setRootIndex(model->index(model->rootPath()));
+    connect(model,SIGNAL(directoryLoaded(QString)),this,SLOT(setCurrentSelection(QString)));
     qDebug()<<directory.absolutePath();
 }
 
 
-void Tab::on_doubleClicked(const QModelIndex &index){
+void TabbedListView::on_doubleClicked(const QModelIndex &index){
     QFileInfo info=model->fileInfo(index);
     if(info.isDir()){
         chDir(index, IN);
@@ -23,31 +25,41 @@ void Tab::on_doubleClicked(const QModelIndex &index){
     }
 }
 
-void Tab::chDir(const QModelIndex &index, bool in_out){
+void TabbedListView::chDir(const QModelIndex &index, bool in_out){
+    qDebug()<<"Dir at input: "<<model->rootPath();
     if(in_out == IN){
-        model->setRootPath(model->fileInfo(index).absoluteFilePath());
+        directory="..";//clever selection
+        QDir parentDir(model->fileInfo(index).absoluteFilePath());
+        model->setRootPath(parentDir.absolutePath());
         setRootIndex(model->index(model->rootPath()));
     }else{
         QDir parentDir(model->fileInfo(index).dir());
+        directory=parentDir.dirName();
         parentDir.cdUp();
         model->setRootPath(parentDir.absolutePath());
         setRootIndex(model->index(model->rootPath()));
     }
+    qDebug()<<"Dir at output: "<<model->rootPath();
+    //setCurrentSelection();
+    /*
     QModelIndex ind = rootIndex().child(0,0);
     if(ind.isValid())
         setCurrentIndex(ind);
     selectionModel()->select(currentIndex(), QItemSelectionModel::Select);
     qDebug()<<model->fileInfo(currentIndex()).fileName();
 
+    */
+    emit dirChanged(model->rootDirectory().absolutePath()/*.dirName()*/, this->index);
+
 }
 
-void Tab::keyPressEvent(QKeyEvent *event){
+void TabbedListView::keyPressEvent(QKeyEvent *event){
     //qDebug()<<event->key();
     QModelIndex index;
     if(selectedIndexes().size()>0)
-        index = *selectedIndexes().begin();
-    else
         index = currentIndex();
+    else
+        index = rootIndex().child(0,0);
     QFileInfo info;
     info=model->fileInfo(index);
     int count = model->rowCount(model->parent(currentIndex()));
@@ -77,6 +89,26 @@ void Tab::keyPressEvent(QKeyEvent *event){
     qDebug()<<model->fileInfo(currentIndex()).fileName();
 }
 
-void Tab::init(){
+void TabbedListView::init(){
     connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
+
+}
+
+void TabbedListView::setCurrentSelection(QString sel){
+    qDebug()<<sel+"/..";
+    //QString dotdot("..");
+    int rows = model->rowCount(rootIndex());
+    QModelIndex ind;
+    for(int i=0;i<rows;i++){
+        ind = rootIndex().child(i,0);
+        qDebug()<< "Index: "<<i<<" filename: " <<model->fileInfo(ind).fileName();
+        if(!directory.compare(model->fileInfo(ind).fileName()))
+            break;
+    }
+
+    if(ind.isValid())
+        setCurrentIndex(ind);
+
+    selectionModel()->select(currentIndex(), QItemSelectionModel::Select);
+    qDebug()<<model->fileInfo(currentIndex()).fileName();
 }

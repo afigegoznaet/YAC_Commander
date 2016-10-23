@@ -11,26 +11,34 @@
 #include <QDesktopServices>
 #include <QItemSelectionModel>
 
-class Tab : public QListView
+class TabbedListView : public QListView
 {
 	Q_OBJECT
 public:
-    explicit Tab(QDir diretory, QWidget *parent = 0);
-    Tab(QWidget *parent) : Tab(QDir::homePath(),parent){};
-    QString GetDirectory(){return directory.dirName();};
+    explicit TabbedListView(QDir directory, QWidget *parent = 0);
+    TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){};
+    QString GetDirectory(){return directory;};
     void init();
+    void setTabOrderIndex(int index){this->index=index;};
+    //void setMetaTab(QTabWidget* metaTab){this->metaTab=metaTab;};
 signals:
-    void activated(const QModelIndex &index);
+    //void activated(const QModelIndex &index);
+    void dirChanged(const QString dirName, int index);
 
 public slots:
     void on_doubleClicked(const QModelIndex &index);
+    void setCurrentSelection(QString sel);
 protected:
     virtual void keyPressEvent(QKeyEvent * event);
     void chDir(const QModelIndex &index, bool in_out);
 
+
 private:
-    QDir directory;
+    QString directory;
+    //QString *selection;
     QFileSystemModel* model;
+    int index;
+    QTabWidget* metaTab;
 
 };
 

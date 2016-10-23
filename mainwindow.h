@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "customtabwidget.h"
 
 namespace Ui {
 	class MainWindow;

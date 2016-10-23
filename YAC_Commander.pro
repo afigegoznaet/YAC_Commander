@@ -13,9 +13,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
 		mainwindow.cpp \
-    tab.cpp
+    tab.cpp \
+    customtabwidget.cpp
 
 HEADERS  += mainwindow.h \
-    tab.h
+    tab.h \
+    customtabwidget.h
 
 FORMS    += mainwindow.ui

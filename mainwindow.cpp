@@ -8,12 +8,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
     init();
-    Tab* tab = new Tab(ui->leftTabWidget);
-    Tab* rightTab = new Tab(ui->rightTabWidget);
+    TabbedListView* tab = new TabbedListView(this);
+    TabbedListView* rightTab = new TabbedListView(this);
     tab->init();
     rightTab->init();
-    ui->leftTabWidget->addTab(tab, tab->GetDirectory());
-    ui->rightTabWidget->addTab(rightTab, rightTab->GetDirectory());
+    tab->setTabOrderIndex(ui->leftTabWidget->addTab(tab, tab->GetDirectory()));
+    connect(tab, SIGNAL(dirChanged(QString,int)),ui->leftTabWidget,SLOT(onDirChanged(QString,int)));
+    rightTab->setTabOrderIndex(ui->rightTabWidget->addTab(rightTab, rightTab->GetDirectory()));//strictly speaking - this is not needed, since the index will be 0 at this stage
+    connect(rightTab, SIGNAL(dirChanged(QString,int)),ui->rightTabWidget,SLOT(onDirChanged(QString,int)));
 }
 
 MainWindow::~MainWindow()
