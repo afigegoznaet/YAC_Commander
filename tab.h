@@ -31,6 +31,8 @@ public slots:
 protected:
     virtual void keyPressEvent(QKeyEvent * event);
     void chDir(const QModelIndex &index, bool in_out);
+    virtual void focusInEvent(QFocusEvent* event);
+    virtual void focusOutEvent(QFocusEvent* event);
 
 
 private:

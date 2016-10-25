@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(tab, SIGNAL(dirChanged(QString,int)),ui->leftTabWidget,SLOT(onDirChanged(QString,int)));
     rightTab->setTabOrderIndex(ui->rightTabWidget->addTab(rightTab, rightTab->GetDirectory()));//strictly speaking - this is not needed, since the index will be 0 at this stage
     connect(rightTab, SIGNAL(dirChanged(QString,int)),ui->rightTabWidget,SLOT(onDirChanged(QString,int)));
+    tab->setFocus();
 }
 
 MainWindow::~MainWindow()
@@ -25,10 +26,8 @@ MainWindow::~MainWindow()
 
 bool MainWindow::init(){
 	ui->leftTabWidget->setTabsClosable(false);
-    ui->leftTabWidget->removeTab(1);
-    ui->leftTabWidget->removeTab(0);
+    //ui->leftTabWidget->removeTab(0);
 	ui->rightTabWidget->setTabsClosable(false);
-    ui->rightTabWidget->removeTab(1);
-    ui->rightTabWidget->removeTab(0);
+    //ui->rightTabWidget->removeTab(0);
 	return false;
 }
