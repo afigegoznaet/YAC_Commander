@@ -26,7 +26,7 @@ void TabbedListView::on_doubleClicked(const QModelIndex &index){
         else
             chDir(index, OUT);
     }else{
-        QDesktopServices::openUrl(QUrl(info.absoluteFilePath()));
+		QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
     }
 }
 
