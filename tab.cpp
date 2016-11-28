@@ -33,7 +33,7 @@ void TabbedListView::on_doubleClicked(const QModelIndex &index){
 void TabbedListView::chDir(const QModelIndex &index, bool in_out){
     qDebug()<<"Dir at input: "<<model->rootPath();
     if(in_out == IN){
-        directory="..";//clever selection
+        //directory="..";//clever selection
         QDir parentDir(model->fileInfo(index).absoluteFilePath());
         model->setRootPath(parentDir.absolutePath());
         setRootIndex(model->index(model->rootPath()));
@@ -41,20 +41,22 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
         QDir parentDir(model->rootPath());
         if(parentDir.isRoot())
             return;
-        directory=parentDir.dirName();
+        //directory=parentDir.dirName();
         parentDir.cdUp();
         model->setRootPath(parentDir.absolutePath());
         setRootIndex(model->index(model->rootPath()));
     }
+    directory = model->rootDirectory().absolutePath();
     qDebug()<<"Dir at output: "<<model->rootPath() << " directory: "<<directory;
     //setCurrentSelection();
-    emit dirChanged(model->rootDirectory().absolutePath()/*.dirName()*/, this->index);
+    emit dirChanged(directory/*.dirName()*/, this->index);
 
 }
 
 void TabbedListView::keyPressEvent(QKeyEvent *event){
     //qDebug()<<event->key();
     QModelIndex index;
+    QModelIndexList items = selectionModel()->selectedIndexes();
     if(selectedIndexes().size()>0)
         index = currentIndex();
     else
@@ -66,6 +68,10 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
         break;
     case Qt::Key_Backspace:
         chDir(index, OUT);
+        break;
+    case Qt::Key_F5:
+        emit fileMovement(items, FileMovementAction::MOVE);
+        qDebug()<<"F5 pressed";
         break;
     default:
         QAbstractItemView::keyPressEvent(event);

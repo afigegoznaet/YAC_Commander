@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "customtabwidget.h"
+#include "tab.h"
 
 namespace Ui {
 	class MainWindow;
@@ -18,6 +19,7 @@ public:
 	bool init();
 
 private slots:
+    void fileMovement(QModelIndexList files, FileMovementAction action);
 
 private:
 	Ui::MainWindow *ui;

@@ -11,9 +11,12 @@
 #include <QDesktopServices>
 #include <QItemSelectionModel>
 
+enum FileMovementAction{COPY, MOVE, SOFTLINK, HARDLINK};
+
 class TabbedListView : public QListView
 {
 	Q_OBJECT
+
 public:
     explicit TabbedListView(QDir directory, QWidget *parent = 0);
     TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){};
@@ -24,6 +27,7 @@ public:
 signals:
     //void activated(const QModelIndex &index);
     void dirChanged(const QString dirName, int index);
+    void fileMovement(QModelIndexList files, FileMovementAction action);
 
 public slots:
     void on_doubleClicked(const QModelIndex &index);
