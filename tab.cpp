@@ -59,7 +59,6 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
         index = currentIndex();
     else
         index = rootIndex().child(0,0);
-    int count = model->rowCount(model->parent(currentIndex()));
     auto key = event->key();
     switch (key) {
     case Qt::Key_Return:
@@ -68,16 +67,8 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
     case Qt::Key_Backspace:
         chDir(index, OUT);
         break;
-    case Qt::Key_Up:
-        if(index.row()>0)
-            setCurrentIndex(index.sibling(index.row()-1,0));
-        break;
-    case Qt::Key_Down:
-        if(index.row()<count-1)
-            setCurrentIndex(index.sibling(index.row()+1,0));
-        break;
     default:
-        break;
+        QAbstractItemView::keyPressEvent(event);
     }
     qDebug()<<model->fileInfo(currentIndex()).fileName();
 }
