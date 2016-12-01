@@ -27,7 +27,7 @@ public:
 signals:
     //void activated(const QModelIndex &index);
     void dirChanged(const QString dirName, int index);
-    void fileMovement(QModelIndexList files, FileMovementAction action);
+    //void fileMovement(QItemSelectionModel* model, FileMovementAction action);
 
 public slots:
     void on_doubleClicked(const QModelIndex &index);

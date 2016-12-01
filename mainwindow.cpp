@@ -8,17 +8,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
     init();
-    TabbedListView* tab = new TabbedListView(this);
+    TabbedListView* leftTab = new TabbedListView(this);
     TabbedListView* rightTab = new TabbedListView(this);
-    tab->init();
+    leftTab->init();
     rightTab->init();
-    tab->setTabOrderIndex(ui->leftTabWidget->addTab(tab, tab->GetDirectory()));
-    connect(tab, SIGNAL(dirChanged(QString,int)),ui->leftTabWidget,SLOT(onDirChanged(QString,int)));
+    leftTab->setTabOrderIndex(ui->leftTabWidget->addTab(leftTab, leftTab->GetDirectory()));
+    connect(leftTab, SIGNAL(dirChanged(QString,int)),ui->leftTabWidget,SLOT(onDirChanged(QString,int)));
     rightTab->setTabOrderIndex(ui->rightTabWidget->addTab(rightTab, rightTab->GetDirectory()));//strictly speaking - this is not needed, since the index will be 0 at this stage
     connect(rightTab, SIGNAL(dirChanged(QString,int)),ui->rightTabWidget,SLOT(onDirChanged(QString,int)));
 
     connect(rightTab, SIGNAL(fileMovement(QModelIndexList,FileMovementAction)),this,SLOT(fileMovement(QModelIndexList,FileMovementAction)));
-    tab->setFocus();
+    leftTab->setFocus();
 }
 
 MainWindow::~MainWindow()
@@ -34,8 +34,47 @@ bool MainWindow::init(){
 	return false;
 }
 
-void MainWindow::fileMovement(QModelIndexList files, FileMovementAction action){
+void MainWindow::keyPressEvent(QKeyEvent *event){
+    auto key = event->key();
+    qDebug() << "Got event!!!!!!!!!!!!!!!!!1";
+    switch (key) {
+    case Qt::Key_F5:
+        copyFile();
+        break;
+    case Qt::Key_F6:
+        moveFile();
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
+    }
+}
+
+void MainWindow::copyFile(){
+    QStringList moveList;
+    QString destination = getDestination();
+    QMessageBox msg(QMessageBox::Information,"Movement!", destination, QMessageBox::Ok);
+    msg.exec();
+}
+
+void MainWindow::moveFile(){
+    QStringList moveList;
+    QString destination = getDestination();
+    QMessageBox msg(QMessageBox::Information,"Movement!", destination, QMessageBox::Ok);
+    msg.exec();
+}
+
+QString MainWindow::getDestination(){
+    auto left = ui->leftTabWidget;
+    auto right = ui->rightTabWidget;
+    if(left->hasFocus())
+        return ((TabbedListView*)(left->currentWidget()))->GetDirectory();
+    else
+        return ((TabbedListView*)(right->currentWidget()))->GetDirectory();
+}
+
+void MainWindow::fileMovement(QItemSelectionModel* model, FileMovementAction action){
     qDebug()<<"Got signal";
+
     QMessageBox msg(QMessageBox::Information,"Movement!", "Moving something", QMessageBox::Ok);
     msg.exec();
     //qDebug()<<QFileSystemModel::fileInfo(*files.begin());

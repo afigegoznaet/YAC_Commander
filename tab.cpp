@@ -14,7 +14,6 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QListView(pare
     setRootIndex(model->index(model->rootPath()));
     connect(model,SIGNAL(directoryLoaded(QString)),this,SLOT(setCurrentSelection(QString)));
     qDebug()<<directory.absolutePath();
-
 }
 
 
@@ -56,7 +55,7 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 void TabbedListView::keyPressEvent(QKeyEvent *event){
     //qDebug()<<event->key();
     QModelIndex index;
-    QModelIndexList items = selectionModel()->selectedIndexes();
+    //QModelIndexList items = selectionModel()->selectedIndexes();
     if(selectedIndexes().size()>0)
         index = currentIndex();
     else
@@ -68,10 +67,6 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
         break;
     case Qt::Key_Backspace:
         chDir(index, OUT);
-        break;
-    case Qt::Key_F5:
-        emit fileMovement(items, FileMovementAction::MOVE);
-        qDebug()<<"F5 pressed";
         break;
     default:
         QAbstractItemView::keyPressEvent(event);
@@ -91,7 +86,7 @@ void TabbedListView::setCurrentSelection(QString sel){
     QModelIndex ind;
     for(int i=0;i<rows;i++){
         ind = rootIndex().child(i,0);
-        qDebug()<< "Index: "<<i<<" filename: " <<model->fileInfo(ind).fileName() << " directory: "<<directory;
+        qDebug()<< "Index: "<<i<<" filename: " << model->fileInfo(ind).fileName() << " directory: "<<directory;
         if(!directory.compare(model->fileInfo(ind).fileName()))
             break;
     }
