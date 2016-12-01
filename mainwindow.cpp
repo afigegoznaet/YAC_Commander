@@ -46,6 +46,14 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
         break;
     default:
         QMainWindow::keyPressEvent(event);
+        break;
+    case Qt::Key_Tab:
+        if(ui->leftTabWidget->currentWidget()->hasFocus())
+            ui->rightTabWidget->setFocus();
+        else
+            ui->leftTabWidget->setFocus();
+
+        break;
     }
 }
 
@@ -64,12 +72,14 @@ void MainWindow::moveFile(){
 }
 
 QString MainWindow::getDestination(){
-    auto left = ui->leftTabWidget;
-    auto right = ui->rightTabWidget;
+    auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
+    auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
+
+
     if(left->hasFocus())
-        return ((TabbedListView*)(left->currentWidget()))->GetDirectory();
+        return left->GetDirectory();
     else
-        return ((TabbedListView*)(right->currentWidget()))->GetDirectory();
+        return right->GetDirectory();
 }
 
 void MainWindow::fileMovement(QItemSelectionModel* model, FileMovementAction action){
