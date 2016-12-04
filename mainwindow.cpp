@@ -13,11 +13,19 @@ MainWindow::MainWindow(QWidget *parent) :
     leftTab->init();
     rightTab->init();
     leftTab->setTabOrderIndex(ui->leftTabWidget->addTab(leftTab, leftTab->GetDirectory()));
-    connect(leftTab, SIGNAL(dirChanged(QString,int)),ui->leftTabWidget,SLOT(onDirChanged(QString,int)));
+    connect(leftTab,            SIGNAL(dirChanged(QString,int)),
+            ui->leftTabWidget,  SLOT(onDirChanged(QString,int))
+            );
+    connect(leftTab,            SIGNAL(focusEvent(bool)),
+            ui->leftTabWidget,  SLOT(onFocusEvent(bool))
+            );
     rightTab->setTabOrderIndex(ui->rightTabWidget->addTab(rightTab, rightTab->GetDirectory()));//strictly speaking - this is not needed, since the index will be 0 at this stage
-    connect(rightTab, SIGNAL(dirChanged(QString,int)),ui->rightTabWidget,SLOT(onDirChanged(QString,int)));
-
-    connect(rightTab, SIGNAL(fileMovement(QModelIndexList,FileMovementAction)),this,SLOT(fileMovement(QModelIndexList,FileMovementAction)));
+    connect(rightTab,           SIGNAL(dirChanged(QString,int)),
+            ui->rightTabWidget, SLOT(onDirChanged(QString,int))
+            );
+    connect(rightTab,           SIGNAL(focusEvent(bool)),
+            ui->rightTabWidget, SLOT(onFocusEvent(bool))
+            );
     leftTab->setFocus();
 }
 
@@ -39,10 +47,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
     qDebug() << "Got event!!!!!!!!!!!!!!!!!1";
     switch (key) {
     case Qt::Key_F5:
-        copyFile();
+        copyFiles();
         break;
     case Qt::Key_F6:
-        moveFile();
+        moveFiles();
         break;
     default:
         QMainWindow::keyPressEvent(event);
@@ -57,18 +65,42 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
     }
 }
 
-void MainWindow::copyFile(){
-    QStringList moveList;
+void MainWindow::copyFiles(){
+    QFileInfoList fileList = getSelectedFiles();
     QString destination = getDestination();
-    QMessageBox msg(QMessageBox::Information,"Movement!", destination, QMessageBox::Ok);
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Moving ", message,
+                                    QMessageBox::Yes|QMessageBox::No);
+
+    if(reply == QMessageBox::No)
+        return;
+    ProgressDialog
+    foreach (auto fileInfo, fileList) {
+        QString newName = destination+"/"+fileInfo.fileName();
+        QFile::copy(fileInfo.absoluteFilePath(), newName);
+    }
+    QMessageBox msg(QMessageBox::Information,"Copying!", destination, QMessageBox::Ok);
     msg.exec();
 }
 
-void MainWindow::moveFile(){
-    QStringList moveList;
+void MainWindow::moveFiles(){
+    QFileInfoList fileList = getSelectedFiles();
     QString destination = getDestination();
-    QMessageBox msg(QMessageBox::Information,"Movement!", destination, QMessageBox::Ok);
-    msg.exec();
+
+    QString message = "Move " + QString::number(fileList.size()) + " files to \n"+destination;
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Moving ", message,
+                                    QMessageBox::Yes|QMessageBox::No);
+
+    if(reply == QMessageBox::No)
+        return;
+
+    foreach (auto fileInfo, fileList) {
+        QString newName = destination+"/"+fileInfo.fileName();
+        QFile::rename(fileInfo.absoluteFilePath(), newName);
+    }
+
 }
 
 QString MainWindow::getDestination(){
@@ -77,15 +109,17 @@ QString MainWindow::getDestination(){
 
 
     if(left->hasFocus())
-        return left->GetDirectory();
-    else
         return right->GetDirectory();
+    else
+        return left->GetDirectory();
 }
 
-void MainWindow::fileMovement(QItemSelectionModel* model, FileMovementAction action){
-    qDebug()<<"Got signal";
+QFileInfoList MainWindow::getSelectedFiles(){
+    auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
+    auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
 
-    QMessageBox msg(QMessageBox::Information,"Movement!", "Moving something", QMessageBox::Ok);
-    msg.exec();
-    //qDebug()<<QFileSystemModel::fileInfo(*files.begin());
+    if(left->hasFocus())
+        return left->getSelectedFiles();
+    else
+        return right->getSelectedFiles();
 }

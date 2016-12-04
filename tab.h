@@ -23,10 +23,12 @@ public:
     QString GetDirectory(){return directory;};
     void init();
     void setTabOrderIndex(int index){this->index=index;};
-    //void setMetaTab(QTabWidget* metaTab){this->metaTab=metaTab;};
+    QFileInfoList getSelectedFiles();
+
 signals:
     //void activated(const QModelIndex &index);
     void dirChanged(const QString dirName, int index);
+    void focusEvent(bool);
     //void fileMovement(QItemSelectionModel* model, FileMovementAction action);
 
 public slots:

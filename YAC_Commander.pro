@@ -20,4 +20,5 @@ HEADERS  += mainwindow.h \
     tab.h \
     customtabwidget.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    dialog.ui

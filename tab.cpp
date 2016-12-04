@@ -10,6 +10,7 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QListView(pare
     model = new QFileSystemModel(this);
     model->setRootPath(this->directory);
     model->setFilter(QDir::AllEntries | QDir::NoDot);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
     setModel(model);
     setRootIndex(model->index(model->rootPath()));
     connect(model,SIGNAL(directoryLoaded(QString)),this,SLOT(setCurrentSelection(QString)));
@@ -71,7 +72,7 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
     default:
         QAbstractItemView::keyPressEvent(event);
     }
-    qDebug()<<model->fileInfo(currentIndex()).fileName();
+    qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();
 }
 
 void TabbedListView::init(){
@@ -101,9 +102,20 @@ void TabbedListView::setCurrentSelection(QString sel){
 void TabbedListView::focusInEvent(QFocusEvent *event){
     cout<<"Focus in! "<<event->gotFocus();
     QWidget::focusInEvent(event);
+    emit focusEvent(true);
 }
 
 void TabbedListView::focusOutEvent(QFocusEvent *event){
     cout<<"Focus out! "<<event->gotFocus();
     QWidget::focusOutEvent(event);
+    emit focusEvent(false);
+}
+
+QFileInfoList TabbedListView::getSelectedFiles(){
+    QFileInfoList selectedFiles;
+    QModelIndexList items = selectionModel()->selectedIndexes();
+    foreach (auto fileIndex, items) {
+        selectedFiles.append(model->fileInfo(fileIndex));
+    }
+    return selectedFiles;
 }

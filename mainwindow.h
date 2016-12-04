@@ -18,14 +18,13 @@ public:
 	~MainWindow();
 	bool init();
 
-private slots:
-    void fileMovement(QItemSelectionModel* model, FileMovementAction action);
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
-    void copyFile();
-    void moveFile();
-    void deleteFile();
+    void copyFiles();
+    void moveFiles();
+    void deleteFiles();
     QString getDestination();
+    QFileInfoList getSelectedFiles();
 
 private:
 	Ui::MainWindow *ui;

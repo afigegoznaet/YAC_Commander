@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QTabWidget>
 #include <QDebug>
+#include <QTabBar>
+
 
 class CustomTabWidget : public QTabWidget
 {
@@ -13,6 +15,11 @@ public:
 
 public slots:
     void onDirChanged(const QString dirName, int tabIndex);
+    void onFocusEvent(bool);
+
+protected:
+    //void paintEvent(QPaintEvent *event);
+    QString defaultStyle;
 };
 
 #endif // CUSTOMTABWIDGET_H
