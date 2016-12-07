@@ -11,42 +11,40 @@
 #include <QDesktopServices>
 #include <QItemSelectionModel>
 
-enum FileMovementAction{COPY, MOVE, SOFTLINK, HARDLINK};
-
 class TabbedListView : public QListView
 {
 	Q_OBJECT
 
 public:
-    explicit TabbedListView(QDir directory, QWidget *parent = 0);
-    TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){};
-    QString GetDirectory(){return directory;};
-    void init();
-    void setTabOrderIndex(int index){this->index=index;};
-    QFileInfoList getSelectedFiles();
+	explicit TabbedListView(QDir directory, QWidget *parent = 0);
+	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){};
+	QString GetDirectory(){return directory;};
+	void init();
+	void setTabOrderIndex(int index){this->index=index;};
+	QFileInfoList getSelectedFiles();
 
 signals:
-    //void activated(const QModelIndex &index);
-    void dirChanged(const QString dirName, int index);
-    void focusEvent(bool);
-    //void fileMovement(QItemSelectionModel* model, FileMovementAction action);
+	//void activated(const QModelIndex &index);
+	void dirChanged(const QString dirName, int index);
+	void focusEvent(bool);
+	//void fileMovement(QItemSelectionModel* model, FileMovementAction action);
 
 public slots:
-    void on_doubleClicked(const QModelIndex &index);
-    void setCurrentSelection(QString sel);
+	void on_doubleClicked(const QModelIndex &index);
+	void setCurrentSelection(QString sel);
 protected:
-    virtual void keyPressEvent(QKeyEvent * event);
-    void chDir(const QModelIndex &index, bool in_out);
-    virtual void focusInEvent(QFocusEvent* event);
-    virtual void focusOutEvent(QFocusEvent* event);
+	virtual void keyPressEvent(QKeyEvent * event);
+	void chDir(const QModelIndex &index, bool in_out);
+	virtual void focusInEvent(QFocusEvent* event);
+	virtual void focusOutEvent(QFocusEvent* event);
 
 
 private:
-    QString directory;
-    //QString *selection;
-    QFileSystemModel* model;
-    int index;
-    QTabWidget* metaTab;
+	QString directory;
+	//QString *selection;
+	QFileSystemModel* model;
+	int index;
+	QTabWidget* metaTab;
 
 };
 

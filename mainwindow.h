@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "customtabwidget.h"
+#include "dialog.h"
 #include "tab.h"
 
 namespace Ui {
@@ -16,18 +17,17 @@ class MainWindow : public QMainWindow
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
-	bool init();
-
-protected:
-    virtual void keyPressEvent(QKeyEvent *event);
-    void copyFiles();
-    void moveFiles();
-    void deleteFiles();
-    QString getDestination();
-    QFileInfoList getSelectedFiles();
 
 private:
+	bool init();
+	virtual void keyPressEvent(QKeyEvent *event);
+	void copyFiles();
+	void moveFiles();
+	void deleteFiles();
+	QString getDestination();
+	QFileInfoList getSelectedFiles();
 	Ui::MainWindow *ui;
+	Dialog newDialog;
 };
 
 #endif // MAINWINDOW_H

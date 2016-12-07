@@ -11,14 +11,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = YAC_Commander
 TEMPLATE = app
 
+FORMS    +=     dialog.ui mainwindow.ui
+
 SOURCES += main.cpp\
+    dialog.cpp \
 		mainwindow.cpp \
     tab.cpp \
     customtabwidget.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
-    customtabwidget.h
-
-FORMS    += mainwindow.ui \
-    dialog.ui
+    customtabwidget.h \
+    dialog.h
