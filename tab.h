@@ -2,7 +2,9 @@
 #define TAB_H
 
 #include <QWidget>
-#include <QListView>
+//#include <QListView>
+#include <QTableView>
+#include <QHeaderView>
 #include <QFileSystemModel>
 #include <QDir>
 #include <QStandardPaths>
@@ -11,14 +13,14 @@
 #include <QDesktopServices>
 #include <QItemSelectionModel>
 
-class TabbedListView : public QListView
+class TabbedListView : public QTableView
 {
 	Q_OBJECT
 
 public:
 	explicit TabbedListView(QDir directory, QWidget *parent = 0);
 	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){};
-	QString GetDirectory(){return directory;};
+	QString GetDirectory(){return model->rootDirectory().absolutePath();};
 	void init();
 	void setTabOrderIndex(int index){this->index=index;};
 	QFileInfoList getSelectedFiles();

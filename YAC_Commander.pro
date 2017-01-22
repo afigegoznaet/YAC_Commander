@@ -17,9 +17,11 @@ SOURCES += main.cpp\
     dialog.cpp \
 		mainwindow.cpp \
     tab.cpp \
-    customtabwidget.cpp
+    customtabwidget.cpp \
+    statuschecker.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
     customtabwidget.h \
-    dialog.h
+    dialog.h \
+    statuschecker.h

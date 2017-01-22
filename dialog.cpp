@@ -17,11 +17,12 @@ void Dialog::setFileAction(QFileInfoList fileList, QString destination, ACTION a
 	switch(action){
 	case MOVE:
 		foreach (auto fileInfo, fileList) {
+			QString item = "Move "+ fileInfo.fileName() + " to "+destination;
 			QString newName = destination+"/"+fileInfo.fileName();
 			//QListWidgetItem item;
 			//item.setText(fileInfo.fileName());
 
-			progress->listWidget->addItem(fileInfo.fileName());
+			progress->listWidget->addItem(item);
 			//newDialog.setFileAction(fileList, destination);
 			//QFile::rename(fileInfo.absoluteFilePath(), newName);
 		}
