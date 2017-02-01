@@ -28,6 +28,8 @@ private:
 	QFileInfoList getSelectedFiles();
 	Ui::MainWindow *ui;
 	Dialog newDialog;
+	void writeSettings();
+	void readSettings();
 };
 
 #endif // MAINWINDOW_H

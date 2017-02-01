@@ -12,6 +12,7 @@
 #include <QKeyEvent>
 #include <QDesktopServices>
 #include <QItemSelectionModel>
+#include <QSettings>
 
 class TabbedListView : public QTableView
 {
@@ -19,6 +20,7 @@ class TabbedListView : public QTableView
 
 public:
 	explicit TabbedListView(QDir directory, QWidget *parent = 0);
+	~TabbedListView();
 	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){};
 	QString GetDirectory(){return model->rootDirectory().absolutePath();};
 	void init();

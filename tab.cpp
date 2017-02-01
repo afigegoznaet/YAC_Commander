@@ -8,6 +8,7 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QTableView(par
 	this->directory="..";
 	//this->setLayoutMode(QListView::Batched);
 	this->setSelectionBehavior(QAbstractItemView::SelectRows);
+
 	this->horizontalHeader()->setStretchLastSection(true);
 	this->horizontalHeader()->setSectionsMovable(true);
 	this->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -23,6 +24,11 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QTableView(par
 	verticalHeader()->setVisible(false);
 	connect(model,SIGNAL(directoryLoaded(QString)),this,SLOT(setCurrentSelection(QString)));
 	qDebug()<<directory.absolutePath();
+}
+
+TabbedListView::~TabbedListView(){
+	QSettings settings;
+	settings.setValue("Columns", this->horizontalHeader()->saveState());
 }
 
 
@@ -57,7 +63,7 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 	//directory = model->rootDirectory().absolutePath();
 	qDebug()<<"Dir at output: "<<model->rootPath() << " directory: "<<directory;
 	//setCurrentSelection();
-	emit dirChanged(directory/*.dirName()*/, this->index);
+	emit dirChanged(model->rootPath(), this->index);
 
 }
 

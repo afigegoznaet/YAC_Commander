@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 	init();
+	readSettings();
 	TabbedListView* leftTab = new TabbedListView(this);
 	TabbedListView* rightTab = new TabbedListView(this);
 	leftTab->init();
@@ -26,12 +27,40 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(rightTab,           SIGNAL(focusEvent(bool)),
 			ui->rightTabWidget, SLOT(onFocusEvent(bool))
 			);
+
+	auto defaultState = leftTab->horizontalHeader()->saveState();//header state
+	QSettings settings;
+	auto headerState = settings.value("Columns", defaultState).toByteArray();
+	leftTab->horizontalHeader()->restoreState(headerState);
+	rightTab->horizontalHeader()->restoreState(headerState);
+
 	leftTab->setFocus();
 }
 
 MainWindow::~MainWindow()
 {
+	writeSettings();
 	delete ui;
+}
+
+void MainWindow::writeSettings()
+{
+	QSettings settings;
+
+	settings.beginGroup("MainWindow");
+	settings.setValue("size", size());
+	settings.setValue("pos", pos());
+	settings.endGroup();
+}
+
+void MainWindow::readSettings()
+{
+	QSettings settings;
+
+	settings.beginGroup("MainWindow");
+	resize(settings.value("size", QSize(400, 400)).toSize());
+	move(settings.value("pos", QPoint(200, 200)).toPoint());
+	settings.endGroup();
 }
 
 bool MainWindow::init(){
