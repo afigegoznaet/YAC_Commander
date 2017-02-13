@@ -37,7 +37,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="F5">
+       <widget class="QPushButton" name="F4">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -50,7 +50,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="F6">
+       <widget class="QPushButton" name="F5">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -63,7 +63,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="F7">
+       <widget class="QPushButton" name="F6">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -76,7 +76,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="F8">
+       <widget class="QPushButton" name="F7">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -89,7 +89,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="F9">
+       <widget class="QPushButton" name="F8">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -98,19 +98,6 @@
         </property>
         <property name="text">
          <string>F8 Delete</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="F4">
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Close app :)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>F10 Quit</string>
         </property>
        </widget>
       </item>

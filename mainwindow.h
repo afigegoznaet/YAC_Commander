@@ -18,6 +18,11 @@ public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
 
+private slots:
+	void on_F6_clicked();
+
+	void on_F5_clicked();
+
 private:
 	bool init();
 	virtual void keyPressEvent(QKeyEvent *event);

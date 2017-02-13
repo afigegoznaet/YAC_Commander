@@ -127,7 +127,7 @@ void TabbedListView::focusOutEvent(QFocusEvent *event){
 
 QFileInfoList TabbedListView::getSelectedFiles(){
 	QFileInfoList selectedFiles;
-	QModelIndexList items = selectionModel()->selectedIndexes();
+	QModelIndexList items = selectionModel()->selectedRows();
 	foreach (auto fileIndex, items) {
 		selectedFiles.append(model->fileInfo(fileIndex));
 	}

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "ui_dialog.h"
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -33,6 +34,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	auto headerState = settings.value("Columns", defaultState).toByteArray();
 	leftTab->horizontalHeader()->restoreState(headerState);
 	rightTab->horizontalHeader()->restoreState(headerState);
+
+	headerState = settings.value("ProgressColumns", defaultState).toByteArray();
+	newDialog.progress->tableWidget->horizontalHeader()->restoreState(headerState);
+
+
 
 	leftTab->setFocus();
 }
@@ -104,13 +110,14 @@ void MainWindow::copyFiles(){
 
 	if(reply == QMessageBox::No)
 		return;
-
-	foreach (auto fileInfo, fileList) {
+	newDialog.show();
+	newDialog.setFileAction(fileList, destination, COPY);
+	/*foreach (auto fileInfo, fileList) {
 		QString newName = destination+"/"+fileInfo.fileName();
-		QFile::copy(fileInfo.absoluteFilePath(), newName);
+		//QFile::copy(fileInfo.absoluteFilePath(), newName);
 	}
 	QMessageBox msg(QMessageBox::Information,"Copying!", destination, QMessageBox::Ok);
-	msg.exec();
+	msg.exec();*/
 }
 
 void MainWindow::moveFiles(){
@@ -153,4 +160,14 @@ QFileInfoList MainWindow::getSelectedFiles(){
 		return left->getSelectedFiles();
 	else
 		return right->getSelectedFiles();
+}
+
+void MainWindow::on_F5_clicked()
+{
+	copyFiles();
+}
+
+void MainWindow::on_F6_clicked()
+{
+	moveFiles();
 }
