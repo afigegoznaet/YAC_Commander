@@ -8,21 +8,21 @@
 enum ACTION {COPY, MOVE, LN, LN_S, ENUM_TERMINATOR} ;
 
 namespace Ui {
-class Dialog;
+class ProgressDialog;
 }
 
-class Dialog : public QDialog
+class ProgressDialog : public QDialog
 {
 	Q_OBJECT
 
 	friend class MainWindow;
 public:
-	explicit Dialog(QWidget *parent = 0);
-	~Dialog();
+	explicit ProgressDialog(QWidget *parent = 0);
+	~ProgressDialog();
 	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
 
 private:
-	Ui::Dialog *progress;
+	Ui::ProgressDialog *progress;
 	void DoSomething();
 	QFileInfoList progressList;
 	int writtenKb;

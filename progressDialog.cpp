@@ -1,9 +1,12 @@
-#include "dialog.h"
-#include "ui_dialog.h"
+#include "progressDialog.h"
+#include "ui_progressDialog.h"
+#include <QDebug>
+#include <windows.h> // for Sleep
+#include "filemover.h"
 
-Dialog::Dialog(QWidget *parent) :
+ProgressDialog::ProgressDialog(QWidget *parent) :
 	QDialog(parent),
-	progress(new Ui::Dialog){
+	progress(new Ui::ProgressDialog){
 	progress->setupUi(this);
 	progress->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	progress->tableWidget->setColumnCount(3);
@@ -18,13 +21,13 @@ Dialog::Dialog(QWidget *parent) :
 	progress->tableWidget->setHorizontalHeaderLabels(m_TableHeader);
 }
 
-Dialog::~Dialog(){
+ProgressDialog::~ProgressDialog(){
 	QSettings settings;
 	settings.setValue("ProgressColumns", progress->tableWidget->horizontalHeader()->saveState());
 	delete progress;
 }
 
-void Dialog::setFileAction(QFileInfoList fileList, QString destination, ACTION action){
+void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, ACTION action){
 	int newRow = progress->tableWidget->rowCount();
 
 	switch(action){
@@ -58,22 +61,30 @@ void Dialog::setFileAction(QFileInfoList fileList, QString destination, ACTION a
 		}
 	}
 
+	DoSomething();
 }
 
-void Dialog::onWrite( qint64 bytesWritten){
+void ProgressDialog::onWrite( qint64 bytesWritten){
 	writtenKb+=bytesWritten;
 	progress->progressBar->setValue(writtenKb);
 }
 
-void Dialog::DoSomething(){
-	while (progress->tableWidget->rowCount()) {
+void ProgressDialog::DoSomething(){
+	if (progress->tableWidget->rowCount()) {
+		Sleep(1000);
 		QFile from(progressList.front().absoluteFilePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
+		destination.append("/");
 		destination.append(progress->tableWidget->item(0,1)->text());
-		QFile to(destination);
-		progressList.pop_front();
-		progress->tableWidget->removeRow(0);
+		qDebug()<<destination;
+		QString action =  progress->tableWidget->item(0,0)->text();
 		writtenKb = 0;
 		progress->progressBar->setMaximum( progressList.front().size() / 1024 );
+		new FileMover(from, destination, action, this);
+		//from.copy(destination);
+		//progressList.pop_front();
+		//progress->tableWidget->removeRow(0);
+	}else{
+		this->hide();
 	}
 }

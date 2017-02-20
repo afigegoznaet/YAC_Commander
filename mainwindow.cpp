@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "ui_dialog.h"
+#include <windows.h>
+#include "ui_progressDialog.h"
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -83,6 +84,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 	switch (key) {
 	case Qt::Key_F5:
 		copyFiles();
+
 		break;
 	case Qt::Key_F6:
 		moveFiles();

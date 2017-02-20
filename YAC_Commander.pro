@@ -11,17 +11,20 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = YAC_Commander
 TEMPLATE = app
 
-FORMS    +=     dialog.ui mainwindow.ui
+FORMS    +=     mainwindow.ui \
+    progressDialog.ui
 
 SOURCES += main.cpp\
-    dialog.cpp \
 		mainwindow.cpp \
     tab.cpp \
     customtabwidget.cpp \
-    statuschecker.cpp
+    statuschecker.cpp \
+    filemover.cpp \
+    progressDialog.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
     customtabwidget.h \
-    dialog.h \
-    statuschecker.h
+    statuschecker.h \
+    filemover.h \
+    progressDialog.h

@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "customtabwidget.h"
-#include "dialog.h"
+#include "progressDialog.h"
 #include "tab.h"
 
 namespace Ui {
@@ -32,7 +32,7 @@ private:
 	QString getDestination();
 	QFileInfoList getSelectedFiles();
 	Ui::MainWindow *ui;
-	Dialog newDialog;
+	ProgressDialog newDialog;
 	void writeSettings();
 	void readSettings();
 };
