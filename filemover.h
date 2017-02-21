@@ -15,6 +15,8 @@ signals:
 
 public slots:
 
+private:
+	//bool fileMovement(std::tuple<>);
 };
 
 #endif // FILEMOVER_H

@@ -15,9 +15,12 @@ bool fileMovement(const std::tuple<QFile&, QString&, QString&> tup){
 
 FileMover::FileMover(QFile &from, QString &destination, QString &action, QObject *parent) : QObject(parent){
 
-	std::tuple<QFile&, QString&, QString&> tup = std::forward_as_tuple(from, destination, action);
+	std::tuple<QFile&, QString&, QString&> tup = ;
 	std::async(std::launch::async,
-								 &fileMovement,tup);
+				&fileMovement,
+			   std::forward_as_tuple(from, destination, action));
+	
+	
 }
 
 
