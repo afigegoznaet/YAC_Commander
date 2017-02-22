@@ -4,6 +4,10 @@
 #include <QDialog>
 #include <QFileInfoList>
 #include <QSettings>
+#include "ui_progressDialog.h"
+#include <QDebug>
+#include <QtConcurrent/QtConcurrent>
+#include "filemover.h"
 
 enum ACTION {COPY, MOVE, LN, LN_S, ENUM_TERMINATOR} ;
 
@@ -26,9 +30,11 @@ private:
 	void DoSomething();
 	QFileInfoList progressList;
 	int writtenKb;
+	QFuture<void> stub;
 
 public slots:
-	void onWrite( qint64 );
+	void onWrite( quint64 );
+	void movementResult(bool);
 };
 
 #endif // DIALOG_H

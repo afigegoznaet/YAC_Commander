@@ -18,13 +18,11 @@ SOURCES += main.cpp\
 		mainwindow.cpp \
     tab.cpp \
     customtabwidget.cpp \
-    statuschecker.cpp \
     filemover.cpp \
     progressDialog.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
     customtabwidget.h \
-    statuschecker.h \
     filemover.h \
     progressDialog.h

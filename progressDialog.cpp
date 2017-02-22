@@ -1,8 +1,5 @@
 #include "progressDialog.h"
-#include "ui_progressDialog.h"
-#include <QDebug>
-#include <windows.h> // for Sleep
-#include "filemover.h"
+#include <QMessageBox>
 
 ProgressDialog::ProgressDialog(QWidget *parent) :
 	QDialog(parent),
@@ -64,14 +61,26 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 	DoSomething();
 }
 
-void ProgressDialog::onWrite( qint64 bytesWritten){
+void ProgressDialog::onWrite(quint64 bytesWritten){
 	writtenKb+=bytesWritten;
 	progress->progressBar->setValue(writtenKb);
 }
 
+void ProgressDialog::movementResult(bool result){
+	if(!result)
+		if(progress->tableWidget->item(0,0)->text().compare("Copy",Qt::CaseInsensitive))
+			QMessageBox::warning(this, "Error!", "Copying file failed!");
+		else
+			QMessageBox::warning(this, "Error!", "Moving file failed!");
+
+}
+
+void async_delete(FileMover* mover){
+	delete mover;
+}
+
 void ProgressDialog::DoSomething(){
 	if (progress->tableWidget->rowCount()) {
-		Sleep(1000);
 		QFile from(progressList.front().absoluteFilePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
 		destination.append("/");
@@ -80,10 +89,12 @@ void ProgressDialog::DoSomething(){
 		QString action =  progress->tableWidget->item(0,0)->text();
 		writtenKb = 0;
 		progress->progressBar->setMaximum( progressList.front().size() / 1024 );
-		new FileMover(from, destination, action, this);
-		//from.copy(destination);
-		//progressList.pop_front();
-		//progress->tableWidget->removeRow(0);
+		FileMover* mover = new FileMover(from, destination, action, this);
+		connect(mover,SIGNAL(bytesMoved(quint64)), this, SLOT(onWrite(quint64)));
+		connect(mover, SIGNAL(completed(bool)),this,SLOT(movementResult(bool)));
+		mover->start();
+		//mover->moveToThread(stub);
+		stub = QtConcurrent::run(async_delete, mover);
 	}else{
 		this->hide();
 	}
