@@ -10,7 +10,7 @@ class FileMover : public QObject
 {
 	Q_OBJECT
 public:
-	explicit FileMover(QFile &from, QString &destination, QString &action, QObject *parent = 0);
+	explicit FileMover(QString from, QString destination, QString action, QObject *parent = 0);
 	~FileMover();
 	void start();
 
@@ -21,9 +21,9 @@ signals:
 public slots:
 
 private:
-	QString& destination;
-	QFile &from;
-	QString &action;
+	QString destination;
+	QString from;
+	QString action;
 	std::future<bool> result;
 };
 

@@ -84,6 +84,7 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 		chDir(index, OUT);
 		break;
 	default:
+		//break;
 		QAbstractItemView::keyPressEvent(event);
 	}
 	qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();

@@ -1,8 +1,8 @@
 #include "filemover.h"
 #include <QDebug>
 
-bool fileMovement(const std::tuple<QFile&, QString&, QString&> tup){
-	QFile &from = std::get<0>(tup);
+bool fileMovement(const std::tuple<QString, QString&, QString&> tup){
+	QFile from(std::get<0>(tup));
 	QString &destination = std::get<1>(tup);
 	QString &action = std::get<2>(tup);
 	qDebug()<<"Starting copy";
@@ -37,7 +37,7 @@ void FileMover::start(){
 			   std::forward_as_tuple(from, destination, action));
 }
 
-FileMover::FileMover(QFile &from, QString &destination, QString &action, QObject *parent) :
+FileMover::FileMover(QString from, QString destination, QString action, QObject *parent) :
 	QObject(parent), destination(destination), from(from), action(action){
 
 }

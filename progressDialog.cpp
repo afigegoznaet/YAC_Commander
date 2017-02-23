@@ -38,7 +38,7 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 
 			progress->tableWidget->insertRow( newRow );
 			progress->tableWidget->setItem(newRow,0,new QTableWidgetItem("Move"));
-			progress->tableWidget->setItem(newRow,1,new QTableWidgetItem(fileInfo.baseName()));
+			progress->tableWidget->setItem(newRow,1,new QTableWidgetItem(fileInfo.fileName()));
 			progress->tableWidget->setItem(newRow,2,new QTableWidgetItem(destination));
 
 			progressList.append(fileInfo);
@@ -84,12 +84,15 @@ void ProgressDialog::DoSomething(){
 		QFile from(progressList.front().absoluteFilePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
 		destination.append("/");
-		destination.append(progress->tableWidget->item(0,1)->text());
+		QFileInfo fileInfo(from.fileName());
+		QString fileName(fileInfo.fileName());
+		destination.append(fileName);
 		qDebug()<<destination;
 		QString action =  progress->tableWidget->item(0,0)->text();
 		writtenKb = 0;
 		progress->progressBar->setMaximum( progressList.front().size() / 1024 );
-		FileMover* mover = new FileMover(from, destination, action, this);
+		fileName = from.fileName();
+		FileMover* mover = new FileMover(fileName, destination, action, this);
 		connect(mover,SIGNAL(bytesMoved(quint64)), this, SLOT(onWrite(quint64)));
 		connect(mover, SIGNAL(completed(bool)),this,SLOT(movementResult(bool)));
 		mover->start();

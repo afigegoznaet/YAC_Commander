@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <windows.h>
+//#include <windows.h>
 #include "ui_progressDialog.h"
 #include <QMessageBox>
 
