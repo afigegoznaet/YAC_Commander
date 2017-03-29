@@ -8,6 +8,8 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QTableView(par
 	this->directory="..";
 	//this->setLayoutMode(QListView::Batched);
 	this->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->setTabKeyNavigation(false);
+
 
 	this->horizontalHeader()->setStretchLastSection(true);
 	this->horizontalHeader()->setSectionsMovable(true);
@@ -84,8 +86,9 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 		chDir(index, OUT);
 		break;
 	default:
-		//break;
-		QAbstractItemView::keyPressEvent(event);
+        //break;
+        QAbstractItemView::keyPressEvent(event);
+        break;
 	}
 	qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();
 }
