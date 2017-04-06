@@ -12,11 +12,13 @@ class FileMover : public QObject
 public:
 	explicit FileMover(QString from, QString destination, QString action, QObject *parent = 0);
 	~FileMover();
+	QMetaObject::Connection progress;
+	QMetaObject::Connection status;
 
 signals:
 	void bytesProgress(uint);
 	void completed(bool);
-	void started();
+
 
 public slots:
 

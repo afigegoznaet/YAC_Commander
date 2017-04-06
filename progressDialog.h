@@ -30,13 +30,11 @@ private:
 	void DoSomething();
 	QFileInfoList progressList;
 	QFuture<void> stub;
+	void DoerSomething(void);
 
 public slots:
 	void onWrite( uint );
 	void movementResult(bool);
-	void startedStarted(){
-		qDebug()<<"Started started!!!11";
-	};
 };
 
 #endif // DIALOG_H

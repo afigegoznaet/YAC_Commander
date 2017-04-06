@@ -56,6 +56,9 @@ FileMover::~FileMover(){
 	emit completed(res);
 	qDebug()<<"FileMover completed?!";
 
+	QObject::disconnect(progress);
+	QObject::disconnect(status);
+
 }
 
 
