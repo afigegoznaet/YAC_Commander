@@ -12,11 +12,11 @@ class FileMover : public QObject
 public:
 	explicit FileMover(QString from, QString destination, QString action, QObject *parent = 0);
 	~FileMover();
-	void start();
 
 signals:
-	void bytesMoved(quint64);
+	void bytesProgress(uint);
 	void completed(bool);
+	void started();
 
 public slots:
 
@@ -24,7 +24,9 @@ private:
 	QString destination;
 	QString from;
 	QString action;
-	std::future<bool> result;
+	bool copy();
+	bool move();
+	void DoSomething();
 };
 
 #endif // FILEMOVER_H

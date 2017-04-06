@@ -29,12 +29,14 @@ private:
 	Ui::ProgressDialog *progress;
 	void DoSomething();
 	QFileInfoList progressList;
-	int writtenKb;
 	QFuture<void> stub;
 
 public slots:
-	void onWrite( quint64 );
+	void onWrite( uint );
 	void movementResult(bool);
+	void startedStarted(){
+		qDebug()<<"Started started!!!11";
+	};
 };
 
 #endif // DIALOG_H

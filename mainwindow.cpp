@@ -6,7 +6,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::MainWindow), newDialog(this)
+	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 	init();
@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	rightTab->horizontalHeader()->restoreState(headerState);
 
 	headerState = settings.value("ProgressColumns", defaultState).toByteArray();
-	newDialog.progress->tableWidget->horizontalHeader()->restoreState(headerState);
+	newDialog->progress->tableWidget->horizontalHeader()->restoreState(headerState);
 
 
 
@@ -75,6 +75,7 @@ bool MainWindow::init(){
 	//ui->leftTabWidget->removeTab(0);
 	ui->rightTabWidget->setTabsClosable(false);
 	//ui->rightTabWidget->removeTab(0);
+	newDialog = new ProgressDialog(this);
 	return false;
 }
 
@@ -88,6 +89,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 		break;
 	case Qt::Key_F6:
 		moveFiles();
+		break;
+	case Qt::Key_F8:
+		deleteFiles();
 		break;
 	default:
 		QMainWindow::keyPressEvent(event);
@@ -103,6 +107,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 }
 
 void MainWindow::copyFiles(){
+
+	qDebug()<<"Main Window"<<thread();
+	qDebug()<<"\n\n\n\n*****\n\n\n";
+
 	QFileInfoList fileList = getSelectedFiles();
 	QString destination = getDestination();
 	QString message = "Copy " + QString::number(fileList.size()) + " files to \n"+destination +" ?";
@@ -112,8 +120,8 @@ void MainWindow::copyFiles(){
 
 	if(reply == QMessageBox::No)
 		return;
-	newDialog.show();
-	newDialog.setFileAction(fileList, destination, COPY);
+	newDialog->show();
+	newDialog->setFileAction(fileList, destination, COPY);
 	/*foreach (auto fileInfo, fileList) {
 		QString newName = destination+"/"+fileInfo.fileName();
 		//QFile::copy(fileInfo.absoluteFilePath(), newName);
@@ -134,13 +142,31 @@ void MainWindow::moveFiles(){
 
 	if(reply == QMessageBox::No)
 		return;
-	newDialog.show();
+	newDialog->show();
 	//foreach (auto fileInfo, fileList) {
 		//QString newName = destination+"/"+fileInfo.fileName();
-		newDialog.setFileAction(fileList, destination, MOVE);
+		newDialog->setFileAction(fileList, destination, MOVE);
 		//QFile::rename(fileInfo.absoluteFilePath(), newName);
    // }
+}
 
+void MainWindow::deleteFiles(){
+	QFileInfoList fileList = getSelectedFiles();
+
+	QString message = "Delete " + QString::number(fileList.size()) + " files?\n";
+
+	QMessageBox::StandardButton reply;
+	reply = QMessageBox::question(this, "Deleting ", message,
+									QMessageBox::Yes|QMessageBox::No);
+
+	if(reply == QMessageBox::No)
+		return;
+	//newDialog->show();
+	foreach (auto fileInfo, fileList) {
+		//QString newName = destination+"/"+fileInfo.fileName();
+		//newDialog->setFileAction(fileList, destination, MOVE);
+		QFile::remove( fileInfo.absoluteFilePath());
+	}
 }
 
 QString MainWindow::getDestination(){
@@ -167,9 +193,15 @@ QFileInfoList MainWindow::getSelectedFiles(){
 void MainWindow::on_F5_clicked()
 {
 	copyFiles();
+	qDebug()<<"F5 Slot?";
 }
 
 void MainWindow::on_F6_clicked()
 {
 	moveFiles();
+}
+
+void MainWindow::on_F8_clicked()
+{
+	deleteFiles();
 }

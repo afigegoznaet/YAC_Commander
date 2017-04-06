@@ -20,8 +20,9 @@ public:
 
 private slots:
 	void on_F6_clicked();
-
 	void on_F5_clicked();
+
+	void on_F8_clicked();
 
 private:
 	bool init();
@@ -32,7 +33,7 @@ private:
 	QString getDestination();
 	QFileInfoList getSelectedFiles();
 	Ui::MainWindow *ui;
-	ProgressDialog newDialog;
+	ProgressDialog* newDialog;
 	void writeSettings();
 	void readSettings();
 };
