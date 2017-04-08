@@ -26,6 +26,7 @@ public:
 	void init();
 	void setTabOrderIndex(int index){this->index=index;};
 	QFileInfoList getSelectedFiles();
+	void cdTo(const QString&);
 
 signals:
 	//void activated(const QModelIndex &index);

@@ -6,8 +6,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::MainWindow)
-{
+	ui(new Ui::MainWindow){
 	ui->setupUi(this);
 	init();
 	readSettings();
@@ -30,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 			ui->rightTabWidget, SLOT(onFocusEvent(bool))
 			);
 
+	connect(ui->quickBar,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
 	auto defaultState = leftTab->horizontalHeader()->saveState();//header state
 	QSettings settings;
 	auto headerState = settings.value("Columns", defaultState).toByteArray();
@@ -44,14 +44,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	leftTab->setFocus();
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
 	writeSettings();
 	delete ui;
 }
 
-void MainWindow::writeSettings()
-{
+void MainWindow::writeSettings(){
 	QSettings settings;
 
 	settings.beginGroup("MainWindow");
@@ -60,8 +58,7 @@ void MainWindow::writeSettings()
 	settings.endGroup();
 }
 
-void MainWindow::readSettings()
-{
+void MainWindow::readSettings(){
 	QSettings settings;
 
 	settings.beginGroup("MainWindow");
@@ -181,27 +178,33 @@ QString MainWindow::getDestination(){
 }
 
 QFileInfoList MainWindow::getSelectedFiles(){
-	auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
-	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
-
-	if(left->hasFocus())
-		return left->getSelectedFiles();
-	else
-		return right->getSelectedFiles();
+	return getFocusedTab()->getSelectedFiles();
 }
 
-void MainWindow::on_F5_clicked()
-{
+void MainWindow::on_F5_clicked(){
 	copyFiles();
-	qDebug()<<"F5 Slot?";
 }
 
-void MainWindow::on_F6_clicked()
-{
+void MainWindow::on_F6_clicked(){
 	moveFiles();
 }
 
-void MainWindow::on_F8_clicked()
-{
+void MainWindow::on_F8_clicked(){
 	deleteFiles();
+}
+
+TabbedListView* MainWindow::getFocusedTab(void){
+	auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
+	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
+
+
+	if(left->hasFocus())
+		return left;
+	return right;
+}
+
+void MainWindow::cdTo(const QString &dir){
+
+	qDebug()<<"Got it!!!!";
+	getFocusedTab()->cdTo(dir);
 }

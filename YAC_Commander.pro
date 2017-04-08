@@ -19,10 +19,12 @@ SOURCES += main.cpp\
     tab.cpp \
     customtabwidget.cpp \
     filemover.cpp \
-    progressDialog.cpp
+    progressDialog.cpp \
+    customtoolbar.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
     customtabwidget.h \
     filemover.h \
-    progressDialog.h
+    progressDialog.h \
+    customtoolbar.h

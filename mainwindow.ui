@@ -158,7 +158,6 @@
      </layout>
     </item>
    </layout>
-   <zorder>rightTabWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -213,7 +212,7 @@
    <addaction name="menuStart"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="quickBar">
+  <widget class="CustomToolbar" name="quickBar">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
      <horstretch>0</horstretch>
@@ -232,7 +231,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionRefresh"/>
    <addaction name="separator"/>
   </widget>
   <action name="actionDisk">
@@ -258,6 +256,11 @@
    <extends>QTabWidget</extends>
    <header>customtabwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CustomToolbar</class>
+   <extends>QToolBar</extends>
+   <header>customtoolbar.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

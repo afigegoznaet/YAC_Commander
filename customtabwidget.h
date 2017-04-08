@@ -7,19 +7,20 @@
 #include <QTabBar>
 
 
+
 class CustomTabWidget : public QTabWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    CustomTabWidget(QWidget* parent = Q_NULLPTR);
+	CustomTabWidget(QWidget* parent = Q_NULLPTR);
 
 public slots:
-    void onDirChanged(const QString dirName, int tabIndex);
-    void onFocusEvent(bool);
+	void onDirChanged(const QString dirName, int tabIndex);
+	void onFocusEvent(bool);
 
 protected:
-    //void paintEvent(QPaintEvent *event);
-    QString defaultStyle;
+	//void paintEvent(QPaintEvent *event);
+	QString defaultStyle;
 };
 
 #endif // CUSTOMTABWIDGET_H

@@ -17,11 +17,11 @@ class MainWindow : public QMainWindow
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
-
+public slots:
+	void cdTo(const QString&);
 private slots:
 	void on_F6_clicked();
 	void on_F5_clicked();
-
 	void on_F8_clicked();
 
 private:
@@ -36,6 +36,7 @@ private:
 	ProgressDialog* newDialog;
 	void writeSettings();
 	void readSettings();
+	TabbedListView* getFocusedTab(void);
 };
 
 #endif // MAINWINDOW_H
