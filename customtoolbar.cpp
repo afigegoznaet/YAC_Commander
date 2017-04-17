@@ -11,7 +11,7 @@ void DriveButton::click(){
 	qDebug()<<rootPath;
 	((CustomToolbar*)parent())->sendSignal(rootPath);
 }
-
+/*
 bool DriveButton::event(QEvent *e){
 	if(e->type() == QEvent::FocusAboutToChange)
 		return true;
@@ -19,17 +19,30 @@ bool DriveButton::event(QEvent *e){
 	bool res = QPushButton::event(e);
 	qDebug()<<	res;
 	return res;
-}
+}*/
 //bool QPushButton::event(QEvent *e)
 
 
 CustomToolbar::CustomToolbar(QWidget *parent) : QToolBar(parent){
-  refreshMountPoints();
+	volumes = QStorageInfo::mountedVolumes();
+	refreshMountPoints();
+	QTimer *timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+	timer->start(1000);
+}
+
+void CustomToolbar::update(){
+	auto newVols = QStorageInfo::mountedVolumes();
+	if(newVols.size() != volumes.size()){
+		//do I need to *free* volumes first?
+		volumes = newVols;
+		refreshMountPoints();
+	}
 }
 
 void CustomToolbar::refreshMountPoints(){
-	clear();
-	auto volumes = QStorageInfo::mountedVolumes();
+	clear();//clear mountpoint buttons from toolbar
+
 	for(auto &drive :  volumes){
 		DriveButton *button = new DriveButton(drive.rootPath(), this);
 		//QPushButton *button=new QPushButton(drive.rootPath(), this);

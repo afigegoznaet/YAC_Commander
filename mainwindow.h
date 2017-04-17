@@ -5,6 +5,10 @@
 #include "customtabwidget.h"
 #include "progressDialog.h"
 #include "tab.h"
+#include "ui_mainwindow.h"
+#include "ui_progressDialog.h"
+#include <QMessageBox>
+#include <QApplication>
 
 namespace Ui {
 	class MainWindow;

@@ -7,6 +7,7 @@
 #include "ui_progressDialog.h"
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
+#include <QMessageBox>
 #include "filemover.h"
 
 enum ACTION {COPY, MOVE, LN, LN_S, ENUM_TERMINATOR} ;

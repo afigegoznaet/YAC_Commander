@@ -1,6 +1,7 @@
 #include "progressDialog.h"
-#include <QMessageBox>
-#include <windows.h>
+
+//#include <unistd.h>
+
 
 ProgressDialog::ProgressDialog(QWidget *parent) :
 	QDialog(parent),
@@ -73,20 +74,19 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 }
 
 void ProgressDialog::DoerSomething(void){
-	while(progress->tableWidget->rowCount() >= 0 ){
-		Sleep(500);
+	while(progress->tableWidget->rowCount() >= 0 && !this->isHidden()){
 		DoSomething();
 	}
+
 }
 
 void ProgressDialog::onWrite(uint percentsWritten){
 	qDebug()<<"GOT ON WRITE~!!!!!!!!!!!!!!!!!!1111";
-	qDebug()<<"Here???";
+	qDebug()<<percentsWritten;
 	//Fucking stupid bullshit QT doesn't allow to update UI on non main thread!!!!
 	progress->progressBar->setValue(percentsWritten);
 	qDebug()<<"Not here";
 }
-#include <windows.h>
 
 void ProgressDialog::movementResult(bool result){
 	qDebug()<<"GOT EDN OF OPERATION!!!!!!!!!!!!!!!!!!1111";
@@ -96,22 +96,19 @@ void ProgressDialog::movementResult(bool result){
 		else
 			QMessageBox::warning(this, "Error!", "Moving file failed!");
 	}
-
-	progress->tableWidget->removeRow(0);
-	progressList.pop_front();
-
 }
 
 void async_delete(FileMover* mover){
 	qDebug()<<"Entering Deleter";
+	//mover->execute();
 	delete mover;
 	qDebug()<<"Deleter";
 }
 
 void ProgressDialog::DoSomething(){
-	if (progress->tableWidget->rowCount()) {
-		//if(stub.isStarted())
-			stub.waitForFinished();
+	stub.waitForFinished();
+	if (progressList.size()) {
+			//stub.waitForFinished();
 		QFile from(progressList.front().absoluteFilePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
 		destination.append("/");
@@ -128,6 +125,10 @@ void ProgressDialog::DoSomething(){
 		mover->status = connect(mover, SIGNAL(completed(bool)),this,SLOT(movementResult(bool)));
 		//mover->moveToThread(stub);
 		stub = QtConcurrent::run(async_delete, mover);
+		qDebug()<<progress->tableWidget->rowCount();
+		progress->tableWidget->removeRow(0);
+		qDebug()<<"Is empty?" << progressList.isEmpty();
+		progressList.pop_front();
 	}else{
 		this->hide();
 	}

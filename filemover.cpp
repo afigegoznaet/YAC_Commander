@@ -1,6 +1,10 @@
 #include "filemover.h"
 #include <QDebug>
+/*
+#ifdef _WIN32
 #include <windows.h>
+#endif
+*/
 
 #define MAX_READ 1048576
 
@@ -27,7 +31,7 @@ bool FileMover::copy(){
 		if(destinationFile.write(buffer, bytesRead) < 0)
 			return false;
 		tempSize +=bytesRead;
-		emit bytesProgress(100*(uint)(tempSize*1. / totalSize) );
+		emit bytesProgress((uint)(tempSize*100. / totalSize*1.) );
 		bytesRead = sourceFile.read(buffer,MAX_READ);
 	}
 
@@ -41,7 +45,11 @@ bool FileMover::move(){
 
 	return true;
 }
+/*
+void FileMover::execute(){
 
+}
+*/
 FileMover::~FileMover(){
 
 	bool res = 0;

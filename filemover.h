@@ -3,8 +3,6 @@
 
 #include <QObject>
 #include <QFile>
-#include <future>
-#include <tuple>
 
 class FileMover : public QObject
 {
@@ -14,6 +12,7 @@ public:
 	~FileMover();
 	QMetaObject::Connection progress;
 	QMetaObject::Connection status;
+	//void execute();
 
 signals:
 	void bytesProgress(uint);

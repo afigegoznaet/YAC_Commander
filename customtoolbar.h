@@ -6,6 +6,7 @@
 #include <QStorageInfo>
 #include <QDebug>
 #include <QEvent>
+#include <QTimer>
 //#include <QAction>
 
 class DriveButton : public QPushButton{
@@ -17,7 +18,7 @@ signals:
 public slots:
 	void click();
 protected:
-	virtual bool event(QEvent *e);
+	//virtual bool event(QEvent *e);
 
 private:
 	const QString rootPath;
@@ -33,9 +34,11 @@ signals:
 	void cdTo(const QString&) const;
 
 public slots:
+	void update();
 
 private:
 	void refreshMountPoints();
+	QList<QStorageInfo> volumes;
 };
 
 #endif // CUSTOMTOOLBAR_H

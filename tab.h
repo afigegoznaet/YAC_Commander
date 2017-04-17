@@ -21,10 +21,15 @@ class TabbedListView : public QTableView
 public:
 	explicit TabbedListView(QDir directory, QWidget *parent = 0);
 	~TabbedListView();
-	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){};
-	QString GetDirectory(){return model->rootDirectory().absolutePath();};
+	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){
+	};
+	QString GetDirectory(){
+		return model->rootDirectory().absolutePath();
+	};
 	void init();
-	void setTabOrderIndex(int index){this->index=index;};
+	void setTabOrderIndex(int index){
+		this->index=index;
+	};
 	QFileInfoList getSelectedFiles();
 	void cdTo(const QString&);
 
