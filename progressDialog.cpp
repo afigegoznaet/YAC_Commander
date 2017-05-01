@@ -3,8 +3,8 @@
 //#include <unistd.h>
 
 
-ProgressDialog::ProgressDialog(QWidget *parent) :
-	QDialog(parent),
+ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
+	QDialog(parent, f),
 	progress(new Ui::ProgressDialog),
 	status(1){
 	progress->setupUi(this);
@@ -113,12 +113,11 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 	if(!dir.exists(dest))
 		dir.mkdir(dest);
 
-	QFileInfoList dirEntries = dir.entryInfoList(QDir::AllEntries, QDir::DirsFirst);
+	QFileInfoList dirEntries = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
 
-	while(!dirEntries.isEmpty()){
+	foreach (auto file, dirEntries){
 
-		auto file = dirEntries.first();
-		dirEntries.pop_front();
+
 
 		QString destination(dest);
 		qDebug()<<file.fileName();
@@ -127,11 +126,6 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 		QString source(file.filePath());
 
 		if(file.isDir()){
-			if(!file.fileName().compare(".", Qt::CaseInsensitive) ||
-					!file.fileName().compare("..", Qt::CaseInsensitive)){
-
-				continue;
-			}
 \
 			QDir dir(file.filePath());
 			destination.append(file.fileName());

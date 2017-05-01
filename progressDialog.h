@@ -22,7 +22,7 @@ class ProgressDialog : public QDialog
 
 	friend class MainWindow;
 public:
-	explicit ProgressDialog(QWidget *parent = 0);
+	explicit ProgressDialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
 	~ProgressDialog();
 	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
 
