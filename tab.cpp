@@ -18,7 +18,7 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QTableView(par
 
 	model = new QFileSystemModel(this);
 	model->setRootPath(this->directory);
-	model->setFilter(QDir::AllEntries | QDir::NoDot);
+	model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System);
 
 	setSelectionMode(QAbstractItemView::ExtendedSelection);
 	setModel(model);
@@ -105,7 +105,7 @@ void TabbedListView::setCurrentSelection(QString sel){
 	QModelIndex ind;
 	for(int i=0;i<rows;i++){
 		ind = rootIndex().child(i,0);
-		qDebug()<< "Index: "<<i<<" filename: " << model->fileInfo(ind).fileName() << " directory: "<<directory;
+		//qDebug()<< "Index: "<<i<<" filename: " << model->fileInfo(ind).fileName() << " directory: "<<directory;
 		if(!directory.compare(model->fileInfo(ind).fileName()))
 			break;
 	}
@@ -118,13 +118,13 @@ void TabbedListView::setCurrentSelection(QString sel){
 }
 
 void TabbedListView::focusInEvent(QFocusEvent *event){
-	cout<<"Focus in! "<<event->gotFocus();
+	//cout<<"Focus in! "<<event->gotFocus();
 	QWidget::focusInEvent(event);
 	emit focusEvent(true);
 }
 
 void TabbedListView::focusOutEvent(QFocusEvent *event){
-	cout<<"Focus out! "<<event->gotFocus();
+	//cout<<"Focus out! "<<event->gotFocus();
 	QWidget::focusOutEvent(event);
 	emit focusEvent(false);
 }
@@ -139,7 +139,7 @@ QFileInfoList TabbedListView::getSelectedFiles(){
 }
 
 void TabbedListView::cdTo(const QString &dir){
-	qDebug()<<"Cd event!!!";
+	//qDebug()<<"Cd event!!!";
 	model->setRootPath(dir);
 	setRootIndex(model->index(model->rootPath()));
 }

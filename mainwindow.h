@@ -8,7 +8,10 @@
 #include "ui_mainwindow.h"
 #include "ui_progressDialog.h"
 #include <QMessageBox>
+#include <QDir>
 #include <QApplication>
+#include <QLabel>
+#include <newdir.h>
 
 namespace Ui {
 	class MainWindow;
@@ -28,13 +31,16 @@ private slots:
 	void on_F5_clicked();
 	void on_F8_clicked();
 
+	void on_F7_clicked();
+
 private:
 	bool init();
 	virtual void keyPressEvent(QKeyEvent *event);
 	void copyFiles();
 	void moveFiles();
+	void makeDir();
 	void deleteFiles();
-	QString getDestination();
+	QString getDirInFocus(bool opposite = false);
 	QFileInfoList getSelectedFiles();
 	Ui::MainWindow *ui;
 	ProgressDialog* newDialog;

@@ -75,7 +75,6 @@ bool MainWindow::init(){
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
 	auto key = event->key();
-	qDebug() << "Got event!!!!!!!!!!!!!!!!!1";
 	switch (key) {
 	case Qt::Key_F5:
 		copyFiles();
@@ -83,6 +82,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 		break;
 	case Qt::Key_F6:
 		moveFiles();
+		break;
+	case Qt::Key_F7:
+		makeDir();
 		break;
 	case Qt::Key_F8:
 		deleteFiles();
@@ -106,10 +108,10 @@ void MainWindow::copyFiles(){
 	qDebug()<<"\n\n\n\n*****\n\n\n";
 
 	QFileInfoList fileList = getSelectedFiles();
-	QString destination = getDestination();
+	QString destination = getDirInFocus(true);
 	QString message = "Copy " + QString::number(fileList.size()) + " files to \n"+destination +" ?";
-	QMessageBox::StandardButton reply;
-	reply = QMessageBox::question(this, "Moving ", message,
+	//QMessageBox::StandardButton reply;
+	auto reply = QMessageBox::question(this, "Moving ", message,
 									QMessageBox::Yes|QMessageBox::No);
 
 	if(reply == QMessageBox::No)
@@ -126,12 +128,12 @@ void MainWindow::copyFiles(){
 
 void MainWindow::moveFiles(){
 	QFileInfoList fileList = getSelectedFiles();
-	QString destination = getDestination();
+	QString destination = getDirInFocus(true);
 
 	QString message = "Move " + QString::number(fileList.size()) + " files to \n"+destination;
 
-	QMessageBox::StandardButton reply;
-	reply = QMessageBox::question(this, "Moving ", message,
+	//QMessageBox::StandardButton reply;
+	auto reply = QMessageBox::question(this, "Moving ", message,
 									QMessageBox::Yes|QMessageBox::No);
 
 	if(reply == QMessageBox::No)
@@ -155,20 +157,35 @@ void MainWindow::deleteFiles(){
 
 	if(reply == QMessageBox::No)
 		return;
-	//newDialog->show();
+
+	bool status;
 	foreach (auto fileInfo, fileList) {
-		//QString newName = destination+"/"+fileInfo.fileName();
-		//newDialog->setFileAction(fileList, destination, MOVE);
-		QFile::remove( fileInfo.absoluteFilePath());
+		if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive) )
+			continue;
+
+		if(!fileInfo.fileName().compare(".", Qt::CaseInsensitive) )
+			continue;
+
+		if(fileInfo.isDir()){
+			QDir dir( fileInfo.absoluteFilePath() );
+			status = dir.removeRecursively();
+		}else
+			status = QFile::remove( fileInfo.absoluteFilePath());
+
+		if(!status){
+			QString msg = "Unable to delede ";
+			msg.append(fileInfo.filePath());
+			QMessageBox::warning(this, "Error!",msg);
+		}
 	}
 }
 
-QString MainWindow::getDestination(){
+QString MainWindow::getDirInFocus(bool opposite){
 	auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
 	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
 
 
-	if(left->hasFocus())
+	if(!(left->hasFocus() ^ opposite))
 		return right->GetDirectory();
 	else
 		return left->GetDirectory();
@@ -190,6 +207,11 @@ void MainWindow::on_F8_clicked(){
 	deleteFiles();
 }
 
+void MainWindow::on_F7_clicked(){
+	makeDir();
+}
+
+
 TabbedListView* MainWindow::getFocusedTab(void){
 	auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
 	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
@@ -205,3 +227,31 @@ void MainWindow::cdTo(const QString &dir){
 	qDebug()<<"Got it!!!!";
 	getFocusedTab()->cdTo(dir);
 }
+
+void MainWindow::makeDir(){
+	qDebug()<<getDirInFocus();
+
+
+	QLabel lbl;
+	NewDir *dialog = new NewDir(&lbl);
+	lbl.show();
+
+	QString dirName;
+
+	if (dialog->exec()) {
+		dirName = dialog->dirName();
+		lbl.setText(dirName);
+	}
+	qDebug()<<dirName;
+	QDir currDir(getDirInFocus());
+	bool status = currDir.mkdir(dirName);
+	if(!status)
+		QMessageBox::critical(this,"Error!","Unable to create directory "+dirName+" in "+currDir.dirName());
+/*
+	auto reply = QMessageBox::question(this, " Make Directory", "Create Directory in this folder",
+									QMessageBox::Yes|QMessageBox::No);
+	if(reply == QMessageBox::No)
+		return;
+*/
+}
+

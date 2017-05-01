@@ -26,7 +26,7 @@ bool FileMover::copy(){
 	qint64 bytesRead=0;
 
 	bytesRead = sourceFile.read(buffer,MAX_READ);
-	qDebug()<<sourceFile.errorString();
+
 	while(bytesRead>0){
 		if(destinationFile.write(buffer, bytesRead) < 0)
 			return false;
@@ -35,8 +35,10 @@ bool FileMover::copy(){
 		bytesRead = sourceFile.read(buffer,MAX_READ);
 	}
 
-	if(bytesRead < 0)
+	if(bytesRead < 0){
+		qDebug()<<sourceFile.errorString();
 		return false;
+	}
 	return true;
 }
 

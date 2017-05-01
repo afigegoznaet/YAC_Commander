@@ -5,7 +5,8 @@
 
 ProgressDialog::ProgressDialog(QWidget *parent) :
 	QDialog(parent),
-	progress(new Ui::ProgressDialog){
+	progress(new Ui::ProgressDialog),
+	status(1){
 	progress->setupUi(this);
 	progress->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	progress->tableWidget->setColumnCount(3);
@@ -74,61 +75,129 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 }
 
 void ProgressDialog::DoerSomething(void){
-	while(progress->tableWidget->rowCount() >= 0 && !this->isHidden()){
+	while(progress->tableWidget->rowCount() >= 0 && !this->isHidden() && status){
 		DoSomething();
 	}
 
 }
 
 void ProgressDialog::onWrite(uint percentsWritten){
-	qDebug()<<"GOT ON WRITE~!!!!!!!!!!!!!!!!!!1111";
-	qDebug()<<percentsWritten;
+	//qDebug()<<"GOT ON WRITE~!!!!!!!!!!!!!!!!!!1111";
+	//qDebug()<<percentsWritten;
 	//Fucking stupid bullshit QT doesn't allow to update UI on non main thread!!!!
 	progress->progressBar->setValue(percentsWritten);
-	qDebug()<<"Not here";
+	//qDebug()<<"Not here";
 }
 
 void ProgressDialog::movementResult(bool result){
-	qDebug()<<"GOT EDN OF OPERATION!!!!!!!!!!!!!!!!!!1111";
+	status &= result;
 	if(!result){
+		QString errorMasg;
 		if(progress->tableWidget->item(0,0)->text().compare("Copy",Qt::CaseInsensitive))
-			QMessageBox::warning(this, "Error!", "Copying file failed!");
+			//QMessageBox::warning(this, "Error!", "Copying file failed!");
+			errorMasg="Copying file failed!\nContinue?";
 		else
-			QMessageBox::warning(this, "Error!", "Moving file failed!");
+			errorMasg="Moving file failed!\nContinue?";
+
+		auto reply = QMessageBox::question(this, "Error!!!", errorMasg,
+										QMessageBox::Yes|QMessageBox::No);
+		if(reply == QMessageBox::Yes){
+			status = 1;
+			QtConcurrent::run(this, &ProgressDialog::DoerSomething);
+		}
 	}
 }
 
-void async_delete(FileMover* mover){
-	qDebug()<<"Entering Deleter";
-	//mover->execute();
-	delete mover;
-	qDebug()<<"Deleter";
-}
+
+void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
+	if(!dir.exists(dest))
+		dir.mkdir(dest);
+
+	QFileInfoList dirEntries = dir.entryInfoList(QDir::AllEntries, QDir::DirsFirst);
+
+	while(!dirEntries.isEmpty()){
+
+		auto file = dirEntries.first();
+		dirEntries.pop_front();
+
+		QString destination(dest);
+		qDebug()<<file.fileName();
+		qDebug()<<file.filePath();
+
+		QString source(file.filePath());
+
+		if(file.isDir()){
+			if(!file.fileName().compare(".", Qt::CaseInsensitive) ||
+					!file.fileName().compare("..", Qt::CaseInsensitive)){
+
+				continue;
+			}
+\
+			QDir dir(file.filePath());
+			destination.append(file.fileName());
+			destination.append("/");
+			dirParsing(dir,action, destination);
+			continue;
+		}
+//		QDir destDir(destination);
+
+		destination.append(file.fileName());
+		FileMover* mover = new FileMover(source, destination, action, this);
+		mover->progress = connect(mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
+		mover->status = connect(mover, SIGNAL(completed(bool)),this,SLOT(movementResult(bool)));
+		delete mover;
+		//mover should be auto deleted now
+	}
+};
 
 void ProgressDialog::DoSomething(){
-	stub.waitForFinished();
+
 	if (progressList.size()) {
 			//stub.waitForFinished();
-		QFile from(progressList.front().absoluteFilePath());
+		QString source(progressList.front().filePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
 		destination.append("/");
-		QFileInfo fileInfo(from.fileName());
+		QFileInfo fileInfo(source);
 		QString fileName(fileInfo.fileName());
+
+		if(!fileName.compare("..", Qt::CaseInsensitive) || !fileName.compare(".", Qt::CaseInsensitive)  ){
+
+			progress->tableWidget->removeRow(0);
+			progressList.pop_front();
+			return;
+		}
+
+
 		destination.append(fileName);
 		qDebug()<<destination;
 		QString action =  progress->tableWidget->item(0,0)->text();
-		fileName = from.fileName();
-		FileMover* mover = new FileMover(fileName, destination, action, this);
-		qDebug()<<"Progress"<<thread();
-		//mover->moveToThread(thread());
+
+		if(fileInfo.isDir()){
+
+
+			QDir dir(fileInfo.filePath());
+			//destination.append(fileInfo.fileName());
+			destination.append("/");
+			dirParsing(dir, action, destination);
+			if(!action.compare("Move", Qt::CaseInsensitive))
+				dir.removeRecursively();
+
+			progress->tableWidget->removeRow(0);
+			progressList.pop_front();
+			return;
+		}
+
+
+
+		FileMover* mover = new FileMover(source, destination, action, this);
+
 		mover->progress = connect(mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
 		mover->status = connect(mover, SIGNAL(completed(bool)),this,SLOT(movementResult(bool)));
-		//mover->moveToThread(stub);
-		stub = QtConcurrent::run(async_delete, mover);
-		qDebug()<<progress->tableWidget->rowCount();
+
+		delete mover;
 		progress->tableWidget->removeRow(0);
-		qDebug()<<"Is empty?" << progressList.isEmpty();
 		progressList.pop_front();
+
 	}else{
 		this->hide();
 	}

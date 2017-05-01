@@ -32,6 +32,8 @@ private:
 	QFileInfoList progressList;
 	QFuture<void> stub;
 	void DoerSomething(void);
+	void dirParsing(QDir& dir, QString &action, QString &destination);
+	bool status;
 
 public slots:
 	void onWrite( uint );
