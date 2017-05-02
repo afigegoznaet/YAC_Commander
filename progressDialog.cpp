@@ -1,6 +1,6 @@
 #include "progressDialog.h"
-
-//#include <unistd.h>
+//#include <QtTest/QTest>
+#include <unistd.h>
 
 
 ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
@@ -110,6 +110,7 @@ void ProgressDialog::movementResult(bool result){
 
 
 void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
+
 	if(!dir.exists(dest))
 		dir.mkdir(dest);
 
@@ -117,23 +118,23 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 
 	foreach (auto file, dirEntries){
 
-
-
 		QString destination(dest);
 		qDebug()<<file.fileName();
 		qDebug()<<file.filePath();
 
 		QString source(file.filePath());
 
-		if(file.isDir()){
-\
+		if(file.isDir() ){
+
 			QDir dir(file.filePath());
+
 			destination.append(file.fileName());
 			destination.append("/");
-			dirParsing(dir,action, destination);
+
+			if( dest.compare(file.absoluteFilePath().append('/')) )
+				dirParsing(dir,action, destination);
 			continue;
 		}
-//		QDir destDir(destination);
 
 		destination.append(file.fileName());
 		FileMover* mover = new FileMover(source, destination, action, this);
