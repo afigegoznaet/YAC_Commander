@@ -27,7 +27,7 @@ CustomToolbar::CustomToolbar(QWidget *parent) : QToolBar(parent){
 	volumes = QStorageInfo::mountedVolumes();
 	refreshMountPoints();
 	QTimer *timer = new QTimer(this);
-	connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+	connect(timer, SIGNAL(timeout()), this, SLOT(update()));//update toolbar every 1 sec
 	timer->start(1000);
 }
 
@@ -45,8 +45,6 @@ void CustomToolbar::refreshMountPoints(){
 
 	for(auto &drive :  volumes){
 		DriveButton *button = new DriveButton(drive.rootPath(), this);
-		//QPushButton *button=new QPushButton(drive.rootPath(), this);
-		//QAction* mountPoint = new QAction(button);
 		addWidget(button);
 		addSeparator();
 	}

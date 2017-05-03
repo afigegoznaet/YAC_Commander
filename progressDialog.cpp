@@ -162,20 +162,27 @@ void ProgressDialog::DoSomething(){
 			return;
 		}
 
-
-		destination.append(fileName);
-		qDebug()<<destination;
 		QString action =  progress->tableWidget->item(0,0)->text();
 
 		if(fileInfo.isDir()){
 
 
 			QDir dir(fileInfo.filePath());
-			//destination.append(fileInfo.fileName());
+
+			bool movable = isMovable(source,destination);
+			destination.append(fileName);
 			destination.append("/");
-			dirParsing(dir, action, destination);
-			if(!action.compare("Move", Qt::CaseInsensitive))
-				dir.removeRecursively();
+
+			if(!action.compare("Move", Qt::CaseInsensitive)){
+				if(movable)
+					dir.rename(source,destination);
+				else{
+					dirParsing(dir, action, destination);
+					dir.removeRecursively();
+				}
+			}else
+				dirParsing(dir, action, destination);
+
 
 			progress->tableWidget->removeRow(0);
 			progressList.pop_front();
@@ -183,7 +190,7 @@ void ProgressDialog::DoSomething(){
 		}
 
 
-
+		destination.append(fileName);
 		FileMover* mover = new FileMover(source, destination, action, this);
 
 		mover->progress = connect(mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));

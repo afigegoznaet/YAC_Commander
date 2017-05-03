@@ -1,5 +1,7 @@
 #include "filemover.h"
 #include <QDebug>
+#include <QStorageInfo>
+
 /*
 #ifdef _WIN32
 #include <windows.h>
@@ -7,6 +9,17 @@
 */
 
 #define MAX_READ 1048576
+
+bool isMovable(QString &from, QString &to){
+	QStorageInfo in, out;
+	in.setPath(from);
+	out.setPath(to);
+
+	qDebug()<<in.rootPath();
+	qDebug()<<out.rootPath();
+	qDebug()<<(in == out);
+	return in == out;
+}
 
 void FileMover::DoSomething(){
 	qDebug()<<"Done something";
@@ -56,11 +69,12 @@ FileMover::~FileMover(){
 
 	bool res = 0;
 	if(!action.compare("Copy",Qt::CaseInsensitive)){
-		qDebug()<<"Copy";
 		res = this->copy();
 	}else{
-		qDebug()<<"Move";
-		res = this->move();
+		if(isMovable(from, destination))
+			res = this->move();
+		else
+			res = this->copy();
 	}
 
 	emit completed(res);

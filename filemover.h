@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QFile>
 
+bool isMovable(QString& from, QString& to);
+
 class FileMover : public QObject
 {
 	Q_OBJECT
