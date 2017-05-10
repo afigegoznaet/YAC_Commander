@@ -172,11 +172,16 @@ void ProgressDialog::DoSomething(){
 			bool movable = isMovable(source,destination);
 			destination.append(fileName);
 			destination.append("/");
-
+			/**
+			  Too many "if"s, gotta do something about it
+			  */
 			if(!action.compare("Move", Qt::CaseInsensitive)){
-				if(movable)
-					dir.rename(source,destination);
-				else{
+				if(movable){
+					if(destination.startsWith(source))
+						QMessageBox::warning(this, "Error","Can not move directory into itself");
+					else
+						dir.rename(source,destination);
+				}else{
 					dirParsing(dir, action, destination);
 					dir.removeRecursively();
 				}
