@@ -30,3 +30,8 @@ HEADERS  += mainwindow.h \
     progressDialog.h \
     customtoolbar.h \
     newdir.h
+
+win32-msvc* {
+	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360
+}
+
