@@ -238,20 +238,17 @@ void MainWindow::makeDir(){
 
 	QString dirName;
 
-	if (dialog->exec()) {
+	int hz = dialog->exec();
+	if (hz) {
 		dirName = dialog->dirName();
 		lbl.setText(dirName);
-	}
+	}else
+		return;
 	qDebug()<<dirName;
 	QDir currDir(getDirInFocus());
 	bool status = currDir.mkdir(dirName);
 	if(!status)
 		QMessageBox::critical(this,"Error!","Unable to create directory "+dirName+" in "+currDir.dirName());
-/*
-	auto reply = QMessageBox::question(this, " Make Directory", "Create Directory in this folder",
-									QMessageBox::Yes|QMessageBox::No);
-	if(reply == QMessageBox::No)
-		return;
-*/
+
 }
 

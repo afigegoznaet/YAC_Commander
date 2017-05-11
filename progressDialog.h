@@ -34,10 +34,17 @@ private:
 	void DoerSomething(void);
 	void dirParsing(QDir& dir, QString &action, QString &destination);
 	bool status;
+	QWaitCondition cond;
+
+signals:
+	void sendErrMsg(QString errorText);
+	void hideDialogSignal();
 
 public slots:
 	void onWrite( uint );
 	void movementResult(bool);
+	void errorMsg(QString errorText);
+	void hideDialogSlot();
 };
 
 #endif // DIALOG_H

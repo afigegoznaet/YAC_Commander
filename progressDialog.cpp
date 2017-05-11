@@ -1,6 +1,6 @@
 #include "progressDialog.h"
 //#include <QtTest/QTest>
-#include <unistd.h>
+//#include <unistd.h>
 
 
 ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
@@ -21,6 +21,7 @@ ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
 	progress->tableWidget->setHorizontalHeaderLabels(m_TableHeader);
 	progress->progressBar->setMinimum(0);
 	progress->progressBar->setMaximum( 100 );
+
 }
 
 ProgressDialog::~ProgressDialog(){
@@ -70,12 +71,16 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 		break;
 	}
 
+
+	connect(this,  SIGNAL(sendErrMsg(QString )), this,SLOT(errorMsg(QString )), Qt::QueuedConnection);
+	connect(this, SIGNAL(hideDialogSignal()), this,SLOT(hideDialogSlot()), Qt::QueuedConnection);
+
 	QtConcurrent::run(this, &ProgressDialog::DoerSomething);
 
 }
 
 void ProgressDialog::DoerSomething(void){
-	while(progress->tableWidget->rowCount() >= 0 && !this->isHidden() && status){
+	while(progressList.size() >= 0 && !this->isHidden() && status){
 		DoSomething();
 	}
 
@@ -145,6 +150,15 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 	}
 };
 
+void ProgressDialog::errorMsg(QString errorText){
+	QMessageBox::warning(this, "Error",errorText);
+	cond.wakeOne();
+}
+void ProgressDialog::hideDialogSlot(){
+	this->hide();
+}
+
+
 void ProgressDialog::DoSomething(){
 
 	if (progressList.size()) {
@@ -177,8 +191,13 @@ void ProgressDialog::DoSomething(){
 			  */
 			if(!action.compare("Move", Qt::CaseInsensitive)){
 				if(movable){
-					if(destination.startsWith(source))
-						QMessageBox::warning(this, "Error","Can not move directory into itself");
+					if(destination.startsWith(source)){
+						emit sendErrMsg("Can not move directory into itself");
+						QMutex blocker;
+						blocker.lock();
+						cond.wait(&blocker);//this releases the mutex
+						//blocker.unlock();
+					}
 					else
 						dir.rename(source,destination);
 				}else{
@@ -205,7 +224,7 @@ void ProgressDialog::DoSomething(){
 		progress->tableWidget->removeRow(0);
 		progressList.pop_front();
 
-	}else{
-		this->hide();
-	}
+	}else
+		emit hideDialogSignal();
+
 }
