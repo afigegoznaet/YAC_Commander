@@ -10,7 +10,7 @@ class FileMover : public QObject
 {
 	Q_OBJECT
 public:
-	explicit FileMover(QString from, QString destination, QString action, QObject *parent = 0);
+	explicit FileMover(QString source, QString destination, QString action, QObject *parent = 0);
 	~FileMover();
 	QMetaObject::Connection progress;
 	QMetaObject::Connection status;
@@ -18,18 +18,17 @@ public:
 
 signals:
 	void bytesProgress(uint);
-	void completed(bool);
+	void completed(int);
 
 
 public slots:
 
 private:
 	QString destination;
-	QString from;
+	QString source;
 	QString action;
-	bool copy();
-	bool move();
-	void DoSomething();
+	int copy();
+	int move();
 };
 
 #endif // FILEMOVER_H

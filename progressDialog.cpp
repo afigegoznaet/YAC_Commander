@@ -75,16 +75,16 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 	connect(this,  SIGNAL(sendErrMsg(QString )), this,SLOT(errorMsg(QString )), Qt::QueuedConnection);
 	connect(this, SIGNAL(hideDialogSignal()), this,SLOT(hideDialogSlot()), Qt::QueuedConnection);
 
-	QtConcurrent::run(this, &ProgressDialog::DoerSomething);
+	QtConcurrent::run(this, &ProgressDialog::DoSomething);
 
 }
-
+/*
 void ProgressDialog::DoerSomething(void){
-	while(progressList.size() >= 0 && !this->isHidden() && status){
+	//while(progressList.size() >= 0 && !this->isHidden() && status){
 		DoSomething();
-	}
+	//}
 
-}
+}*/
 
 void ProgressDialog::onWrite(uint percentsWritten){
 	//qDebug()<<"GOT ON WRITE~!!!!!!!!!!!!!!!!!!1111";
@@ -94,22 +94,44 @@ void ProgressDialog::onWrite(uint percentsWritten){
 	//qDebug()<<"Not here";
 }
 
-void ProgressDialog::movementResult(bool result){
-	status &= result;
-	if(!result){
-		QString errorMasg;
-		if(progress->tableWidget->item(0,0)->text().compare("Copy",Qt::CaseInsensitive))
-			//QMessageBox::warning(this, "Error!", "Copying file failed!");
-			errorMasg="Copying file failed!\nContinue?";
-		else
-			errorMasg="Moving file failed!\nContinue?";
+void ProgressDialog::movementResult(int result){
+	status &= (result & 1);
+	static const QString errorCopyMasg = "Copying file failed!\nContinue?";
+	static const QString errorMoveMasg = "Moving file failed!\nContinue?";
+	static const QString errorCopyEOLMasg = "Copying file failed!";
+	static const QString errorMoveEOLMasg = "Moving file failed!";
+	QMessageBox::StandardButton reply = QMessageBox::Yes;
+	switch(result){
+		case 10://Move failed
+			if(progressList.size()>1)
+				reply = QMessageBox::question(this, "Error!!!", errorMoveMasg,
+											QMessageBox::Yes|QMessageBox::No);
+			else
+				QMessageBox::warning(this, "Error!!!", errorMoveEOLMasg);
 
-		auto reply = QMessageBox::question(this, "Error!!!", errorMasg,
-										QMessageBox::Yes|QMessageBox::No);
-		if(reply == QMessageBox::Yes){
-			status = 1;
-			QtConcurrent::run(this, &ProgressDialog::DoerSomething);
-		}
+
+
+			break;
+		case 0:
+			if(progressList.size()>1)
+				reply = QMessageBox::question(this, "Error!!!", errorCopyMasg,
+											QMessageBox::Yes|QMessageBox::No);
+			else
+				reply = QMessageBox::question(this, "Error!!!", errorCopyEOLMasg);
+
+			break;
+	}
+
+
+	cond.wakeOne();
+
+	QMutex blocker;
+	blocker.lock();
+	condStatus.wait(&blocker);//this releases the mutex
+
+	if(reply == QMessageBox::Yes){
+		status = 1;
+		QtConcurrent::run(this, &ProgressDialog::DoSomething);
 	}
 }
 
@@ -144,7 +166,7 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 		destination.append(file.fileName());
 		FileMover* mover = new FileMover(source, destination, action, this);
 		mover->progress = connect(mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
-		mover->status = connect(mover, SIGNAL(completed(bool)),this,SLOT(movementResult(bool)));
+		mover->status = connect(mover, SIGNAL(completed(int)),this,SLOT(movementResult(int)));
 		delete mover;
 		//mover should be auto deleted now
 	}
@@ -159,9 +181,8 @@ void ProgressDialog::hideDialogSlot(){
 }
 
 
-void ProgressDialog::DoSomething(){
-
-	if (progressList.size()) {
+void ProgressDialog::DoSomething(void){
+	if (!progressList.isEmpty()) {
 			//stub.waitForFinished();
 		QString source(progressList.front().filePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
@@ -218,11 +239,18 @@ void ProgressDialog::DoSomething(){
 		FileMover* mover = new FileMover(source, destination, action, this);
 
 		mover->progress = connect(mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
-		mover->status = connect(mover, SIGNAL(completed(bool)),this,SLOT(movementResult(bool)));
+		mover->status = connect(mover, SIGNAL(completed(int)),this,SLOT(movementResult(int)));
 
 		delete mover;
+
+		QMutex blocker;
+		blocker.lock();
+		cond.wait(&blocker);//this releases the mutex
+
 		progress->tableWidget->removeRow(0);
 		progressList.pop_front();
+
+		condStatus.wakeOne();
 
 	}else
 		emit hideDialogSignal();

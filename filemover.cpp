@@ -21,12 +21,8 @@ bool isMovable(QString &from, QString &to){
 	return in == out;
 }
 
-void FileMover::DoSomething(){
-	qDebug()<<"Done something";
-}
-
-bool FileMover::copy(){
-	QFile sourceFile(from);
+int FileMover::copy(){
+	QFile sourceFile(source);
 	QFile destinationFile(destination);
 
 	sourceFile.open(QIODevice::ReadOnly);
@@ -55,10 +51,9 @@ bool FileMover::copy(){
 	return true;
 }
 
-bool FileMover::move(){
+int FileMover::move(){
 
-
-	return true;
+	return 10 + (int)QFile::rename(source, destination);
 }
 /*
 void FileMover::execute(){
@@ -67,11 +62,11 @@ void FileMover::execute(){
 */
 FileMover::~FileMover(){
 
-	bool res = 0;
+	int res = 0;
 	if(!action.compare("Copy",Qt::CaseInsensitive)){
 		res = this->copy();
 	}else{
-		if(isMovable(from, destination))
+		if(isMovable(source, destination))
 			res = this->move();
 		else
 			res = this->copy();
@@ -87,8 +82,8 @@ FileMover::~FileMover(){
 
 
 
-FileMover::FileMover(QString from, QString destination, QString action, QObject *parent) :
-	QObject(parent), destination(destination), from(from), action(action){
+FileMover::FileMover(QString source, QString destination, QString action, QObject *parent) :
+	QObject(parent), destination(destination), source(source), action(action){
 	qDebug()<<"Mover constructor"<<thread();
 }
 

@@ -28,13 +28,14 @@ public:
 
 private:
 	Ui::ProgressDialog *progress;
-	void DoSomething();
+	void DoSomething(void);
 	QFileInfoList progressList;
 	QFuture<void> stub;
-	void DoerSomething(void);
+	//void DoerSomething(void);
 	void dirParsing(QDir& dir, QString &action, QString &destination);
 	bool status;
 	QWaitCondition cond;
+	QWaitCondition condStatus;
 
 signals:
 	void sendErrMsg(QString errorText);
@@ -42,7 +43,7 @@ signals:
 
 public slots:
 	void onWrite( uint );
-	void movementResult(bool);
+	void movementResult(int);
 	void errorMsg(QString errorText);
 	void hideDialogSlot();
 };
