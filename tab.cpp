@@ -5,16 +5,19 @@
 #define cout qDebug()
 
 TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QTableView(parent){
-	this->directory="..";
-	//this->setLayoutMode(QListView::Batched);
-	this->setSelectionBehavior(QAbstractItemView::SelectRows);
-	this->setTabKeyNavigation(false);
+	directory="..";
+	//setLayoutMode(QListView::Batched);
+	setSelectionBehavior(QAbstractItemView::SelectRows);
+	setTabKeyNavigation(false);
 
 
-	this->horizontalHeader()->setStretchLastSection(true);
-	this->horizontalHeader()->setSectionsMovable(true);
-	this->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-	this->verticalHeader()->setDefaultSectionSize(this->fontMetrics().height()+4);
+	horizontalHeader()->setStretchLastSection(true);
+	horizontalHeader()->setSectionsMovable(true);
+	horizontalHeader()->setSectionsClickable(true);
+	horizontalHeader()->setSortIndicatorShown(true);
+
+	verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+	verticalHeader()->setDefaultSectionSize(fontMetrics().height()+4);
 
 	model = new QFileSystemModel(this);
 	model->setRootPath(this->directory);
@@ -24,13 +27,14 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QTableView(par
 	setModel(model);
 	setRootIndex(model->index(model->rootPath()));
 	verticalHeader()->setVisible(false);
+
 	connect(model,SIGNAL(directoryLoaded(QString)),this,SLOT(setCurrentSelection(QString)));
 	qDebug()<<directory.absolutePath();
 }
 
 TabbedListView::~TabbedListView(){
 	QSettings settings;
-	settings.setValue("Columns", this->horizontalHeader()->saveState());
+	settings.setValue("Columns", horizontalHeader()->saveState());
 }
 
 
@@ -95,7 +99,9 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 
 void TabbedListView::init(){
 	connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
-
+	horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
+	auto hz = connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
+	qDebug()<<hz;
 }
 
 void TabbedListView::setCurrentSelection(QString sel){
@@ -115,6 +121,18 @@ void TabbedListView::setCurrentSelection(QString sel){
 
 	selectionModel()->select(currentIndex(), QItemSelectionModel::Select);
 	qDebug()<<model->fileInfo(currentIndex()).fileName();
+}
+
+void TabbedListView::headerClicked(int section){
+
+	Qt::SortOrder order = Qt::AscendingOrder;
+	if(section == horizontalHeader()->sortIndicatorSection())
+		if(Qt::AscendingOrder == horizontalHeader()->sortIndicatorOrder())
+			order = Qt::DescendingOrder;
+
+
+	model->sort(section, order);
+	//setModel(model);
 }
 
 void TabbedListView::focusInEvent(QFocusEvent *event){

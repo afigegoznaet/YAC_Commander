@@ -13,7 +13,6 @@ Things to add:
 * more informative progress dialog
 * progress dialog actions
 * Tab support
-* Sorting by column
 * TBU
 
 # NEED VOLUNTEERS! TESTERS and DEVELOPERS

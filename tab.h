@@ -42,6 +42,7 @@ signals:
 public slots:
 	void on_doubleClicked(const QModelIndex &index);
 	void setCurrentSelection(QString sel);
+	void headerClicked(int section);
 protected:
 	virtual void keyPressEvent(QKeyEvent * event);
 	void chDir(const QModelIndex &index, bool in_out);

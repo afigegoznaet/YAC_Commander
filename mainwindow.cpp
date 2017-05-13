@@ -52,17 +52,18 @@ void MainWindow::writeSettings(){
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
 	settings.setValue("editor", editor);
+
 	settings.endGroup();
 }
 
 void MainWindow::readSettings(){
 	QSettings settings;
 
-
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(400, 400)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	editor = settings.value("editor", DEF_EDITOR).toString();
+
 	settings.endGroup();
 }
 
@@ -272,5 +273,5 @@ void MainWindow::on_F4_clicked(){
 }
 
 void MainWindow::on_F3_clicked(){
-
+	QMessageBox::information(this,"Info","Not yet implemented");
 }
