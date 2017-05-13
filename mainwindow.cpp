@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 
-
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow){
@@ -34,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	rightTab->horizontalHeader()->restoreState(headerState);
 
 	headerState = settings.value("ProgressColumns", defaultState).toByteArray();
-	newDialog->progress->tableWidget->horizontalHeader()->restoreState(headerState);
+	movementProgress->progress->tableWidget->horizontalHeader()->restoreState(headerState);
 
 
 
@@ -52,15 +51,18 @@ void MainWindow::writeSettings(){
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
+	settings.setValue("editor", editor);
 	settings.endGroup();
 }
 
 void MainWindow::readSettings(){
 	QSettings settings;
 
+
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(400, 400)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
+	editor = settings.value("editor", DEF_EDITOR).toString();
 	settings.endGroup();
 }
 
@@ -69,16 +71,21 @@ bool MainWindow::init(){
 	//ui->leftTabWidget->removeTab(0);
 	ui->rightTabWidget->setTabsClosable(false);
 	//ui->rightTabWidget->removeTab(0);
-	newDialog = new ProgressDialog(this);
+	movementProgress = new ProgressDialog(this);
 	return false;
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
 	auto key = event->key();
 	switch (key) {
+	case Qt::Key_F3:
+		on_F3_clicked();
+		break;
+	case Qt::Key_F4:
+		on_F4_clicked();
+		break;
 	case Qt::Key_F5:
 		copyFiles();
-
 		break;
 	case Qt::Key_F6:
 		moveFiles();
@@ -116,8 +123,8 @@ void MainWindow::copyFiles(){
 
 	if(reply == QMessageBox::No)
 		return;
-	newDialog->show();
-	newDialog->setFileAction(fileList, destination, COPY);
+	movementProgress->show();
+	movementProgress->setFileAction(fileList, destination, COPY);
 	/*foreach (auto fileInfo, fileList) {
 		QString newName = destination+"/"+fileInfo.fileName();
 		//QFile::copy(fileInfo.absoluteFilePath(), newName);
@@ -132,18 +139,14 @@ void MainWindow::moveFiles(){
 
 	QString message = "Move " + QString::number(fileList.size()) + " files to \n"+destination;
 
-	//QMessageBox::StandardButton reply;
 	auto reply = QMessageBox::question(this, "Moving ", message,
 									QMessageBox::Yes|QMessageBox::No);
 
 	if(reply == QMessageBox::No)
 		return;
-	newDialog->show();
-	//foreach (auto fileInfo, fileList) {
-		//QString newName = destination+"/"+fileInfo.fileName();
-		newDialog->setFileAction(fileList, destination, MOVE);
-		//QFile::rename(fileInfo.absoluteFilePath(), newName);
-   // }
+
+	movementProgress->show();
+	movementProgress->setFileAction(fileList, destination, MOVE);
 }
 
 void MainWindow::deleteFiles(){
@@ -252,3 +255,22 @@ void MainWindow::makeDir(){
 
 }
 
+
+void MainWindow::on_F4_clicked(){
+
+	QFileInfoList fileList = getSelectedFiles();
+	foreach (auto file, fileList) {
+		if(file.isDir())
+			continue;
+		QProcess *notepad = new QProcess();
+		QStringList args;
+		args<<file.absoluteFilePath();
+		notepad->start(editor, args);
+	}
+
+
+}
+
+void MainWindow::on_F3_clicked(){
+
+}

@@ -13,6 +13,21 @@
 #include <QLabel>
 #include <newdir.h>
 
+#define DEF_EDITOR "undefined"
+
+#ifdef __linux__
+	#undef DEF_EDITOR
+	#define DEF_EDITOR "kate"
+#endif
+#ifdef _WIN32
+	#undef DEF_EDITOR
+	#define DEF_EDITOR "notepad"
+#endif
+#ifdef __APPLE__
+	#undef DEF_EDITOR
+	#define DEF_EDITOR "TextEdit"
+#endif
+
 namespace Ui {
 	class MainWindow;
 }
@@ -27,25 +42,29 @@ public:
 public slots:
 	void cdTo(const QString&);
 private slots:
-	void on_F6_clicked();
+	void on_F3_clicked();
+	void on_F4_clicked();
 	void on_F5_clicked();
+	void on_F6_clicked();
+	void on_F7_clicked();
 	void on_F8_clicked();
 
-	void on_F7_clicked();
-
 private:
+
+	Ui::MainWindow *ui;
+	ProgressDialog* movementProgress;
+	QString editor;
+
 	bool init();
 	virtual void keyPressEvent(QKeyEvent *event);
 	void copyFiles();
 	void moveFiles();
 	void makeDir();
 	void deleteFiles();
-	QString getDirInFocus(bool opposite = false);
-	QFileInfoList getSelectedFiles();
-	Ui::MainWindow *ui;
-	ProgressDialog* newDialog;
 	void writeSettings();
 	void readSettings();
+	QString getDirInFocus(bool opposite = false);
+	QFileInfoList getSelectedFiles();
 	TabbedListView* getFocusedTab(void);
 };
 
