@@ -4,8 +4,10 @@
 #define OUT 0
 #define cout qDebug()
 
-TabbedListView::TabbedListView(QDir directory, QWidget *parent) : QTableView(parent){
-	directory="..";
+TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
+	directory(directory.absolutePath()),
+	QTableView(parent){
+
 	//setLayoutMode(QListView::Batched);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setTabKeyNavigation(false);
@@ -51,7 +53,7 @@ void TabbedListView::on_doubleClicked(const QModelIndex &index){
 }
 
 void TabbedListView::chDir(const QModelIndex &index, bool in_out){
-	qDebug()<<"Dir at input: "<<model->rootPath();
+	//qDebug()<<"Dir at input: "<<model->rootPath();
 	if(in_out == IN){
 		directory="..";//clever selection
 		QDir parentDir(model->fileInfo(index).absoluteFilePath());
@@ -67,7 +69,7 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 		setRootIndex(model->index(model->rootPath()));
 	}
 	//directory = model->rootDirectory().absolutePath();
-	qDebug()<<"Dir at output: "<<model->rootPath() << " directory: "<<directory;
+	//qDebug()<<"Dir at output: "<<model->rootPath() << " directory: "<<directory;
 	//setCurrentSelection();
 	emit dirChanged(model->rootPath(), this->index);
 

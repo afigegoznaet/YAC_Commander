@@ -6,8 +6,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 	init();
 	readSettings();
-	TabbedListView* leftTab = new TabbedListView(this);
-	TabbedListView* rightTab = new TabbedListView(this);
+	TabbedListView* leftTab = new TabbedListView(ui->leftTabWidget);
+	TabbedListView* rightTab = new TabbedListView(ui->rightTabWidget);
 	leftTab->init();
 	rightTab->init();
 	leftTab->setTabOrderIndex(ui->leftTabWidget->addTab(leftTab, leftTab->GetDirectory()));

@@ -5,6 +5,9 @@
 #include <QTabWidget>
 #include <QDebug>
 #include <QTabBar>
+#include <QMenu>
+#include <QMouseEvent>
+#include "tab.h"
 
 
 
@@ -19,8 +22,10 @@ public slots:
 	void onFocusEvent(bool);
 
 protected:
-	//void paintEvent(QPaintEvent *event);
 	QString defaultStyle;
+private:
+	virtual void mousePressEvent(QMouseEvent *event);
+	void addNewTab(bool dup=false);
 };
 
 #endif // CUSTOMTABWIDGET_H

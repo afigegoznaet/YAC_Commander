@@ -12,7 +12,7 @@ Things to add:
 * soft/hard linking
 * more informative progress dialog
 * progress dialog actions
-* Tab support
+* Tab persistence
 * TBU
 
 # NEED VOLUNTEERS! TESTERS and DEVELOPERS
