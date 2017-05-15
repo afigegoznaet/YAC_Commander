@@ -13,6 +13,15 @@ Things to add:
 * more informative progress dialog
 * progress dialog actions
 * Tab persistence
+* Some sort of Directory action if a drive is removed(maybe just notification)
+* Search capability
 * TBU
+
+Implemented sutff:
+* File/Directory move/add/delete
+* tabs
+* Save state on exit
+* Disk / Mount points buttons
+* asynchronows file/dir movement progress dialog
 
 # NEED VOLUNTEERS! TESTERS and DEVELOPERS
