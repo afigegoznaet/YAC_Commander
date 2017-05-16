@@ -24,4 +24,7 @@ Implemented sutff:
 * Disk / Mount points buttons
 * asynchronows file/dir movement progress dialog
 
-# NEED VOLUNTEERS! TESTERS and DEVELOPERS
+Known issues:
+* Dir doesn't refresh if some action is performed in the other tab
+
+# NEED VOLUNTEERS! TESTERS and DEVELOPERS and IDEAS

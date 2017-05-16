@@ -5,8 +5,9 @@
 #define cout qDebug()
 
 TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
-	directory(directory.absolutePath()),
-	QTableView(parent){
+	QTableView(parent),
+	directory(directory.absolutePath())
+	{
 
 	//setLayoutMode(QListView::Batched);
 	setSelectionBehavior(QAbstractItemView::SelectRows);

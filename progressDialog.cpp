@@ -21,7 +21,7 @@ ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
 	progress->tableWidget->setHorizontalHeaderLabels(m_TableHeader);
 	progress->progressBar->setMinimum(0);
 	progress->progressBar->setMaximum( 100 );
-
+	connect(this, SIGNAL(dirMoved(int)),this,SLOT(movementResult(int)));
 }
 
 ProgressDialog::~ProgressDialog(){
@@ -96,6 +96,9 @@ void ProgressDialog::onWrite(uint percentsWritten){
 
 void ProgressDialog::movementResult(int result){
 	status &= (result & 1);
+
+	progress->tableWidget->removeRow(0);
+	progressList.pop_front();
 	static const QString errorCopyMasg = "Copying file failed!\nContinue?";
 	static const QString errorMoveMasg = "Moving file failed!\nContinue?";
 	static const QString errorCopyEOLMasg = "Copying file failed!";
@@ -122,13 +125,6 @@ void ProgressDialog::movementResult(int result){
 			break;
 	}
 
-
-	cond.wakeOne();
-
-	QMutex blocker;
-	blocker.lock();
-	condStatus.wait(&blocker);//this releases the mutex
-
 	if(reply == QMessageBox::Yes){
 		status = 1;
 		QtConcurrent::run(this, &ProgressDialog::DoSomething);
@@ -136,8 +132,45 @@ void ProgressDialog::movementResult(int result){
 }
 
 
+void ProgressDialog::dirMovementResult(int result){
+	status &= (result & 1);
+
+	static const QString errorCopyMasg = "Copying file failed!\nContinue?";
+	static const QString errorMoveMasg = "Moving file failed!\nContinue?";
+	static const QString errorCopyEOLMasg = "Copying file failed!";
+	static const QString errorMoveEOLMasg = "Moving file failed!";
+	QMessageBox::StandardButton reply = QMessageBox::Yes;
+	switch(result){
+		case 10://Move failed
+			if(progressList.size()>1)
+				reply = QMessageBox::question(this, "Error!!!", errorMoveMasg,
+											QMessageBox::Yes|QMessageBox::No);
+			else
+				QMessageBox::warning(this, "Error!!!", errorMoveEOLMasg);
+
+
+
+			break;
+		case 0:
+			if(progressList.size()>1)
+				reply = QMessageBox::question(this, "Error!!!", errorCopyMasg,
+											QMessageBox::Yes|QMessageBox::No);
+			else
+				reply = QMessageBox::question(this, "Error!!!", errorCopyEOLMasg);
+
+			break;
+	}
+
+	if(reply == QMessageBox::Yes){
+		status = 1;
+		//QtConcurrent::run(this, &ProgressDialog::DoSomething);
+	}
+}
+
 void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 
+	if(!status)
+		return;
 	if(!dir.exists(dest))
 		dir.mkdir(dest);
 
@@ -166,7 +199,7 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 		destination.append(file.fileName());
 		FileMover* mover = new FileMover(source, destination, action, this);
 		mover->progress = connect(mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
-		mover->status = connect(mover, SIGNAL(completed(int)),this,SLOT(movementResult(int)));
+		mover->status = connect(mover, SIGNAL(completed(int)),this,SLOT(dirMovementResult(int)));
 		delete mover;
 		//mover should be auto deleted now
 	}
@@ -227,10 +260,7 @@ void ProgressDialog::DoSomething(void){
 				}
 			}else
 				dirParsing(dir, action, destination);
-
-
-			progress->tableWidget->removeRow(0);
-			progressList.pop_front();
+				dirMoved(1);
 			return;
 		}
 
@@ -242,15 +272,6 @@ void ProgressDialog::DoSomething(void){
 		mover->status = connect(mover, SIGNAL(completed(int)),this,SLOT(movementResult(int)));
 
 		delete mover;
-
-		QMutex blocker;
-		blocker.lock();
-		cond.wait(&blocker);//this releases the mutex
-
-		progress->tableWidget->removeRow(0);
-		progressList.pop_front();
-
-		condStatus.wakeOne();
 
 	}else
 		emit hideDialogSignal();

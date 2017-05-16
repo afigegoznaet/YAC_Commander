@@ -40,10 +40,12 @@ private:
 signals:
 	void sendErrMsg(QString errorText);
 	void hideDialogSignal();
+	void dirMoved(int);
 
 public slots:
 	void onWrite( uint );
 	void movementResult(int);
+	void dirMovementResult(int);
 	void errorMsg(QString errorText);
 	void hideDialogSlot();
 };
