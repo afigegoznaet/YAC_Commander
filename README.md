@@ -3,18 +3,20 @@ I want to create yet another commander, since all Linux file managers are just v
 This is already my primary file manager in Linux/Xorg.
 At the moment it performs all the basic file manager operations, like copy/move/delete/open.
 Things to add:
-* View file
-* Edit destination on file&dir move/copy
-* Command line
-* selection filters
 * directory refresh on change
-* chown / chmod
-* soft/hard linking
-* more informative progress dialog
 * progress dialog actions
 * Tab persistence
 * Some sort of Directory action if a drive is removed(maybe just notification)
+* Context menu
+
+* View file
+* Command line
+* selection filters
+* chown / chmod
+* soft/hard linking
+* more informative progress dialog
 * Search capability
+* Plugins support
 * TBU
 
 Implemented sutff:
@@ -27,4 +29,4 @@ Implemented sutff:
 Known issues:
 * Dir doesn't refresh if some action is performed in the other tab
 
-# NEED VOLUNTEERS! TESTERS and DEVELOPERS and IDEAS
+# NEED VOLUNTEERS! TESTERS, DEVELOPERS and IDEAS

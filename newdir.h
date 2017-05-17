@@ -11,7 +11,7 @@ class NewDir : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit NewDir(QWidget *parent = 0);
+	explicit NewDir(QString &dirName, QWidget *parent = 0);
 
 	QString dirName() const;
 

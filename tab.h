@@ -56,7 +56,7 @@ private:
 	QFileSystemModel* model;
 	int index;
 	QTabWidget* metaTab;
-
+	virtual void mousePressEvent(QMouseEvent *event);
 };
 
 #endif // TAB_H

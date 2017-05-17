@@ -119,6 +119,12 @@ void MainWindow::copyFiles(){
 	QString destination = getDirInFocus(true);
 	QString message = "Copy " + QString::number(fileList.size()) + " files to \n"+destination +" ?";
 	//QMessageBox::StandardButton reply;
+
+	if(!getDir(destination))
+		return;
+
+	qDebug()<<destination;
+
 	auto reply = QMessageBox::question(this, "Moving ", message,
 									QMessageBox::Yes|QMessageBox::No);
 
@@ -126,12 +132,6 @@ void MainWindow::copyFiles(){
 		return;
 	movementProgress->show();
 	movementProgress->setFileAction(fileList, destination, COPY);
-	/*foreach (auto fileInfo, fileList) {
-		QString newName = destination+"/"+fileInfo.fileName();
-		//QFile::copy(fileInfo.absoluteFilePath(), newName);
-	}
-	QMessageBox msg(QMessageBox::Information,"Copying!", destination, QMessageBox::Ok);
-	msg.exec();*/
 }
 
 void MainWindow::moveFiles(){
@@ -232,21 +232,31 @@ void MainWindow::cdTo(const QString &dir){
 	getFocusedTab()->cdTo(dir);
 }
 
-void MainWindow::makeDir(){
-	qDebug()<<getDirInFocus();
+bool MainWindow::getDir(QString& dirName){
 
-
-	QLabel lbl;
-	NewDir *dialog = new NewDir(&lbl);
+	QLabel lbl(this);
+	NewDir *dialog = new NewDir(dirName,&lbl);
 	lbl.show();
 
-	QString dirName;
+	QRect r = geometry();
+	int x = r.x() + r.width()/2;
+	int y = r.y() + r.height()/2;
 
+	dialog->move(x,y);
 	int hz = dialog->exec();
 	if (hz) {
 		dirName = dialog->dirName();
 		lbl.setText(dirName);
+		return true;
 	}else
+		return false;
+
+}
+
+void MainWindow::makeDir(){
+	qDebug()<<getDirInFocus();
+	QString dirName;
+	if(!getDir(dirName))
 		return;
 	qDebug()<<dirName;
 	QDir currDir(getDirInFocus());

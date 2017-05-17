@@ -1,11 +1,11 @@
 #include "newdir.h"
 
-NewDir::NewDir(QWidget *parent) :
+NewDir::NewDir(QString& dirName, QWidget *parent) :
 	QDialog(parent)
 {
-	m_lineEdit = new QLineEdit(this);
+	m_lineEdit = new QLineEdit(dirName, this);
 
-	QPushButton *createButton = new QPushButton(tr("Create"));
+	QPushButton *createButton = new QPushButton(tr("Ok"));
 	createButton->setDefault(true);
 
 	QPushButton *cancelButton = new QPushButton(tr("Cancel"));

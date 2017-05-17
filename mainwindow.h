@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QLabel>
 #include <newdir.h>
+#include <utility>
 
 #define DEF_EDITOR "undefined"
 
@@ -66,6 +67,7 @@ private:
 	QString getDirInFocus(bool opposite = false);
 	QFileInfoList getSelectedFiles();
 	TabbedListView* getFocusedTab(void);
+	bool getDir(QString &dirName);
 };
 
 #endif // MAINWINDOW_H

@@ -164,3 +164,12 @@ void TabbedListView::cdTo(const QString &dir){
 	model->setRootPath(dir);
 	setRootIndex(model->index(model->rootPath()));
 }
+
+void TabbedListView::mousePressEvent(QMouseEvent *event){
+	if(event->button() != Qt::RightButton){
+		QTableView::mousePressEvent(event);
+		return;
+	}
+
+	qDebug()<<"Right mouse!";
+}
