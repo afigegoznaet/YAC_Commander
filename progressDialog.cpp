@@ -78,27 +78,22 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 	QtConcurrent::run(this, &ProgressDialog::DoSomething);
 
 }
-/*
-void ProgressDialog::DoerSomething(void){
-	//while(progressList.size() >= 0 && !this->isHidden() && status){
-		DoSomething();
-	//}
-
-}*/
 
 void ProgressDialog::onWrite(uint percentsWritten){
-	//qDebug()<<"GOT ON WRITE~!!!!!!!!!!!!!!!!!!1111";
-	//qDebug()<<percentsWritten;
-	//Fucking stupid bullshit QT doesn't allow to update UI on non main thread!!!!
 	progress->progressBar->setValue(percentsWritten);
-	//qDebug()<<"Not here";
 }
 
 void ProgressDialog::movementResult(int result){
 	status &= (result & 1);
 
-	progress->tableWidget->removeRow(0);
-	progressList.pop_front();
+	if(!progressList.isEmpty())
+		progressList.pop_front();
+	qDebug()<<"progressList cleared";
+	if(progress->tableWidget->rowCount())
+		progress->tableWidget->removeRow(0);
+	qDebug()<<"table widget cleared";
+
+
 	static const QString errorCopyMasg = "Copying file failed!\nContinue?";
 	static const QString errorMoveMasg = "Moving file failed!\nContinue?";
 	static const QString errorCopyEOLMasg = "Copying file failed!";
@@ -163,7 +158,6 @@ void ProgressDialog::dirMovementResult(int result){
 
 	if(reply == QMessageBox::Yes){
 		status = 1;
-		//QtConcurrent::run(this, &ProgressDialog::DoSomething);
 	}
 }
 
@@ -177,7 +171,8 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 	QFileInfoList dirEntries = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
 
 	foreach (auto file, dirEntries){
-
+		if(!status)//this is a very very very bad hack
+			return;
 		QString destination(dest);
 		qDebug()<<file.fileName();
 		qDebug()<<file.filePath();
@@ -197,10 +192,12 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 		}
 
 		destination.append(file.fileName());
-		FileMover* mover = new FileMover(source, destination, action, this);
-		mover->progress = connect(mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
-		mover->status = connect(mover, SIGNAL(completed(int)),this,SLOT(dirMovementResult(int)));
-		delete mover;
+		FileMover mover(source, destination, action, this);
+		connect(&mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
+		connect(&mover, SIGNAL(completed(int)),this,SLOT(dirMovementResult(int)));
+		connect(this, SIGNAL(setStatus(int)),&mover,SLOT(setStatus(int)), Qt::DirectConnection);
+		emit setStatus(status);
+		//delete mover;
 		//mover should be auto deleted now
 	}
 };
@@ -215,7 +212,7 @@ void ProgressDialog::hideDialogSlot(){
 
 
 void ProgressDialog::DoSomething(void){
-	if (!progressList.isEmpty()) {
+	if (status && !progressList.isEmpty()) {
 			//stub.waitForFinished();
 		QString source(progressList.front().filePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
@@ -267,14 +264,44 @@ void ProgressDialog::DoSomething(void){
 
 
 		destination.append(fileName);
-		FileMover* mover = new FileMover(source, destination, action, this);
+		FileMover mover(source, destination, action, this);
 
-		mover->progress = connect(mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
-		mover->status = connect(mover, SIGNAL(completed(int)),this,SLOT(movementResult(int)));
+		connect(&mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
+		connect(&mover, SIGNAL(completed(int)),this,SLOT(movementResult(int)), Qt::DirectConnection);
+		connect(this, SIGNAL(setStatus(int)),&mover,SLOT(setStatus(int)), Qt::DirectConnection);
+		emit setStatus(status);
 
-		delete mover;
+		//delete mover;
 
 	}else
 		emit hideDialogSignal();
 
+}
+
+void ProgressDialog::switchText(){
+	progress->pauseButton->setText(pauseButtonLabels[status]);
+}
+
+void ProgressDialog::on_pauseButton_clicked(){
+
+	status=!status;
+	switchText();
+	emit setStatus(status);
+	qDebug()<<"*************************************";
+	qDebug()<<"status "<<status<<" sent";
+}
+
+void ProgressDialog::on_removeButton_clicked(){
+
+}
+
+void ProgressDialog::on_abortButton_clicked(){
+	status=!status;
+	emit setStatus(-1);
+	if(!progressList.isEmpty())
+		progressList.clear();
+	qDebug()<<"progressList cleared";
+	if(progress->tableWidget->rowCount())
+		progress->tableWidget->clear();
+	qDebug()<<"table widget cleared";
 }

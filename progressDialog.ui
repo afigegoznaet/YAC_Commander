@@ -38,9 +38,9 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="pauseButton">
          <property name="text">
-          <string>Cancel</string>
+          <string>Pause</string>
          </property>
         </widget>
        </item>
@@ -58,9 +58,9 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="removeButton">
          <property name="text">
-          <string>Pause</string>
+          <string>Remove from list</string>
          </property>
         </widget>
        </item>
@@ -78,9 +78,9 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="abortButton">
          <property name="text">
-          <string>Remove from list</string>
+          <string>Abort</string>
          </property>
         </widget>
        </item>

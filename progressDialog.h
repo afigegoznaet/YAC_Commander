@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QFileInfoList>
 #include <QSettings>
+#include <QPushButton>
 #include "ui_progressDialog.h"
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -13,7 +14,7 @@
 enum ACTION {COPY, MOVE, LN, LN_S, ENUM_TERMINATOR} ;
 
 namespace Ui {
-class ProgressDialog;
+	class ProgressDialog;
 }
 
 class ProgressDialog : public QDialog
@@ -36,11 +37,14 @@ private:
 	bool status;
 	QWaitCondition cond;
 	QWaitCondition condStatus;
+	void switchText();
+	QString pauseButtonLabels[2]= {"Continue","Pause"};
 
 signals:
 	void sendErrMsg(QString errorText);
 	void hideDialogSignal();
 	void dirMoved(int);
+	void setStatus(int status);
 
 public slots:
 	void onWrite( uint );
@@ -48,6 +52,10 @@ public slots:
 	void dirMovementResult(int);
 	void errorMsg(QString errorText);
 	void hideDialogSlot();
+private slots:
+	void on_pauseButton_clicked();
+	void on_removeButton_clicked();
+	void on_abortButton_clicked();
 };
 
 #endif // DIALOG_H

@@ -13,7 +13,7 @@
 bool isMovable(QString &from, QString &to){
 	QStorageInfo in, out;
 	in.setPath(from);
-	out.setPath(to);
+	out.setPath(to.mid(0,to.lastIndexOf('/')));
 
 	qDebug()<<in.rootPath();
 	qDebug()<<out.rootPath();
@@ -33,10 +33,23 @@ int FileMover::copy(){
 
 	char buffer[MAX_READ];//1 Mb
 	qint64 bytesRead=0;
+	QMutex blocker;
+	blocker.lock();
 
 	bytesRead = sourceFile.read(buffer,MAX_READ);
 
 	while(bytesRead>0){
+		switch(status){
+		case 0:
+			cond.wait(&blocker);
+			break;
+		case -1:
+			sourceFile.close();
+			destinationFile.close();
+			destinationFile.remove();
+			return true;
+		}
+
 		if(destinationFile.write(buffer, bytesRead) < 0)
 			return false;
 		tempSize +=bytesRead;
@@ -44,6 +57,9 @@ int FileMover::copy(){
 		bytesRead = sourceFile.read(buffer,MAX_READ);
 	}
 
+	blocker.unlock();
+	sourceFile.close();
+	destinationFile.close();
 	if(bytesRead < 0){
 		qDebug()<<sourceFile.errorString();
 		return false;
@@ -75,17 +91,17 @@ FileMover::~FileMover(){
 	emit completed(res);
 	qDebug()<<"FileMover completed?!";
 
-	QObject::disconnect(progress);
-	QObject::disconnect(status);
-
 }
 
-
-
 FileMover::FileMover(QString source, QString destination, QString action, QObject *parent) :
-	QObject(parent), destination(destination), source(source), action(action){
+	QObject(parent), destination(destination), source(source), action(action), status(true){
 	qDebug()<<"Mover constructor"<<thread();
 }
 
-
+void FileMover::setStatus(int status){
+	this->status = status;
+	qDebug()<<"*************************************";
+	qDebug()<<"status "<<status<<" emmitted";
+	cond.wakeOne();
+}
 
