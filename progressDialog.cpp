@@ -220,6 +220,7 @@ void ProgressDialog::DoSomething(void){
 		QString source(progressList.front().filePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
 		destination.append("/");
+
 		QFileInfo fileInfo(source);
 		QString fileName(fileInfo.fileName());
 

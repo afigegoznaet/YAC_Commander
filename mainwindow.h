@@ -10,7 +10,6 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QApplication>
-#include <QLabel>
 #include <newdir.h>
 #include <utility>
 
@@ -56,7 +55,6 @@ private:
 	ProgressDialog* movementProgress;
 	QString editor;
 
-	bool init();
 	virtual void keyPressEvent(QKeyEvent *event);
 	void copyFiles();
 	void moveFiles();
@@ -67,7 +65,7 @@ private:
 	QString getDirInFocus(bool opposite = false);
 	QFileInfoList getSelectedFiles();
 	TabbedListView* getFocusedTab(void);
-	bool getDir(QString &dirName);
+	bool getDir(QString &dirName, int numFiles=0, ACTION action=ENUM_TERMINATOR);
 };
 
 #endif // MAINWINDOW_H

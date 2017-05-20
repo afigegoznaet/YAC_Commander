@@ -1,10 +1,14 @@
 #include "mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-	QMainWindow(parent),
-	ui(new Ui::MainWindow){
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
 	ui->setupUi(this);
-	init();
+
+	ui->leftTabWidget->setTabsClosable(false);
+	//ui->leftTabWidget->removeTab(0);
+	ui->rightTabWidget->setTabsClosable(false);
+	//ui->rightTabWidget->removeTab(0);
+	movementProgress = new ProgressDialog(this);
+
 	readSettings();
 	TabbedListView* leftTab = new TabbedListView(ui->leftTabWidget);
 	TabbedListView* rightTab = new TabbedListView(ui->rightTabWidget);
@@ -38,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 	leftTab->setFocus();
+
+	qDebug()<<QStandardPaths::AppConfigLocation;
 }
 
 MainWindow::~MainWindow(){
@@ -65,15 +71,6 @@ void MainWindow::readSettings(){
 	editor = settings.value("editor", DEF_EDITOR).toString();
 
 	settings.endGroup();
-}
-
-bool MainWindow::init(){
-	ui->leftTabWidget->setTabsClosable(false);
-	//ui->leftTabWidget->removeTab(0);
-	ui->rightTabWidget->setTabsClosable(false);
-	//ui->rightTabWidget->removeTab(0);
-	movementProgress = new ProgressDialog(this);
-	return false;
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
@@ -112,39 +109,46 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 
 void MainWindow::copyFiles(){
 
-	qDebug()<<"Main Window"<<thread();
-	qDebug()<<"\n\n\n\n*****\n\n\n";
-
 	QFileInfoList fileList = getSelectedFiles();
+	if(fileList.isEmpty())
+		return;
 	QString destination = getDirInFocus(true);
-	QString message = "Copy " + QString::number(fileList.size()) + " files to \n"+destination +" ?";
-	//QMessageBox::StandardButton reply;
 
-	if(!getDir(destination))
+	if(!getDir(destination, fileList.size(),COPY))
 		return;
 
-	qDebug()<<destination;
+	QDir dir;
+	if(!dir.exists(destination)){
+		QString message = "Directory\n" + destination + "\ndoesn't exit.\nCreate it?";
+		auto reply = QMessageBox::warning(this, "Warning!", message,
+											QMessageBox::Yes|QMessageBox::No);
+		if(reply == QMessageBox::No)
+			return;
+		dir.mkdir(destination);
+	}
 
-	auto reply = QMessageBox::question(this, "Moving ", message,
-									QMessageBox::Yes|QMessageBox::No);
-
-	if(reply == QMessageBox::No)
-		return;
 	movementProgress->show();
 	movementProgress->setFileAction(fileList, destination, COPY);
 }
 
 void MainWindow::moveFiles(){
 	QFileInfoList fileList = getSelectedFiles();
+	if(fileList.isEmpty())
+		return;
 	QString destination = getDirInFocus(true);
 
-	QString message = "Move " + QString::number(fileList.size()) + " files to \n"+destination;
-
-	auto reply = QMessageBox::question(this, "Moving ", message,
-									QMessageBox::Yes|QMessageBox::No);
-
-	if(reply == QMessageBox::No)
+	if(!getDir(destination, fileList.size(),MOVE))
 		return;
+
+	QDir dir;
+	if(!dir.exists(destination)){
+		QString message = "Directory\n" + destination + "\ndoesn't exit.\nCreate it?";
+		auto reply = QMessageBox::warning(this, "Warning!", message,
+											QMessageBox::Yes|QMessageBox::No);
+		if(reply == QMessageBox::No)
+			return;
+		dir.mkdir(destination);
+	}
 
 	movementProgress->show();
 	movementProgress->setFileAction(fileList, destination, MOVE);
@@ -196,7 +200,10 @@ QString MainWindow::getDirInFocus(bool opposite){
 }
 
 QFileInfoList MainWindow::getSelectedFiles(){
-	return getFocusedTab()->getSelectedFiles();
+	QFileInfoList list = getFocusedTab()->getSelectedFiles();
+	if(1 == list.size() && 0==list.begin()->fileName().compare(".."))
+		list.clear();
+	return list;
 }
 
 void MainWindow::on_F5_clicked(){
@@ -232,10 +239,25 @@ void MainWindow::cdTo(const QString &dir){
 	getFocusedTab()->cdTo(dir);
 }
 
-bool MainWindow::getDir(QString& dirName){
+bool MainWindow::getDir(QString& dirName, int numFiles, ACTION action){
+
+	QString message;
+
+	switch (action) {
+	case COPY:
+		message = "<h3><font color=\"#0000ff\">Copy " + QString::number(numFiles) + " files to:</font><h3>";
+		break;
+	case MOVE:
+		message = "<h3><font color=\"#ff0000\">Move " + QString::number(numFiles) + " files to:</font><h3>";
+		break;
+	default:
+		message = "<h3><font color=\"#22b14c\">New directory name:</font><h3>";
+
+	}
 
 	QLabel lbl(this);
-	NewDir *dialog = new NewDir(dirName,&lbl);
+	NewDir *dialog = new NewDir(message, dirName,&lbl);
+	dialog->adjustSize();
 	lbl.show();
 
 	QRect r = geometry();
@@ -250,7 +272,6 @@ bool MainWindow::getDir(QString& dirName){
 		return true;
 	}else
 		return false;
-
 }
 
 void MainWindow::makeDir(){

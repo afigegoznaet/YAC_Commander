@@ -1,8 +1,9 @@
 #include "newdir.h"
 
-NewDir::NewDir(QString& dirName, QWidget *parent) :
+NewDir::NewDir(QString &label, QString& dirName, QWidget *parent) :
 	QDialog(parent)
 {
+	QLabel *qlabel = new QLabel(label);
 	m_lineEdit = new QLineEdit(dirName, this);
 
 	QPushButton *createButton = new QPushButton(tr("Ok"));
@@ -18,13 +19,19 @@ NewDir::NewDir(QString& dirName, QWidget *parent) :
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
 	QVBoxLayout *lt = new QVBoxLayout;
+	qlabel->adjustSize();
+	lt->addWidget(qlabel);
 	lt->addWidget(m_lineEdit);
 	lt->addWidget(buttonBox);
 
 	setLayout(lt);
+
+	dirCompleter = new QCompleter(this);
+	dirCompleter->setModel(new QDirModel(dirCompleter));
+	if(!dirName.isEmpty())
+		m_lineEdit->setCompleter(dirCompleter);
 }
 
-QString NewDir::dirName() const
-{
+QString NewDir::dirName() const{
 	return m_lineEdit->text();
 }
