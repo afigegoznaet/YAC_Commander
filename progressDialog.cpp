@@ -36,6 +36,12 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 	switch(action){
 	case MOVE:
 		foreach (auto fileInfo, fileList) {
+
+			if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive)
+					|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  ){
+				continue;
+			}
+
 			QString item = "Move "+ fileInfo.fileName() + " to "+destination;
 			QString newName = destination+"/"+fileInfo.fileName();
 			//QListWidgetItem item;
@@ -54,6 +60,10 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 		break;
 	case COPY:
 		foreach (auto fileInfo, fileList) {
+			if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive)
+					|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  ){
+				continue;
+			}
 			QString newName = destination+"/"+fileInfo.fileName();
 			//progress->tableWidget->addItem(fileInfo.fileName());
 			progress->tableWidget->insertRow( newRow );
@@ -83,16 +93,9 @@ void ProgressDialog::onWrite(uint percentsWritten){
 	progress->progressBar->setValue(percentsWritten);
 }
 
-void ProgressDialog::movementResult(int result){
+QMessageBox::StandardButton ProgressDialog::showError(int result){
+
 	status &= (result & 1);
-
-	if(!progressList.isEmpty())
-		progressList.pop_front();
-	qDebug()<<"progressList cleared";
-	if(progress->tableWidget->rowCount())
-		progress->tableWidget->removeRow(0);
-	qDebug()<<"table widget cleared";
-
 
 	static const QString errorCopyMasg = "Copying file failed!\nContinue?";
 	static const QString errorMoveMasg = "Moving file failed!\nContinue?";
@@ -104,6 +107,8 @@ void ProgressDialog::movementResult(int result){
 			if(progressList.size()>1)
 				reply = QMessageBox::question(this, "Error!!!", errorMoveMasg,
 											QMessageBox::Yes|QMessageBox::No);
+			if(reply == QMessageBox::Yes)
+				status = 1;
 			else
 				QMessageBox::warning(this, "Error!!!", errorMoveEOLMasg);
 
@@ -114,65 +119,53 @@ void ProgressDialog::movementResult(int result){
 			if(progressList.size()>1)
 				reply = QMessageBox::question(this, "Error!!!", errorCopyMasg,
 											QMessageBox::Yes|QMessageBox::No);
+			if(reply == QMessageBox::Yes)
+				status = 1;
 			else
 				reply = QMessageBox::question(this, "Error!!!", errorCopyEOLMasg);
 
 			break;
 	}
+	return reply;
+}
 
+void ProgressDialog::movementResult(int result){
+
+
+	if(!progressList.isEmpty())
+		progressList.pop_front();
+	if(progress->tableWidget->rowCount())
+		progress->tableWidget->removeRow(0);
+
+	auto reply = showError(result);
 	if(reply == QMessageBox::Yes){
-		status = 1;
+		//status = 1;
 		QtConcurrent::run(this, &ProgressDialog::DoSomething);
 	}
 }
 
 
 void ProgressDialog::dirMovementResult(int result){
-	status &= (result & 1);
-
-	static const QString errorCopyMasg = "Copying file failed!\nContinue?";
-	static const QString errorMoveMasg = "Moving file failed!\nContinue?";
-	static const QString errorCopyEOLMasg = "Copying file failed!";
-	static const QString errorMoveEOLMasg = "Moving file failed!";
-	QMessageBox::StandardButton reply = QMessageBox::Yes;
-	switch(result){
-		case 10://Move failed
-			if(progressList.size()>1)
-				reply = QMessageBox::question(this, "Error!!!", errorMoveMasg,
-											QMessageBox::Yes|QMessageBox::No);
-			else
-				QMessageBox::warning(this, "Error!!!", errorMoveEOLMasg);
-
-
-
-			break;
-		case 0:
-			if(progressList.size()>1)
-				reply = QMessageBox::question(this, "Error!!!", errorCopyMasg,
-											QMessageBox::Yes|QMessageBox::No);
-			else
-				reply = QMessageBox::question(this, "Error!!!", errorCopyEOLMasg);
-
-			break;
-	}
-
-	if(reply == QMessageBox::Yes){
-		status = 1;
-	}
+	dirMoverBlocker.lock();
+	showError(result);
+	dirMoverBlocker.unlock();
 }
 
 void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 
-	if(!status)
-		return;
 	if(!dir.exists(dest))
 		dir.mkdir(dest);
 
 	QFileInfoList dirEntries = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
 
 	foreach (auto file, dirEntries){
-		if(!status)//this is a very very very bad hack
+		dirMoverBlocker.lock();
+		dirMoverBlocker.unlock();
+		//this is a very very very bad hack
+		if(!status){
+			qDebug()<<"Negative status?";
 			return;
+		}
 		QString destination(dest);
 		qDebug()<<file.fileName();
 		qDebug()<<file.filePath();
@@ -217,24 +210,12 @@ void ProgressDialog::DoSomething(void){
 		QString source(progressList.front().filePath());
 		QString destination( progress->tableWidget->item(0,2)->text() );
 		destination.append("/");
-
 		QFileInfo fileInfo(source);
 		QString fileName(fileInfo.fileName());
-
-		if(!fileName.compare("..", Qt::CaseInsensitive) || !fileName.compare(".", Qt::CaseInsensitive)  ){
-
-			progress->tableWidget->removeRow(0);
-			progressList.pop_front();
-			return;
-		}
-
 		QString action =  progress->tableWidget->item(0,0)->text();
 
 		if(fileInfo.isDir()){
-
-
 			QDir dir(fileInfo.filePath());
-
 			bool movable = isMovable(source,destination);
 			destination.append(fileName);
 			destination.append("/");
@@ -296,7 +277,7 @@ void ProgressDialog::on_removeButton_clicked(){
 }
 
 void ProgressDialog::on_abortButton_clicked(){
-	status=!status;
+	status=0;
 	emit setStatus(-1);
 	if(!progressList.isEmpty())
 		progressList.clear();

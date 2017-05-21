@@ -29,16 +29,18 @@ public:
 
 private:
 	Ui::ProgressDialog *progress;
-	void DoSomething(void);
 	QFileInfoList progressList;
 	QFuture<void> stub;
-	//void DoerSomething(void);
-	void dirParsing(QDir& dir, QString &action, QString &destination);
 	bool status;
 	QWaitCondition cond;
 	QWaitCondition condStatus;
-	void switchText();
 	QString pauseButtonLabels[2]= {"Continue","Pause"};
+	QMutex dirMoverBlocker;
+
+	void switchText();
+	void DoSomething(void);
+	void dirParsing(QDir& dir, QString &action, QString &destination);
+	QMessageBox::StandardButton ProgressDialog::showError(int result);
 
 signals:
 	void sendErrMsg(QString errorText);

@@ -4,7 +4,7 @@ This is already my primary file manager in Linux/Xorg.
 At the moment it performs all the basic file manager operations, like copy/move/delete/open.
 Things to add:
 * directory refresh on change (on Linux)
-* progress dialog actions (in progress)
+* remove files from queue
 * Tab persistence
 * Some sort of Directory action if a drive is removed(maybe just notification)
 * Context menu
@@ -26,6 +26,7 @@ Implemented sutff:
 * Disk / Mount points buttons
 * asynchronows file/dir movement progress dialog
 * pause/continue actions when copying/moving files
+* possibility to abort moving
 
 Known issues:
 * On Linux, dir doesn't refresh if some action is performed in the other tab, containing the same dir
