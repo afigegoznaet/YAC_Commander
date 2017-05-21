@@ -9,7 +9,7 @@ ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
 	status(1){
 	progress->setupUi(this);
 	progress->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-	progress->tableWidget->setColumnCount(3);
+	progress->tableWidget->setColumnCount(4);
 	progress->tableWidget->verticalHeader()->setDefaultSectionSize(this->fontMetrics().height()+6);
 
 	progress->tableWidget->horizontalHeader()->setStretchLastSection(true);
@@ -31,46 +31,43 @@ ProgressDialog::~ProgressDialog(){
 }
 
 void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, ACTION action){
-	int newRow = progress->tableWidget->rowCount();
+	if(!progress->tableWidget->rowCount())
+		status = 1;
 
+	int newRow = progress->tableWidget->rowCount();
 	switch(action){
 	case MOVE:
 		foreach (auto fileInfo, fileList) {
 
 			if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive)
-					|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  ){
+					|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  )
 				continue;
-			}
+
 
 			QString item = "Move "+ fileInfo.fileName() + " to "+destination;
 			QString newName = destination+"/"+fileInfo.fileName();
-			//QListWidgetItem item;
-			//item.setText(fileInfo.fileName());
-
 
 			progress->tableWidget->insertRow( newRow );
 			progress->tableWidget->setItem(newRow,0,new QTableWidgetItem("Move"));
 			progress->tableWidget->setItem(newRow,1,new QTableWidgetItem(fileInfo.fileName()));
 			progress->tableWidget->setItem(newRow,2,new QTableWidgetItem(destination));
+			progress->tableWidget->setItem(newRow,3,new QTableWidgetItem(fileInfo.absoluteFilePath()));
 
-			progressList.append(fileInfo);
-			//newDialog.setFileAction(fileList, destination);
-			//QFile::rename(fileInfo.absoluteFilePath(), newName);
 		}
 		break;
 	case COPY:
 		foreach (auto fileInfo, fileList) {
 			if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive)
-					|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  ){
+					|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  )
 				continue;
-			}
+
 			QString newName = destination+"/"+fileInfo.fileName();
-			//progress->tableWidget->addItem(fileInfo.fileName());
 			progress->tableWidget->insertRow( newRow );
 			progress->tableWidget->setItem(newRow,0,new QTableWidgetItem("Copy"));
 			progress->tableWidget->setItem(newRow,1,new QTableWidgetItem(fileInfo.baseName()));
 			progress->tableWidget->setItem(newRow,2,new QTableWidgetItem(destination));
-			progressList.append(fileInfo);
+			progress->tableWidget->setItem(newRow,3,new QTableWidgetItem(fileInfo.absoluteFilePath()));
+
 		}
 		break;
 	case LN:
@@ -104,7 +101,7 @@ QMessageBox::StandardButton ProgressDialog::showError(int result){
 	QMessageBox::StandardButton reply = QMessageBox::Yes;
 	switch(result){
 		case 10://Move failed
-			if(progressList.size()>1)
+			if(progress->tableWidget->rowCount()>1)
 				reply = QMessageBox::question(this, "Error!!!", errorMoveMasg,
 											QMessageBox::Yes|QMessageBox::No);
 			if(reply == QMessageBox::Yes)
@@ -116,7 +113,7 @@ QMessageBox::StandardButton ProgressDialog::showError(int result){
 
 			break;
 		case 0:
-			if(progressList.size()>1)
+			if(progress->tableWidget->rowCount()>1)
 				reply = QMessageBox::question(this, "Error!!!", errorCopyMasg,
 											QMessageBox::Yes|QMessageBox::No);
 			if(reply == QMessageBox::Yes)
@@ -131,9 +128,7 @@ QMessageBox::StandardButton ProgressDialog::showError(int result){
 
 void ProgressDialog::movementResult(int result){
 
-
-	if(!progressList.isEmpty())
-		progressList.pop_front();
+	moverBlocker.lock();
 	if(progress->tableWidget->rowCount())
 		progress->tableWidget->removeRow(0);
 
@@ -142,13 +137,14 @@ void ProgressDialog::movementResult(int result){
 		//status = 1;
 		QtConcurrent::run(this, &ProgressDialog::DoSomething);
 	}
+	moverBlocker.unlock();
 }
 
 
 void ProgressDialog::dirMovementResult(int result){
-	dirMoverBlocker.lock();
+	moverBlocker.lock();
 	showError(result);
-	dirMoverBlocker.unlock();
+	moverBlocker.unlock();
 }
 
 void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
@@ -159,8 +155,8 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 	QFileInfoList dirEntries = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
 
 	foreach (auto file, dirEntries){
-		dirMoverBlocker.lock();
-		dirMoverBlocker.unlock();
+		moverBlocker.lock();
+		moverBlocker.unlock();
 		//this is a very very very bad hack
 		if(!status){
 			qDebug()<<"Negative status?";
@@ -178,6 +174,12 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 
 			destination.append(file.fileName());
 			destination.append("/");
+
+			qDebug()<<"***********************";
+			qDebug()<<dest;
+			qDebug()<<destination;
+			qDebug()<<file.absoluteFilePath();
+
 
 			if( dest.compare(file.absoluteFilePath().append('/')) )
 				dirParsing(dir,action, destination);
@@ -205,9 +207,9 @@ void ProgressDialog::hideDialogSlot(){
 
 
 void ProgressDialog::DoSomething(void){
-	if (status && !progressList.isEmpty()) {
+	if (status && progress->tableWidget->rowCount()) {
 			//stub.waitForFinished();
-		QString source(progressList.front().filePath());
+		QString source( progress->tableWidget->item(0,3)->text() );
 		QString destination( progress->tableWidget->item(0,2)->text() );
 		destination.append("/");
 		QFileInfo fileInfo(source);
@@ -215,7 +217,7 @@ void ProgressDialog::DoSomething(void){
 		QString action =  progress->tableWidget->item(0,0)->text();
 
 		if(fileInfo.isDir()){
-			QDir dir(fileInfo.filePath());
+			QDir dir(source);
 			bool movable = isMovable(source,destination);
 			destination.append(fileName);
 			destination.append("/");
@@ -273,15 +275,26 @@ void ProgressDialog::on_pauseButton_clicked(){
 }
 
 void ProgressDialog::on_removeButton_clicked(){
+	moverBlocker.lock();
+	auto items = progress->tableWidget->selectedItems();
+	std::set<int> rows;
+	foreach (auto item, items)
+		rows.insert(item->row());
 
+	foreach (int rowNum, rows) {
+		if(0 == rowNum)
+			emit setStatus(-1);
+		progress->tableWidget->removeRow(rowNum);
+	}
+
+	if(!progress->tableWidget->rowCount())
+		status = 0;
+	moverBlocker.unlock();
 }
 
 void ProgressDialog::on_abortButton_clicked(){
 	status=0;
 	emit setStatus(-1);
-	if(!progressList.isEmpty())
-		progressList.clear();
-	qDebug()<<"progressList cleared";
 	if(progress->tableWidget->rowCount())
 		progress->tableWidget->clear();
 	qDebug()<<"table widget cleared";

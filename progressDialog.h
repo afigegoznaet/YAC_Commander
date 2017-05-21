@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
+#include <set>
 #include "filemover.h"
 
 enum ACTION {COPY, MOVE, LN, LN_S, ENUM_TERMINATOR} ;
@@ -29,13 +30,13 @@ public:
 
 private:
 	Ui::ProgressDialog *progress;
-	QFileInfoList progressList;
+
 	QFuture<void> stub;
 	bool status;
 	QWaitCondition cond;
 	QWaitCondition condStatus;
 	QString pauseButtonLabels[2]= {"Continue","Pause"};
-	QMutex dirMoverBlocker;
+	QMutex moverBlocker;
 
 	void switchText();
 	void DoSomething(void);
