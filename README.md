@@ -31,6 +31,5 @@ Implemented sutff:
 
 Known issues:
 * On Linux, dir doesn't refresh if some action is performed in the other tab, containing the same dir
-* recursive copying of directory into itself deeper than one level is infinite
 
 # NEED VOLUNTEERS! TESTERS, DEVELOPERS and IDEAS

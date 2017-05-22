@@ -40,7 +40,7 @@ private:
 
 	void switchText();
 	void DoSomething(void);
-	void dirParsing(QDir& dir, QString &action, QString &destination);
+	void dirParsing(QDir& dir, QString &action, QString &destination, QList<QString>& createdDirs);
 	QMessageBox::StandardButton ProgressDialog::showError(int result);
 
 signals:

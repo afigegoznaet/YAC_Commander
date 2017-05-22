@@ -147,10 +147,12 @@ void ProgressDialog::dirMovementResult(int result){
 	moverBlocker.unlock();
 }
 
-void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
+void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest, QList<QString> &createdDirs){
 
-	if(!dir.exists(dest))
+	if(!dir.exists(dest)){
 		dir.mkdir(dest);
+		createdDirs.append(dest);
+	}
 
 	QFileInfoList dirEntries = dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
 
@@ -181,8 +183,8 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest){
 			qDebug()<<file.absoluteFilePath();
 
 
-			if( dest.compare(file.absoluteFilePath().append('/')) )
-				dirParsing(dir,action, destination);
+			if( !createdDirs.contains(file.absoluteFilePath().append('/')) )
+				dirParsing(dir,action, destination, createdDirs);
 			continue;
 		}
 
@@ -221,6 +223,7 @@ void ProgressDialog::DoSomething(void){
 			bool movable = isMovable(source,destination);
 			destination.append(fileName);
 			destination.append("/");
+			QList<QString> createdDirs;
 			/**
 			  Too many "if"s, gotta do something about it
 			  */
@@ -236,11 +239,11 @@ void ProgressDialog::DoSomething(void){
 					else
 						dir.rename(source,destination);
 				}else{
-					dirParsing(dir, action, destination);
+					dirParsing(dir, action, destination, createdDirs);
 					dir.removeRecursively();
 				}
 			}else
-				dirParsing(dir, action, destination);
+				dirParsing(dir, action, destination,createdDirs);
 				dirMoved(1);
 			return;
 		}
