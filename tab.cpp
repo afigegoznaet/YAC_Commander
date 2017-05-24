@@ -101,7 +101,7 @@ void TabbedListView::init(){
 }
 
 void TabbedListView::setCurrentSelection(QString sel){
-	qDebug()<<"Sel: "<<sel<<" |";
+	//qDebug()<<"Sel: "<<sel<<" |";
 	//QString dotdot("..");
 	int rows = model->rowCount(rootIndex());
 	QModelIndex ind;
@@ -116,7 +116,7 @@ void TabbedListView::setCurrentSelection(QString sel){
 		setCurrentIndex(ind);
 
 	selectionModel()->select(currentIndex(), QItemSelectionModel::Select);
-	qDebug()<<model->fileInfo(currentIndex()).fileName();
+	//qDebug()<<model->fileInfo(currentIndex()).fileName();
 }
 
 void TabbedListView::headerClicked(int section){

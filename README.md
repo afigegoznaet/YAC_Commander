@@ -30,6 +30,5 @@ Implemented sutff:
 
 Known issues:
 * On Linux, dir doesn't refresh if some action is performed in the other tab, containing the same dir
-* Stack overflow when resizing headers
 
 # NEED VOLUNTEERS! TESTERS, DEVELOPERS and IDEAS

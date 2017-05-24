@@ -12,6 +12,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	connect(ui->quickBar,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
 	connect(ui->leftTabWidget,SIGNAL(gotResized(int,int,int)),ui->rightTabWidget,SLOT(sectionResized(int,int,int)));
 	connect(ui->rightTabWidget,SIGNAL(gotResized(int,int,int)),ui->leftTabWidget,SLOT(sectionResized(int,int,int)));
+	connect(ui->leftTabWidget,SIGNAL(gotMoved(int,int,int)),ui->rightTabWidget,SLOT(sectionMoved(int,int,int)));
+	connect(ui->rightTabWidget,SIGNAL(gotMoved(int,int,int)),ui->leftTabWidget,SLOT(sectionMoved(int,int,int)));
+	connect(ui->leftTabWidget, SIGNAL(currentChanged(int)), ui->leftTabWidget, SLOT(indexChanged(int)) );
+	connect(ui->rightTabWidget, SIGNAL(currentChanged(int)), ui->rightTabWidget, SLOT(indexChanged(int)) );
+
+
 
 	QSettings settings;
 	auto headerState = settings.value("ProgressColumns").toByteArray();

@@ -2,6 +2,14 @@
 
 CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent) {
 	defaultStyle = styleSheet();
+
+}
+
+void CustomTabWidget::indexChanged(int index){
+	//qDebug()<<objectName()<<" got a new index "<<index;
+	disconnect(currentWidgetConnection);
+	currentWidgetConnection = connect(((TabbedListView*)widget(index))->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
+	currentWidgetConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionMoved(int,int,int)), this, SLOT(sectionMoved(int,int,int)));
 }
 
 void CustomTabWidget::onDirChanged(const QString dirName, int tabIndex){
@@ -14,10 +22,17 @@ void CustomTabWidget::onDirChanged(const QString dirName, int tabIndex){
 }
 
 void CustomTabWidget::onFocusEvent(bool focused){
-	if(focused)
+	if(focused){
 		setStyleSheet("border: 1px solid green");
-	else
+		disconnect(currentWidgetConnection);
+		currentWidgetConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
+		currentWidgetConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionMoved(int,int,int)), this, SLOT(sectionMoved(int,int,int)));
+
+	}
+	else{
+		disconnect(currentWidgetConnection);
 		setStyleSheet(defaultStyle);
+	}
 }
 
 TabbedListView* CustomTabWidget::addNewTab(bool dup, QString dir){
@@ -47,18 +62,34 @@ TabbedListView* CustomTabWidget::addNewTab(bool dup, QString dir){
 	setCurrentIndex(index);
 	newTab->setFocus();
 
-	connect(newTab->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
+	emit currentChanged(index);
 
 	return newTab;
 }
 
 void CustomTabWidget::sectionResized(int logicalIndex, int oldSize, int newSize){
+
+	//qDebug()<< objectName()<<" Resized: "<<logicalIndex<<" "<<oldSize<<" "<<newSize;
 	for(int i=0;i<count();i++)
-			if(((TabbedListView*)widget(i))->horizontalHeader()->sectionSize(logicalIndex) != newSize)
-			((TabbedListView*)widget(i))->horizontalHeader()->resizeSection(logicalIndex, newSize);
+			if(currentWidget()->hasFocus() && i==currentIndex())
+				continue;
+			else
+				((TabbedListView*)widget(i))->horizontalHeader()->resizeSection(logicalIndex, newSize);
 
 	if(currentWidget()->hasFocus())
 		emit gotResized(logicalIndex, oldSize, newSize);
+}
+
+void CustomTabWidget::sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex){
+	//qDebug()<< objectName()<<" Moved: "<<logicalIndex<<" "<<oldVisualIndex<<" "<<newVisualIndex;
+	for(int i=0;i<count();i++)
+			if(currentWidget()->hasFocus() && i==currentIndex())
+				continue;
+			else
+				((TabbedListView*)widget(i))->horizontalHeader()->moveSection(oldVisualIndex, newVisualIndex);
+
+	if(currentWidget()->hasFocus())
+		emit gotMoved(logicalIndex, oldVisualIndex, newVisualIndex);
 }
 
 void CustomTabWidget::mousePressEvent(QMouseEvent *event){

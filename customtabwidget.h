@@ -24,16 +24,19 @@ public slots:
 	void onDirChanged(const QString dirName, int tabIndex);
 	void onFocusEvent(bool);
 	void sectionResized(int logicalIndex, int oldSize, int newSize);
+	void sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
+	void indexChanged(int index);
 
 signals:
 	void gotResized(int logicalIndex, int oldSize, int newSize);
+	void gotMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
 
 protected:
 	QString defaultStyle;
 
 private:
 	virtual void mousePressEvent(QMouseEvent *event);
-
+	QMetaObject::Connection currentWidgetConnection;
 };
 
 #endif // CUSTOMTABWIDGET_H
