@@ -20,18 +20,18 @@ void CustomTabWidget::onFocusEvent(bool focused){
 		setStyleSheet(defaultStyle);
 }
 
-void CustomTabWidget::addNewTab(bool dup){
+TabbedListView* CustomTabWidget::addNewTab(bool dup, QString dir){
 	TabbedListView* newTab;
+	int index;
 	if(dup){
-		int index = currentIndex();
-		QString dir = ((TabbedListView*)widget(index))->GetDirectory();
-		newTab = new TabbedListView(
-					dir,this);
-	}else
-		newTab = new TabbedListView(this);
+		index = currentIndex();
+		dir = ((TabbedListView*)widget(index))->GetDirectory();
+	}
+
+	newTab = new TabbedListView(dir,this);
 	newTab->init();
 
-	int index = addTab(newTab, newTab->GetDirectory());
+	index = addTab(newTab, newTab->GetDirectory());
 	newTab->setTabOrderIndex(index);
 	connect(newTab,            SIGNAL(dirChanged(QString,int)),
 			this,  SLOT(onDirChanged(QString,int))
@@ -46,8 +46,20 @@ void CustomTabWidget::addNewTab(bool dup){
 	newTab->horizontalHeader()->restoreState(headerState);
 	setCurrentIndex(index);
 	newTab->setFocus();
+
+	connect(newTab->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
+
+	return newTab;
 }
 
+void CustomTabWidget::sectionResized(int logicalIndex, int oldSize, int newSize){
+	for(int i=0;i<count();i++)
+			if(((TabbedListView*)widget(i))->horizontalHeader()->sectionSize(logicalIndex) != newSize)
+			((TabbedListView*)widget(i))->horizontalHeader()->resizeSection(logicalIndex, newSize);
+
+	if(currentWidget()->hasFocus())
+		emit gotResized(logicalIndex, oldSize, newSize);
+}
 
 void CustomTabWidget::mousePressEvent(QMouseEvent *event){
 	if(event->button() != Qt::RightButton)
@@ -70,4 +82,28 @@ void CustomTabWidget::mousePressEvent(QMouseEvent *event){
 			removeTab(index);
 		});
 	menu->exec(QCursor::pos());
+}
+
+CustomTabWidget::~CustomTabWidget(){
+
+	QSettings settings;
+	int count=this->count();
+	settings.beginWriteArray(objectName(),count);
+	for(int i=0;i<count;i++){
+		settings.setArrayIndex(i);
+		settings.setValue("dir", ((TabbedListView*)widget(i))->GetDirectory());
+	}
+	settings.endArray();
+}
+
+void CustomTabWidget::readSettings(){
+	QSettings settings;
+	int count = settings.beginReadArray(objectName());
+	int i=0;
+	do{
+		settings.setArrayIndex(i++);
+		addNewTab(false, settings.value("dir").toString());
+	}while (--count > 0) ;
+	settings.endArray();
+
 }

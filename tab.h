@@ -20,7 +20,6 @@ class TabbedListView : public QTableView
 
 public:
 	explicit TabbedListView(QDir directory, QWidget *parent = 0);
-	~TabbedListView();
 	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){
 	};
 	QString GetDirectory(){

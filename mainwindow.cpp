@@ -4,44 +4,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->setupUi(this);
 
 	ui->leftTabWidget->setTabsClosable(false);
-	//ui->leftTabWidget->removeTab(0);
 	ui->rightTabWidget->setTabsClosable(false);
-	//ui->rightTabWidget->removeTab(0);
 	movementProgress = new ProgressDialog(this);
 
 	readSettings();
-	TabbedListView* leftTab = new TabbedListView(ui->leftTabWidget);
-	TabbedListView* rightTab = new TabbedListView(ui->rightTabWidget);
-	leftTab->init();
-	rightTab->init();
-	leftTab->setTabOrderIndex(ui->leftTabWidget->addTab(leftTab, leftTab->GetDirectory()));
-	connect(leftTab,            SIGNAL(dirChanged(QString,int)),
-			ui->leftTabWidget,  SLOT(onDirChanged(QString,int))
-			);
-	connect(leftTab,            SIGNAL(focusEvent(bool)),
-			ui->leftTabWidget,  SLOT(onFocusEvent(bool))
-			);
-	rightTab->setTabOrderIndex(ui->rightTabWidget->addTab(rightTab, rightTab->GetDirectory()));//strictly speaking - this is not needed, since the index will be 0 at this stage
-	connect(rightTab,           SIGNAL(dirChanged(QString,int)),
-			ui->rightTabWidget, SLOT(onDirChanged(QString,int))
-			);
-	connect(rightTab,           SIGNAL(focusEvent(bool)),
-			ui->rightTabWidget, SLOT(onFocusEvent(bool))
-			);
 
 	connect(ui->quickBar,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
-	auto defaultState = leftTab->horizontalHeader()->saveState();//header state
+	connect(ui->leftTabWidget,SIGNAL(gotResized(int,int,int)),ui->rightTabWidget,SLOT(sectionResized(int,int,int)));
+	connect(ui->rightTabWidget,SIGNAL(gotResized(int,int,int)),ui->leftTabWidget,SLOT(sectionResized(int,int,int)));
+
 	QSettings settings;
-	auto headerState = settings.value("Columns", defaultState).toByteArray();
-	leftTab->horizontalHeader()->restoreState(headerState);
-	rightTab->horizontalHeader()->restoreState(headerState);
-
-	headerState = settings.value("ProgressColumns", defaultState).toByteArray();
+	auto headerState = settings.value("ProgressColumns").toByteArray();
 	movementProgress->progress->tableWidget->horizontalHeader()->restoreState(headerState);
-
-
-
-	leftTab->setFocus();
 
 	qDebug()<<QStandardPaths::AppConfigLocation;
 }
@@ -53,13 +27,14 @@ MainWindow::~MainWindow(){
 
 void MainWindow::writeSettings(){
 	QSettings settings;
-
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
 	settings.setValue("editor", editor);
-
 	settings.endGroup();
+
+	TabbedListView* current = (TabbedListView*)ui->leftTabWidget->currentWidget();
+	settings.setValue("Columns", current->horizontalHeader()->saveState());
 }
 
 void MainWindow::readSettings(){
@@ -69,8 +44,10 @@ void MainWindow::readSettings(){
 	resize(settings.value("size", QSize(400, 400)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	editor = settings.value("editor", DEF_EDITOR).toString();
-
 	settings.endGroup();
+
+	ui->rightTabWidget->readSettings();
+	ui->leftTabWidget->readSettings();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event){

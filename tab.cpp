@@ -35,11 +35,6 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	qDebug()<<directory.absolutePath();
 }
 
-TabbedListView::~TabbedListView(){
-	QSettings settings;
-	settings.setValue("Columns", horizontalHeader()->saveState());
-}
-
 
 void TabbedListView::on_doubleClicked(const QModelIndex &index){
 	QFileInfo info=model->fileInfo(index);
@@ -69,9 +64,7 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 		model->setRootPath(parentDir.absolutePath());
 		setRootIndex(model->index(model->rootPath()));
 	}
-	//directory = model->rootDirectory().absolutePath();
-	//qDebug()<<"Dir at output: "<<model->rootPath() << " directory: "<<directory;
-	//setCurrentSelection();
+
 	emit dirChanged(model->rootPath(), this->index);
 
 }

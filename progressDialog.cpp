@@ -9,7 +9,7 @@ ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
 	status(1){
 	progress->setupUi(this);
 	progress->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-	progress->tableWidget->setColumnCount(4);
+	progress->tableWidget->setColumnCount(3);
 	progress->tableWidget->verticalHeader()->setDefaultSectionSize(this->fontMetrics().height()+6);
 
 	progress->tableWidget->horizontalHeader()->setStretchLastSection(true);
@@ -35,51 +35,39 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 		status = 1;
 
 	int newRow = progress->tableWidget->rowCount();
-	switch(action){
-	case MOVE:
-		foreach (auto fileInfo, fileList) {
-
-			if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive)
-					|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  )
-				continue;
 
 
-			QString item = "Move "+ fileInfo.fileName() + " to "+destination;
-			QString newName = destination+"/"+fileInfo.fileName();
+	foreach (auto fileInfo, fileList) {
 
-			progress->tableWidget->insertRow( newRow );
+		if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive)
+				|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  )
+			continue;
+
+
+		QString item = "Move "+ fileInfo.fileName() + " to "+destination;
+		QString newName = destination+"/"+fileInfo.fileName();
+
+		progress->tableWidget->insertRow( newRow );
+
+		switch(action){
+		case MOVE:
 			progress->tableWidget->setItem(newRow,0,new QTableWidgetItem("Move"));
-			progress->tableWidget->setItem(newRow,1,new QTableWidgetItem(fileInfo.fileName()));
-			progress->tableWidget->setItem(newRow,2,new QTableWidgetItem(destination));
-			progress->tableWidget->setItem(newRow,3,new QTableWidgetItem(fileInfo.absoluteFilePath()));
-
-		}
-		break;
-	case COPY:
-		foreach (auto fileInfo, fileList) {
-			if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive)
-					|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  )
-				continue;
-
-			QString newName = destination+"/"+fileInfo.fileName();
-			progress->tableWidget->insertRow( newRow );
+			break;
+		case COPY:
 			progress->tableWidget->setItem(newRow,0,new QTableWidgetItem("Copy"));
-			progress->tableWidget->setItem(newRow,1,new QTableWidgetItem(fileInfo.baseName()));
-			progress->tableWidget->setItem(newRow,2,new QTableWidgetItem(destination));
-			progress->tableWidget->setItem(newRow,3,new QTableWidgetItem(fileInfo.absoluteFilePath()));
-
+			break;
+		case LN:
+		case LN_S:
+			break;
+		case ENUM_TERMINATOR:
+			QMessageBox::warning(this, "Error!", "Unsupported action!");
+			break;
 		}
-		break;
-	case LN:
-	case LN_S:
-		break;
-	case ENUM_TERMINATOR:
-		QMessageBox::warning(this, "Error!", "Unsupported action!");
-		break;
+		progress->tableWidget->setItem(newRow,1,new QTableWidgetItem(fileInfo.absoluteFilePath()));
+		progress->tableWidget->setItem(newRow,2,new QTableWidgetItem(destination));
 	}
 
-
-	connect(this,  SIGNAL(sendErrMsg(QString )), this,SLOT(errorMsg(QString )), Qt::QueuedConnection);
+	connect(this, SIGNAL(sendErrMsg(QString )), this,SLOT(errorMsg(QString )), Qt::QueuedConnection);
 	connect(this, SIGNAL(hideDialogSignal()), this,SLOT(hideDialogSlot()), Qt::QueuedConnection);
 
 	QtConcurrent::run(this, &ProgressDialog::DoSomething);
@@ -177,12 +165,6 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest, QList
 			destination.append(file.fileName());
 			destination.append("/");
 
-			qDebug()<<"***********************";
-			qDebug()<<dest;
-			qDebug()<<destination;
-			qDebug()<<file.absoluteFilePath();
-
-
 			if( !createdDirs.contains(file.absoluteFilePath().append('/')) )
 				dirParsing(dir,action, destination, createdDirs);
 			continue;
@@ -211,7 +193,7 @@ void ProgressDialog::hideDialogSlot(){
 void ProgressDialog::DoSomething(void){
 	if (status && progress->tableWidget->rowCount()) {
 			//stub.waitForFinished();
-		QString source( progress->tableWidget->item(0,3)->text() );
+		QString source( progress->tableWidget->item(0,1)->text() );
 		QString destination( progress->tableWidget->item(0,2)->text() );
 		destination.append("/");
 		QFileInfo fileInfo(source);
