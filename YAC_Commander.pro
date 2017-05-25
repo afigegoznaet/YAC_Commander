@@ -12,7 +12,8 @@ TARGET = YAC_Commander
 TEMPLATE = app
 
 FORMS    +=     mainwindow.ui \
-    progressDialog.ui
+    progressDialog.ui \
+    textviewer.ui
 
 SOURCES += main.cpp\
 		mainwindow.cpp \
@@ -21,7 +22,8 @@ SOURCES += main.cpp\
     filemover.cpp \
     progressDialog.cpp \
     customtoolbar.cpp \
-    newdir.cpp
+    newdir.cpp \
+    textviewer.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
@@ -29,7 +31,8 @@ HEADERS  += mainwindow.h \
     filemover.h \
     progressDialog.h \
     customtoolbar.h \
-    newdir.h
+    newdir.h \
+    textviewer.h
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

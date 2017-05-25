@@ -7,7 +7,7 @@ Things to add:
 * Some sort of Directory action if a drive is removed(maybe just notification)
 * Context menu
 
-* View file
+* View file (in progress)
 * Command line
 * selection filters
 * chown / chmod

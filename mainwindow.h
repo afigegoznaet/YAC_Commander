@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <newdir.h>
 #include <utility>
+#include "textviewer.h"
 
 #define DEF_EDITOR "undefined"
 

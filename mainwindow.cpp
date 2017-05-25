@@ -189,21 +189,6 @@ QFileInfoList MainWindow::getSelectedFiles(){
 	return list;
 }
 
-void MainWindow::on_F5_clicked(){
-	copyFiles();
-}
-
-void MainWindow::on_F6_clicked(){
-	moveFiles();
-}
-
-void MainWindow::on_F8_clicked(){
-	deleteFiles();
-}
-
-void MainWindow::on_F7_clicked(){
-	makeDir();
-}
 
 
 TabbedListView* MainWindow::getFocusedTab(void){
@@ -270,6 +255,17 @@ void MainWindow::makeDir(){
 
 }
 
+void MainWindow::on_F3_clicked(){
+	//QMessageBox::information(this,"Info","Not yet implemented");
+	QFileInfoList fileList = getSelectedFiles();
+	foreach (auto file, fileList) {
+		auto textViewer = new TextViewer(this);
+		textViewer->setDocument(file.absoluteFilePath());
+		textViewer->exec();
+
+	}
+
+}
 
 void MainWindow::on_F4_clicked(){
 
@@ -286,6 +282,18 @@ void MainWindow::on_F4_clicked(){
 
 }
 
-void MainWindow::on_F3_clicked(){
-	QMessageBox::information(this,"Info","Not yet implemented");
+void MainWindow::on_F5_clicked(){
+	copyFiles();
+}
+
+void MainWindow::on_F6_clicked(){
+	moveFiles();
+}
+
+void MainWindow::on_F8_clicked(){
+	deleteFiles();
+}
+
+void MainWindow::on_F7_clicked(){
+	makeDir();
 }
