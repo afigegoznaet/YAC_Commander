@@ -1,9 +1,6 @@
 #include "textviewer.h"
 #include "ui_textviewer.h"
-#include <QDebug>
-#include <QTime>
-#include <QFile>
-#include <QPlainTextDocumentLayout>
+
 
 TextViewer::TextViewer(QWidget *parent) :
 	QDialog(parent),
@@ -12,25 +9,34 @@ TextViewer::TextViewer(QWidget *parent) :
 	ui->setupUi(this);
 }
 
-TextViewer::~TextViewer()
-{
+TextViewer::~TextViewer(){
 	delete ui;
 }
 
-void TextViewer::setDocument(QString &docPath){
-	auto file = new QFile(docPath, this);
-	file->open(QIODevice::ReadOnly);
-	qDebug()<<"Start now: "<<QTime::currentTime();
+void TextViewer::insertFromMimeData( const QMimeData *source ){
 
-	auto document = new QTextDocument(this);
-	QString hz(QByteArray::fromRawData((char*)file->map(0,file->size()),file->size()));
+}
+
+void TextViewer::setDocument(QString &&docPath){
+
+	auto file  = new QFile(this);
+	QHexView *pcntwgt = ui->hexViewer;
+	if(file)
+		delete file;
+	file = new QFile(docPath);
+
+
+	if(!file->open(QIODevice::ReadOnly))
+	{
+		//QMessageBox::critical(this, "File opening problem", "Problem with open file `" + fileName + "`for reading");
+		return;
+	}
+
+
+	pcntwgt -> clear();
+
+	QByteArray arr = QByteArray::fromRawData((char*)file->map(0,file->size()),file->size());
 	file->close();
-	qDebug()<<hz.length();
-	qDebug()<<"file mapped now: "<<QTime::currentTime();
-	document->setPlainText(hz);
-	qDebug()<<QTime::currentTime();
 
-	auto layout = new QPlainTextDocumentLayout(document);
-	document->setDocumentLayout(layout);
-	ui->plainTextEdit->setDocument(document);
+	pcntwgt -> setData(new QHexView::DataStorageArray(arr));
 }

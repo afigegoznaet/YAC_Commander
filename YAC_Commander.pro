@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     progressDialog.cpp \
     customtoolbar.cpp \
     newdir.cpp \
-    textviewer.cpp
+    textviewer.cpp \
+    HexView/QHexView.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
@@ -32,9 +33,15 @@ HEADERS  += mainwindow.h \
     progressDialog.h \
     customtoolbar.h \
     newdir.h \
-    textviewer.h
+    textviewer.h \
+    HexView/QHexView.h \
+    ui_mainwindow.h \
+    ui_progressDialog.h
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360
 }
+
+DISTFILES += \
+    HexView/LICENSE
 
