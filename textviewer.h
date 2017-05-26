@@ -27,7 +27,8 @@ public:
 
 private:
 	Ui::TextViewer *ui;
-	void insertFromMimeData( const QMimeData *source );
+	//void setFileList(QFileList&& files);
+	//void insertFromMimeData( const QMimeData *source );
 };
 
 

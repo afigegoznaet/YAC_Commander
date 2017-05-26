@@ -12,26 +12,23 @@ TextViewer::TextViewer(QWidget *parent) :
 TextViewer::~TextViewer(){
 	delete ui;
 }
-
+/*
 void TextViewer::insertFromMimeData( const QMimeData *source ){
 
 }
-
+*/
 void TextViewer::setDocument(QString &&docPath){
 
+	QHexView *pcntwgt = new QHexView;
+	ui->tabWidget->addTab(pcntwgt, docPath);
 	auto file  = new QFile(this);
-	QHexView *pcntwgt = ui->hexViewer;
+
 	if(file)
 		delete file;
 	file = new QFile(docPath);
 
-
 	if(!file->open(QIODevice::ReadOnly))
-	{
-		//QMessageBox::critical(this, "File opening problem", "Problem with open file `" + fileName + "`for reading");
 		return;
-	}
-
 
 	pcntwgt -> clear();
 
@@ -39,4 +36,6 @@ void TextViewer::setDocument(QString &&docPath){
 	file->close();
 
 	pcntwgt -> setData(new QHexView::DataStorageArray(arr));
+
+	pcntwgt->setFocus();
 }

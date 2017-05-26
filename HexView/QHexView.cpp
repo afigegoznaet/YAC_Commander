@@ -99,7 +99,7 @@ void QHexView::paintEvent(QPaintEvent *event)
 
 	int firstLineIdx = verticalScrollBar() -> value();
 
-	int lastLineIdx = firstLineIdx + areaSize.height() / m_charHeight;
+	uint lastLineIdx = firstLineIdx + areaSize.height() / m_charHeight;
 	if(lastLineIdx > m_pdata->size() / BYTES_PER_LINE)
 	{
 		lastLineIdx = m_pdata->size() / BYTES_PER_LINE;

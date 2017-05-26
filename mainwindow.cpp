@@ -258,12 +258,10 @@ void MainWindow::makeDir(){
 void MainWindow::on_F3_clicked(){
 	//QMessageBox::information(this,"Info","Not yet implemented");
 	QFileInfoList fileList = getSelectedFiles();
-	foreach (auto file, fileList) {
-		auto textViewer = new TextViewer(this);
+	auto textViewer = new TextViewer(this);
+	foreach (auto file, fileList)
 		textViewer->setDocument(file.absoluteFilePath());
-		textViewer->exec();
-
-	}
+	textViewer->exec();
 
 }
 
