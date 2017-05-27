@@ -70,8 +70,16 @@ TabbedListView* CustomTabWidget::addNewTab(bool dup, QString dir){
 void CustomTabWidget::sectionResized(int logicalIndex, int oldSize, int newSize){
 
 	//qDebug()<< objectName()<<" Resized: "<<logicalIndex<<" "<<oldSize<<" "<<newSize;
+
+	static int check = 0;
+
+	if(check == newSize)
+		return;
+	else
+		check = newSize;
+
 	for(int i=0;i<count();i++)
-			if(currentWidget()->hasFocus() && i==currentIndex())
+			if(widget(i)->hasFocus() )
 				continue;
 			else
 				((TabbedListView*)widget(i))->horizontalHeader()->resizeSection(logicalIndex, newSize);
