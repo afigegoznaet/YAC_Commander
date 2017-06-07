@@ -13,6 +13,7 @@
 #include <newdir.h>
 #include <utility>
 #include "textviewer.h"
+#include "dropdown.h"
 
 #define DEF_EDITOR "undefined"
 

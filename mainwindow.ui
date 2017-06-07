@@ -76,6 +76,9 @@
      </layout>
     </item>
     <item row="1" column="0">
+     <widget class="DropDown" name="commandsBox"/>
+    </item>
+    <item row="2" column="0">
      <layout class="QHBoxLayout" name="buttons">
       <item>
        <widget class="QPushButton" name="F3">
@@ -165,7 +168,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
@@ -261,6 +264,11 @@
    <class>CustomToolbar</class>
    <extends>QToolBar</extends>
    <header>customtoolbar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DropDown</class>
+   <extends>QComboBox</extends>
+   <header>dropdown.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

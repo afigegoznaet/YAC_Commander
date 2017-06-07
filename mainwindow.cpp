@@ -23,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	auto headerState = settings.value("ProgressColumns").toByteArray();
 	movementProgress->progress->tableWidget->horizontalHeader()->restoreState(headerState);
 
+	ui->commandsBox->setEditable(true);
+	//ui->commandsBox->addItem(" ");
+
 	qDebug()<<QStandardPaths::AppConfigLocation;
 }
 
@@ -295,3 +298,4 @@ void MainWindow::on_F8_clicked(){
 void MainWindow::on_F7_clicked(){
 	makeDir();
 }
+

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.8.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -24,6 +24,7 @@
 #include <QtWidgets/QWidget>
 #include "customtabwidget.h"
 #include "customtoolbar.h"
+#include "dropdown.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -37,6 +38,7 @@ public:
     QHBoxLayout *horizontalLayout;
     CustomTabWidget *leftTabWidget;
     CustomTabWidget *rightTabWidget;
+    DropDown *commandsBox;
     QHBoxLayout *buttons;
     QPushButton *F3;
     QPushButton *F4;
@@ -98,6 +100,11 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
 
+        commandsBox = new DropDown(centralwidget);
+        commandsBox->setObjectName(QStringLiteral("commandsBox"));
+
+        gridLayout->addWidget(commandsBox, 1, 0, 1, 1);
+
         buttons = new QHBoxLayout();
         buttons->setObjectName(QStringLiteral("buttons"));
         F3 = new QPushButton(centralwidget);
@@ -137,12 +144,12 @@ public:
         buttons->addWidget(F8);
 
 
-        gridLayout->addLayout(buttons, 1, 0, 1, 1);
+        gridLayout->addLayout(buttons, 2, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 800, 26));
+        menubar->setGeometry(QRect(0, 0, 800, 18));
         menuFiles = new QMenu(menubar);
         menuFiles->setObjectName(QStringLiteral("menuFiles"));
         menuCommand = new QMenu(menubar);

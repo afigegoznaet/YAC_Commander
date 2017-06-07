@@ -14,7 +14,7 @@ class QHexView: public QAbstractScrollArea
 			public:
 				virtual ~DataStorage() {};
 				virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
-				virtual std::size_t size() = 0;
+				virtual unsigned long long size() = 0;
 		};
 
 
@@ -22,7 +22,7 @@ class QHexView: public QAbstractScrollArea
 		{
 			public:
 				DataStorageArray(const QByteArray &arr);
-				virtual QByteArray getData(std::size_t position, std::size_t length);
+				virtual QByteArray getData(unsigned long long position, unsigned long long length);
 				virtual std::size_t size();
 			private:
 				QByteArray    m_data;
@@ -46,7 +46,7 @@ class QHexView: public QAbstractScrollArea
 	public slots:
 		void setData(DataStorage *pData);
 		void clear();
-		void showFromOffset(std::size_t offset);
+		void showFromOffset(unsigned long long offset);
 
 	protected:
 		void paintEvent(QPaintEvent *event);
@@ -55,17 +55,17 @@ class QHexView: public QAbstractScrollArea
 		void mousePressEvent(QMouseEvent *event);
 	private:
 		DataStorage          *m_pdata;
-		std::size_t           m_posAddr; 
-		std::size_t           m_posHex;
-		std::size_t           m_posAscii;
-		std::size_t           m_charWidth;
-		std::size_t           m_charHeight;
+		unsigned long long           m_posAddr;
+		unsigned long long           m_posHex;
+		unsigned long long           m_posAscii;
+		unsigned long long           m_charWidth;
+		unsigned long long           m_charHeight;
 
 
-		std::size_t           m_selectBegin;
-		std::size_t           m_selectEnd;
-		std::size_t           m_selectInit;
-		std::size_t           m_cursorPos;
+		unsigned long long           m_selectBegin;
+		unsigned long long           m_selectEnd;
+		unsigned long long           m_selectInit;
+		unsigned long long           m_cursorPos;
 
 
 		QSize fullSize() const;
@@ -74,7 +74,7 @@ class QHexView: public QAbstractScrollArea
 		void setSelection(int pos);
 		void ensureVisible();
 		void setCursorPos(int pos);
-		std::size_t cursorPos(const QPoint &position);
+		unsigned long long cursorPos(const QPoint &position);
 };
 
 #endif

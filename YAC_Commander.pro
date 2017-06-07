@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     customtoolbar.cpp \
     newdir.cpp \
     textviewer.cpp \
-    HexView/QHexView.cpp
+    HexView/QHexView.cpp \
+    dropdown.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
@@ -36,7 +37,8 @@ HEADERS  += mainwindow.h \
     textviewer.h \
     HexView/QHexView.h \
     ui_mainwindow.h \
-    ui_progressDialog.h
+    ui_progressDialog.h \
+    dropdown.h
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360
