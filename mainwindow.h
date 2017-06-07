@@ -40,7 +40,9 @@ class MainWindow : public QMainWindow
 
 public:
 	explicit MainWindow(QWidget *parent = 0);
+	QString getDirInFocus(bool opposite = false);
 	~MainWindow();
+
 public slots:
 	void cdTo(const QString&);
 private slots:
@@ -50,6 +52,7 @@ private slots:
 	void on_F6_clicked();
 	void on_F7_clicked();
 	void on_F8_clicked();
+
 
 private:
 
@@ -64,7 +67,7 @@ private:
 	void deleteFiles();
 	void writeSettings();
 	void readSettings();
-	QString getDirInFocus(bool opposite = false);
+
 	QFileInfoList getSelectedFiles();
 	TabbedListView* getFocusedTab(void);
 	bool getDir(QString &dirName, int numFiles=0, ACTION action=ENUM_TERMINATOR);

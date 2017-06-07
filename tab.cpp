@@ -153,7 +153,7 @@ QFileInfoList TabbedListView::getSelectedFiles(){
 }
 
 void TabbedListView::cdTo(const QString &dir){
-	//qDebug()<<"Cd event!!!";
+	qDebug()<<"Cd event!!! "<<dir;
 	model->setRootPath(dir);
 	setRootIndex(model->index(model->rootPath()));
 }

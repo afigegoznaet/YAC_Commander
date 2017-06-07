@@ -505,7 +505,7 @@ QByteArray QHexView::DataStorageArray::getData(unsigned long long position, unsi
 }
 
 
-std::size_t QHexView::DataStorageArray::size()
+unsigned long long QHexView::DataStorageArray::size()
 {
 	return m_data.count();
 }
@@ -525,7 +525,7 @@ QByteArray QHexView::DataStorageFile::getData(std::size_t position, std::size_t 
 }
 
 
-std::size_t QHexView::DataStorageFile::size()
+unsigned long long QHexView::DataStorageFile::size()
 {
 	return m_file.size();
 }

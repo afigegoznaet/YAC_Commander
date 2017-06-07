@@ -102,6 +102,7 @@ public:
 
         commandsBox = new DropDown(centralwidget);
         commandsBox->setObjectName(QStringLiteral("commandsBox"));
+        commandsBox->setFocusPolicy(Qt::ClickFocus);
 
         gridLayout->addWidget(commandsBox, 1, 0, 1, 1);
 
@@ -149,7 +150,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 800, 18));
+        menubar->setGeometry(QRect(0, 0, 800, 19));
         menuFiles = new QMenu(menubar);
         menuFiles->setObjectName(QStringLiteral("menuFiles"));
         menuCommand = new QMenu(menubar);

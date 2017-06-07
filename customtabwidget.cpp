@@ -105,15 +105,10 @@ void CustomTabWidget::mousePressEvent(QMouseEvent *event){
 		return;
 
 
-	QMenu *menu = new QMenu();
-	menu->addAction("Add new tab",
-		[=](){
-		addNewTab();
-	});
-	menu->addAction("Duplicate tab",[=](){
-		addNewTab(true);
-	});
-	if(count())
+	QMenu *menu = new QMenu(this);
+	menu->addAction("Add new tab", [=](){  addNewTab();  });
+	menu->addAction("Duplicate tab",[=](){	addNewTab(true); });
+	if(count()>1)
 		menu->addAction("Close tab",
 			[=]() {
 			int index = currentIndex();
