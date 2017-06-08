@@ -12,8 +12,8 @@ TARGET = YAC_Commander
 TEMPLATE = app
 
 FORMS    +=     mainwindow.ui \
-    progressDialog.ui \
-    textviewer.ui
+	progressDialog.ui \
+	textviewer.ui
 
 SOURCES += main.cpp\
 		mainwindow.cpp \
