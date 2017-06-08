@@ -30,13 +30,15 @@ public slots:
 signals:
 	void gotResized(int logicalIndex, int oldSize, int newSize);
 	void gotMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
+	void focusLost();
 
 protected:
 	QString defaultStyle;
 
 private:
 	virtual void mousePressEvent(QMouseEvent *event);
-	QMetaObject::Connection currentWidgetConnection;
+	QMetaObject::Connection currentHeaderResizedConnection;
+	QMetaObject::Connection currentHeaderMovedConnection;
 };
 
 #endif // CUSTOMTABWIDGET_H

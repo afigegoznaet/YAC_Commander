@@ -7,7 +7,6 @@ Things to add:
 * some more meaningful next file selection after a file is deleted
 * Some sort of Directory action if a drive is removed(maybe just notification)
 * Context menu
-* Command line
 * selection filters
 * chown / chmod
 * soft/hard linking
@@ -27,6 +26,7 @@ Implemented sutff:
 * possibility to remove files from queue
 * Tab restore capability
 * View file (in hex mode) -> using this project: https://github.com/virinext/QHexView
+* Command line
 
 Known issues:
 * On Linux, dir doesn't refresh if some action is performed in the other tab, containing the same dir

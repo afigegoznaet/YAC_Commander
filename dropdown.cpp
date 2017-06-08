@@ -3,15 +3,18 @@
 
 DropDown::DropDown(QWidget *parent) : QComboBox(parent) {
 	qDebug()<<"helo";
+
 }
 
 void DropDown::setMain(MainWindow *mainWindow){
 	this->mainWindow=mainWindow;
+	//readSettings();
+	QTimer::singleShot(200, this, &DropDown::clearEditText);	//An ugly hack - never use it
 }
 
 void DropDown::processCommand(){
 	QString cmd(lineEdit()->text());
-	focusPreviousChild();
+	emit focusPreviouslyFocused();
 	if(findText(cmd)<0)
 		insertItem(0,cmd);
 	if(cmd.startsWith("cd")){
@@ -20,17 +23,12 @@ void DropDown::processCommand(){
 	}else{
 		QProcess proc;
 		QString dir(mainWindow->getDirInFocus());
-		proc.setWorkingDirectory(dir);
-
-		qDebug()<<cmd;
-		QStringList args = cmd.split(" ");
-		args.removeFirst();
-		qDebug()<<args;
-		qDebug()<<"Object status: "<<proc.execute(cmd,args);
+		QDir::setCurrent(dir);
+		proc.startDetached(cmd);
 
 	}
 
-	lineEdit()->setText("");
+	clearEditText();
 }
 
 void DropDown::keyPressEvent(QKeyEvent *event){
@@ -44,4 +42,30 @@ void DropDown::keyPressEvent(QKeyEvent *event){
 			processCommand();
 			break;
 	}
+}
+
+
+DropDown::~DropDown(){
+
+	QSettings settings;
+	int count=this->count();
+	settings.beginWriteArray("Commands",count);
+	for(int i=0;i<count && i<50;i++){
+		settings.setArrayIndex(i);
+		settings.setValue("command", itemText(i));
+	}
+	settings.endArray();
+}
+
+void DropDown::readSettings(){
+	//return;
+	QSettings settings;
+	int count = settings.beginReadArray("Commands");
+	int i=0;
+	while (count-- > 0) {
+		settings.setArrayIndex(i);
+		insertItem(i++,settings.value("command").toString());
+	};
+	clearEditText();
+	//insertItem(0,"");
 }

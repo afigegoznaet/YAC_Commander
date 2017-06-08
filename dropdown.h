@@ -14,9 +14,12 @@ class DropDown : public QComboBox
 	Q_OBJECT
 public:
 	explicit DropDown(QWidget *parent = Q_NULLPTR);
+	~DropDown();
 	void setMain(MainWindow* mainWindow);
+	void readSettings();
 signals:
 	void cdTo(const QString&) const;
+	void focusPreviouslyFocused();
 private:
 	virtual void keyPressEvent(QKeyEvent *event);
 	void processCommand();

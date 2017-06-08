@@ -7,9 +7,10 @@ CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent) {
 
 void CustomTabWidget::indexChanged(int index){
 	//qDebug()<<objectName()<<" got a new index "<<index;
-	disconnect(currentWidgetConnection);
-	currentWidgetConnection = connect(((TabbedListView*)widget(index))->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
-	currentWidgetConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionMoved(int,int,int)), this, SLOT(sectionMoved(int,int,int)));
+	disconnect(currentHeaderResizedConnection);
+	disconnect(currentHeaderMovedConnection);;
+	currentHeaderResizedConnection = connect(((TabbedListView*)widget(index))->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
+	currentHeaderMovedConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionMoved(int,int,int)), this, SLOT(sectionMoved(int,int,int)));
 }
 
 void CustomTabWidget::onDirChanged(const QString dirName, int tabIndex){
@@ -24,14 +25,17 @@ void CustomTabWidget::onDirChanged(const QString dirName, int tabIndex){
 void CustomTabWidget::onFocusEvent(bool focused){
 	if(focused){
 		setStyleSheet("border: 1px solid green");
-		disconnect(currentWidgetConnection);
-		currentWidgetConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
-		currentWidgetConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionMoved(int,int,int)), this, SLOT(sectionMoved(int,int,int)));
+		disconnect(currentHeaderResizedConnection);
+		disconnect(currentHeaderMovedConnection);
+		currentHeaderResizedConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
+		currentHeaderMovedConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionMoved(int,int,int)), this, SLOT(sectionMoved(int,int,int)));
 
 	}
 	else{
-		disconnect(currentWidgetConnection);
+		disconnect(currentHeaderResizedConnection);
+		disconnect(currentHeaderMovedConnection);
 		setStyleSheet(defaultStyle);
+		emit focusLost();
 	}
 }
 
@@ -139,5 +143,4 @@ void CustomTabWidget::readSettings(){
 		addNewTab(false, settings.value("dir").toString());
 	}while (--count > 0) ;
 	settings.endArray();
-
 }

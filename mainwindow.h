@@ -45,6 +45,7 @@ public:
 
 public slots:
 	void cdTo(const QString&);
+	void focusPreviouslyFocused();
 private slots:
 	void on_F3_clicked();
 	void on_F4_clicked();
@@ -55,10 +56,10 @@ private slots:
 
 
 private:
-
 	Ui::MainWindow *ui;
 	ProgressDialog* movementProgress;
 	QString editor;
+	bool leftFocusOut;
 
 	virtual void keyPressEvent(QKeyEvent *event);
 	void copyFiles();
@@ -71,6 +72,7 @@ private:
 	QFileInfoList getSelectedFiles();
 	TabbedListView* getFocusedTab(void);
 	bool getDir(QString &dirName, int numFiles=0, ACTION action=ENUM_TERMINATOR);
+
 };
 
 #endif // MAINWINDOW_H
