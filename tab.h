@@ -1,3 +1,4 @@
+
 #ifndef TAB_H
 #define TAB_H
 
@@ -13,11 +14,13 @@
 #include <QDesktopServices>
 #include <QItemSelectionModel>
 #include <QSettings>
+#include <QInputDialog>
 
 class TabbedListView : public QTableView
 {
 	Q_OBJECT
 
+	enum Action{PLUS, MINUS, ASTERISK};
 public:
 	explicit TabbedListView(QDir directory, QWidget *parent = 0);
 	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){
@@ -56,6 +59,11 @@ private:
 	int index;
 	QTabWidget* metaTab;
 	virtual void mousePressEvent(QMouseEvent *event);
+	void queryDialog(QString& filter, Action act);
+	void select(QString& filter);
+	void deselect(QString& filter);
+	void invertSelection();
 };
 
 #endif // TAB_H
+

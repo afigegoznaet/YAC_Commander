@@ -71,6 +71,7 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 
 void TabbedListView::keyPressEvent(QKeyEvent *event){
 	//qDebug()<<event->key();
+	QString filter;
 	QModelIndex index;
 	//QModelIndexList items = selectionModel()->selectedIndexes();
 	if(selectedIndexes().size()>0)
@@ -85,8 +86,21 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 	case Qt::Key_Backspace:
 		chDir(index, OUT);
 		break;
+	case Qt::Key_Plus:
+		queryDialog(filter, PLUS);
+		select(filter);
+		break;
+	case Qt::Key_Minus:
+		queryDialog(filter, MINUS);
+		deselect(filter);
+		break;
+	case Qt::Key_Asterisk:
+		invertSelection();
+		break;
 	default:
 		//break;
+		//qDebug()<<"key: "<<key;
+		//qDebug()<<"event: "<<event;
 		QAbstractItemView::keyPressEvent(event);
 		break;
 	}
@@ -166,3 +180,76 @@ void TabbedListView::mousePressEvent(QMouseEvent *event){
 
 	qDebug()<<"Right mouse!";
 }
+
+void TabbedListView::queryDialog(QString& filter, Action act){
+	bool ok;
+	QString label;
+	switch (act) {
+	case PLUS:
+		label = "Select";
+		break;
+	case MINUS:
+		label = "Deselect";
+		break;
+	default:
+		return;
+	}
+	filter = QInputDialog::getText(this, "Filter selection",
+										 label, QLineEdit::Normal,
+										 "*.*", &ok);
+
+}
+
+void TabbedListView::select(QString& filter){
+	int rowCount = model->rowCount(rootIndex());
+	int columnCount = model->columnCount(rootIndex());
+	QRegExp reg(filter, Qt::CaseSensitive, QRegExp::Wildcard);
+	for(int i = 0; i<rowCount;i++){
+		auto ind = rootIndex().child(i,0);
+		//qDebug()<< "Index: "<<i<<" filename: " << model->fileInfo(ind).fileName() << " directory: "<<directory;4
+		if(!model->fileInfo(ind).fileName().compare("..")){
+			qDebug()<<"dotdot";
+			continue;
+		}
+		if(model->fileInfo(ind).fileName().contains(reg)){
+			//qDebug()<<"match";
+			selectionModel()->select(ind, QItemSelectionModel::Select );
+			for(int j=1;j<columnCount;j++)
+			selectionModel()->select(rootIndex().child(i,j), QItemSelectionModel::Select );
+		}
+
+	}
+}
+
+void TabbedListView::deselect(QString& filter){
+	int rowCount = model->rowCount(rootIndex());
+	int columnCount = model->columnCount(rootIndex());
+	QRegExp reg(filter, Qt::CaseSensitive, QRegExp::Wildcard);
+	for(int i = 0; i<rowCount;i++){
+		auto ind = rootIndex().child(i,0);
+		//qDebug()<< "Index: "<<i<<" filename: " << model->fileInfo(ind).fileName() << " directory: "<<directory;4
+
+		if(model->fileInfo(ind).fileName().contains(reg)){
+			selectionModel()->select(ind, QItemSelectionModel::Deselect );
+			for(int j=1;j<columnCount;j++)
+			selectionModel()->select(rootIndex().child(i,j), QItemSelectionModel::Deselect );
+		}
+
+	}
+}
+
+void TabbedListView::invertSelection(){
+	int rowCount = model->rowCount(rootIndex());
+	int columnCount = model->columnCount(rootIndex());
+	for(int i = 0; i<rowCount;i++){
+		auto ind = rootIndex().child(i,0);
+
+		if(!model->fileInfo(ind).fileName().compare(".."))
+			continue;
+
+		selectionModel()->select(ind, QItemSelectionModel::Toggle );
+		for(int j=1;j<columnCount;j++)
+		selectionModel()->select(rootIndex().child(i,j), QItemSelectionModel::Toggle );
+	}
+}
+
