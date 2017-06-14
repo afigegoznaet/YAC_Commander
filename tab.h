@@ -60,9 +60,7 @@ private:
 	QTabWidget* metaTab;
 	virtual void mousePressEvent(QMouseEvent *event);
 	void queryDialog(QString& filter, Action act);
-	void select(QString& filter);
-	void deselect(QString& filter);
-	void invertSelection();
+	void setSelection(Action act);
 };
 
 #endif // TAB_H
