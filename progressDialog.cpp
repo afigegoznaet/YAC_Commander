@@ -171,6 +171,7 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest, QList
 		}
 
 		destination.append(file.fileName());
+		setWindowTitle(file.fileName());
 		FileMover mover(source, destination, action, this);
 		connect(&mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
 		connect(&mover, SIGNAL(completed(int)),this,SLOT(dirMovementResult(int)));
@@ -241,8 +242,10 @@ void ProgressDialog::DoSomething(void){
 
 		//delete mover;
 
-	}else
+	}else{
+		setWindowTitle("");
 		emit hideDialogSignal();
+	}
 
 }
 
