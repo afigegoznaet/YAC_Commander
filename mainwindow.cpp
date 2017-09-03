@@ -5,6 +5,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	ui->leftTabWidget->setTabsClosable(false);
 	ui->rightTabWidget->setTabsClosable(false);
+	ui->leftTabWidget->tabBar()->setFocusPolicy(Qt::NoFocus);
+	ui->rightTabWidget->tabBar()->setFocusPolicy(Qt::NoFocus);
+
 	movementProgress = new ProgressDialog(this);
 
 	readSettings();
@@ -38,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->commandsBox->setEditable(true);
 	//ui->commandsBox->addItem(" ");
 
+	ui->leftTabWidget->setFocus();
+	ui->rightTabWidget->setFocus();
 	qDebug()<<QStandardPaths::AppConfigLocation;
 }
 
@@ -257,12 +262,14 @@ bool MainWindow::getDir(QString& dirName, int numFiles, ACTION action){
 }
 
 void MainWindow::makeDir(){
-	qDebug()<<getDirInFocus();
+
+	QDir currDir(getDirInFocus());
+	qDebug()<<currDir;
 	QString dirName;
 	if(!getDir(dirName))
 		return;
 	qDebug()<<dirName;
-	QDir currDir(getDirInFocus());
+
 	bool status = currDir.mkdir(dirName);
 	if(!status)
 		QMessageBox::critical(this,"Error!","Unable to create directory "+dirName+" in "+currDir.dirName());

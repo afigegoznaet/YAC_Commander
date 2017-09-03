@@ -25,6 +25,7 @@ void CustomTabWidget::onDirChanged(const QString dirName, int tabIndex){
 void CustomTabWidget::onFocusEvent(bool focused){
 	if(focused){
 		setStyleSheet("border: 1px solid green");
+		//setStyleSheet("");
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
 		currentHeaderResizedConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
@@ -35,6 +36,7 @@ void CustomTabWidget::onFocusEvent(bool focused){
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
 		setStyleSheet(defaultStyle);
+		setStyleSheet("selection-background-color: lightblue");
 		emit focusLost();
 	}
 }
