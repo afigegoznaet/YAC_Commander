@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     newdir.cpp \
     textviewer.cpp \
     HexView/QHexView.cpp \
-    dropdown.cpp
+    dropdown.cpp \
+    orderedfilesystemmodel.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
@@ -38,7 +39,8 @@ HEADERS  += mainwindow.h \
     HexView/QHexView.h \
     ui_mainwindow.h \
     ui_progressDialog.h \
-    dropdown.h
+    dropdown.h \
+    orderedfilesystemmodel.h
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

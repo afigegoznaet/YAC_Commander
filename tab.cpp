@@ -22,22 +22,26 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 	verticalHeader()->setDefaultSectionSize(fontMetrics().height()+4);
 
-	model = new QFileSystemModel(this);
+	model = new OrderedFileSystemModel(this);
+	auto fModel = new QFileSystemModel(this);
+	model->setSourceModel(fModel);
 	model->setRootPath(this->directory);
 	model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System);
 
 	setSelectionMode(QAbstractItemView::ExtendedSelection);
 	setModel(model);
-	setRootIndex(model->index(model->rootPath()));
+	model->setFilterRegExp("");
+	setRootIndex(model->getRootIndex());
 	verticalHeader()->setVisible(false);
 
-	connect(model,SIGNAL(directoryLoaded(QString)),this,SLOT(setCurrentSelection(QString)));
+	connect(fModel,SIGNAL(directoryLoaded(QString)),this,SLOT(setCurrentSelection(QString)));
 	qDebug()<<directory.absolutePath();
+
 }
 
 
 void TabbedListView::on_doubleClicked(const QModelIndex &index){
-	QFileInfo info=model->fileInfo(index);
+	QFileInfo info=model->fileInfo(index);//mapped
 	if(info.isDir()){
 		if(info.fileName().compare(".."))
 			chDir(index, IN);
@@ -54,7 +58,7 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 		directory="..";//clever selection
 		QDir parentDir(model->fileInfo(index).absoluteFilePath());
 		model->setRootPath(parentDir.absolutePath());
-		setRootIndex(model->index(model->rootPath()));
+
 	}else{
 		QDir parentDir(model->rootPath());
 		if(parentDir.isRoot())
@@ -62,9 +66,8 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 		directory=parentDir.dirName();
 		parentDir.cdUp();
 		model->setRootPath(parentDir.absolutePath());
-		setRootIndex(model->index(model->rootPath()));
 	}
-
+	setRootIndex(model->getRootIndex());
 	emit dirChanged(model->rootPath(), this->index);
 
 }
@@ -112,7 +115,7 @@ void TabbedListView::init(){
 	qDebug()<<hz;
 }
 
-void TabbedListView::setCurrentSelection(QString sel){
+void TabbedListView::setCurrentSelection(QString){
 	//qDebug()<<"Sel: "<<sel<<" |";
 	//QString dotdot("..");
 	int rows = model->rowCount(rootIndex());
@@ -167,7 +170,8 @@ QFileInfoList TabbedListView::getSelectedFiles(){
 void TabbedListView::cdTo(const QString &dir){
 	qDebug()<<"Cd event!!! "<<dir;
 	model->setRootPath(dir);
-	setRootIndex(model->index(model->rootPath()));
+	setRootIndex(model->getRootIndex());
+	emit dirChanged(dir, this->index);
 }
 
 void TabbedListView::mousePressEvent(QMouseEvent *event){
@@ -232,4 +236,3 @@ void TabbedListView::setSelection(Action act){
 		}
 	}
 }
-

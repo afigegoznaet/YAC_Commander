@@ -15,6 +15,7 @@
 #include <QItemSelectionModel>
 #include <QSettings>
 #include <QInputDialog>
+#include "orderedfilesystemmodel.h"
 
 class TabbedListView : public QTableView
 {
@@ -26,7 +27,8 @@ public:
 	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){
 	};
 	QString GetDirectory(){
-		return model->rootDirectory().absolutePath();
+
+		return model->rootPath();
 	};
 	void init();
 	void setTabOrderIndex(int index){
@@ -43,7 +45,7 @@ signals:
 
 public slots:
 	void on_doubleClicked(const QModelIndex &index);
-	void setCurrentSelection(QString sel);
+	void setCurrentSelection(QString);
 	void headerClicked(int section);
 protected:
 	virtual void keyPressEvent(QKeyEvent * event);
@@ -55,7 +57,8 @@ protected:
 private:
 	QString directory;
 	//QString *selection;
-	QFileSystemModel* model;
+	OrderedFileSystemModel* model;
+	//QFileSystemModel* model;
 	int index;
 	QTabWidget* metaTab;
 	virtual void mousePressEvent(QMouseEvent *event);
