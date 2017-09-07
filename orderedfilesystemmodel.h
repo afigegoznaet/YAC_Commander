@@ -32,6 +32,10 @@ public:
 
 	virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 
+	void sort(){
+		sort(column, order);
+	}
+
 
 private:
 	QFileSystemModel *sourceModel() const;

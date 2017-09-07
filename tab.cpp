@@ -264,6 +264,7 @@ void TabbedListView::rowsInserted(const QModelIndex &parent, int first, int){
 		qDebug()<<"*****************\n"<<prevSelection.row() << prevSelection.row();
 	}
 
+	model->sort();
 	auto prevSelection1 = parent.child(first, 0);
 	setCurrentIndex(prevSelection1);
 }
