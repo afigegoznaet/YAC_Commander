@@ -96,6 +96,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 		makeDir();
 		break;
 	case Qt::Key_F8:
+	case Qt::Key_Delete:
 		deleteFiles();
 		break;
 	default:
