@@ -34,8 +34,6 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	setRootIndex(model->getRootIndex());
 	verticalHeader()->setVisible(false);
 
-	connect(fModel, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsAboutToBeInserted(QModelIndex,int,int)));
-	connect(fModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
 	connect(fModel, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
 	connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(rowsRemoved(QModelIndex,int,int)));
 	qDebug()<<directory.absolutePath();
@@ -240,31 +238,13 @@ void TabbedListView::setSelection(Action act){
 }
 
 
-void TabbedListView::rowsAboutToBeRemoved(const QModelIndex &parent, int first, int){
-	prevSelection = parent.child(first, 0);
-}
-
-void TabbedListView::rowsAboutToBeInserted(const QModelIndex &parent, int start, int){
-	prevSelection = parent.child(start-1, 0);
-}
-
 void TabbedListView::rowsRemoved(const QModelIndex &parent, int first, int){
-	//auto prevSelection = model->mapFromSource(parent.child(first, 0));
-	if(prevSelection.row() != prevSelection.row()){
-		qDebug()<<"*****************\n"<<prevSelection.row() << prevSelection.row();
-	}
-
-	auto prevSelection1 = parent.child(first, 0);
-	setCurrentIndex(prevSelection1);
+	auto prevSelection = parent.child(first, 0);
+	setCurrentIndex(prevSelection);
 }
 
 void TabbedListView::rowsInserted(const QModelIndex &parent, int first, int){
-
-	if(prevSelection.row() != prevSelection.row()){
-		qDebug()<<"*****************\n"<<prevSelection.row() << prevSelection.row();
-	}
-
+	auto prevSelection = parent.child(first, 0);
+	setCurrentIndex(prevSelection);
 	model->sort();
-	auto prevSelection1 = parent.child(first, 0);
-	setCurrentIndex(prevSelection1);
 }

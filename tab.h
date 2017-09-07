@@ -47,8 +47,6 @@ public slots:
 	void on_doubleClicked(const QModelIndex &index);
 	void setCurrentSelection(QString);
 	void headerClicked(int section);
-	void rowsAboutToBeRemoved(const QModelIndex &parent, int first, int);
-	void rowsAboutToBeInserted(const QModelIndex &parent, int start, int);
 	void rowsRemoved(const QModelIndex &parent, int first, int);
 	void rowsInserted(const QModelIndex &parent, int first, int);
 protected:
@@ -68,7 +66,6 @@ private:
 	virtual void mousePressEvent(QMouseEvent *event);
 	void queryDialog(QString& filter, Action act);
 	void setSelection(Action act);
-	QModelIndex prevSelection;
 };
 
 #endif // TAB_H
