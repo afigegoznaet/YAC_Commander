@@ -16,6 +16,10 @@ bool OrderedFileSystemModel::lessThan(const QModelIndex &left,
 		else
 			return leftFile.isDir();		//will it be optimized
 	bool res = false;
+	if(!leftFile.fileName().compare(".."))
+		return order==Qt::AscendingOrder ? true : false;
+	if(!rightFile.fileName().compare(".."))
+		return order==Qt::AscendingOrder ? false : true;
 	switch(column){
 	case 0:
 		res = leftFile.fileName().compare(rightFile.fileName())<0;

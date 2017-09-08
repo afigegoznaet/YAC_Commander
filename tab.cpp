@@ -55,20 +55,20 @@ void TabbedListView::on_doubleClicked(const QModelIndex &index){
 
 void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 	//qDebug()<<"Dir at input: "<<model->rootPath();
+	QDir parentDir(model->rootPath());
+	QModelIndex selection = model->getRootIndex();
 	if(in_out == IN){
 		directory="..";//clever selection
-		QDir parentDir(model->fileInfo(index).absoluteFilePath());
-		model->setRootPath(parentDir.absolutePath());
-
+		parentDir.setPath(model->fileInfo(index).absoluteFilePath());
 	}else{
-		QDir parentDir(model->rootPath());
 		if(parentDir.isRoot())
 			return;
-		directory=parentDir.dirName();
+		directory=parentDir.currentPath();
 		parentDir.cdUp();
-		model->setRootPath(parentDir.absolutePath());
 	}
+	model->setRootPath(parentDir.absolutePath());
 	setRootIndex(model->getRootIndex());
+	selectionModel()->select(selection,QItemSelectionModel::Select);
 	emit dirChanged(model->rootPath(), this->index);
 
 }
