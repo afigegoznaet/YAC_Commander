@@ -13,7 +13,8 @@ TEMPLATE = app
 
 FORMS    +=     mainwindow.ui \
 	progressDialog.ui \
-	textviewer.ui
+	textviewer.ui \
+    searchdialog.ui
 
 SOURCES += main.cpp\
 		mainwindow.cpp \
@@ -26,7 +27,10 @@ SOURCES += main.cpp\
     textviewer.cpp \
     HexView/QHexView.cpp \
     dropdown.cpp \
-    orderedfilesystemmodel.cpp
+    orderedfilesystemmodel.cpp \
+    searchdialog.cpp \
+    customdropdown.cpp \
+    filefindingsmodel.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
@@ -40,7 +44,10 @@ HEADERS  += mainwindow.h \
     ui_mainwindow.h \
     ui_progressDialog.h \
     dropdown.h \
-    orderedfilesystemmodel.h
+    orderedfilesystemmodel.h \
+    searchdialog.h \
+    customdropdown.h \
+    filefindingsmodel.h
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

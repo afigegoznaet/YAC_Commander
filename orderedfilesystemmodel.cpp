@@ -10,11 +10,12 @@ bool OrderedFileSystemModel::lessThan(const QModelIndex &left,
 									  const QModelIndex &right) const{
 	const QFileInfo &leftFile = sourceModel()->fileInfo(left);
 	const QFileInfo &rightFile = sourceModel()->fileInfo(right);
-	if(leftFile.isDir() ^ rightFile.isDir())
+	if(leftFile.isDir() ^ rightFile.isDir()){
 		if(this->order)
 			return !leftFile.isDir();
 		else
 			return leftFile.isDir();		//will it be optimized
+	}
 	bool res = false;
 	if(!leftFile.fileName().compare(".."))
 		return order==Qt::AscendingOrder ? true : false;

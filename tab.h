@@ -24,16 +24,15 @@ class TabbedListView : public QTableView
 	enum Action{PLUS, MINUS, ASTERISK};
 public:
 	explicit TabbedListView(QDir directory, QWidget *parent = 0);
-	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){
-	};
+	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){}
+	~TabbedListView(){delete prevSelection;}
 	QString GetDirectory(){
-
 		return model->rootPath();
-	};
+	}
 	void init();
 	void setTabOrderIndex(int index){
 		this->index=index;
-	};
+	}
 	QFileInfoList getSelectedFiles();
 	void cdTo(const QString&);
 
@@ -58,11 +57,11 @@ protected:
 
 private:
 	QString directory;
-	//QString *selection;
 	OrderedFileSystemModel* model;
-	//QFileSystemModel* model;
 	int index;
 	QTabWidget* metaTab;
+	QModelIndex* prevSelection = nullptr;
+
 	virtual void mousePressEvent(QMouseEvent *event);
 	void queryDialog(QString& filter, Action act);
 	void setSelection(Action act);

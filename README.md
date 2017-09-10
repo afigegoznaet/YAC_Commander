@@ -4,14 +4,13 @@ This is already my primary file manager in Linux/Xorg.
 At the moment it performs all the basic file manager operations, like copy/move/delete/open.
 
 Things to add:
-* some more meaningful next file selection after a file is deleted
 * Some sort of Directory action if a drive is removed(maybe just notification)
 * Context menu
 * chown / chmod
 * soft/hard linking
-* more informative progress dialog
 * Search capability
 * Plugins support
+* Add home directory / custom links to mountpoints bar
 * TBU
 
 Implemented sutff:

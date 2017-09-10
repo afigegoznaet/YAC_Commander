@@ -12,8 +12,6 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	//setLayoutMode(QListView::Batched);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setTabKeyNavigation(false);
-
-
 	horizontalHeader()->setStretchLastSection(true);
 	horizontalHeader()->setSectionsMovable(true);
 	horizontalHeader()->setSectionsClickable(true);
@@ -33,10 +31,14 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	model->setFilterRegExp("");
 	setRootIndex(model->getRootIndex());
 	verticalHeader()->setVisible(false);
-
-	connect(fModel, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(rowsInserted(QModelIndex,int,int)));
-	connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)), this, SLOT(rowsRemoved(QModelIndex,int,int)));
-	qDebug()<<directory.absolutePath();
+	//this is needed for clever file selection whn moving up and down
+	connect(fModel,	SIGNAL(directoryLoaded(QString)),this,
+					SLOT(setCurrentSelection(QString)));
+	connect(fModel, SIGNAL(rowsInserted(QModelIndex,int,int)), this,
+					SLOT(rowsInserted(QModelIndex,int,int)));
+	connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)), this,
+					SLOT(rowsRemoved(QModelIndex,int,int)));
+	//qDebug()<<directory.absolutePath();
 
 }
 
@@ -54,21 +56,23 @@ void TabbedListView::on_doubleClicked(const QModelIndex &index){
 }
 
 void TabbedListView::chDir(const QModelIndex &index, bool in_out){
-	//qDebug()<<"Dir at input: "<<model->rootPath();
-	QDir parentDir(model->rootPath());
-	QModelIndex selection = model->getRootIndex();
+	delete prevSelection;
+	prevSelection = nullptr;
 	if(in_out == IN){
 		directory="..";//clever selection
-		parentDir.setPath(model->fileInfo(index).absoluteFilePath());
+		QDir parentDir(model->fileInfo(index).absoluteFilePath());
+		model->setRootPath(parentDir.absolutePath());
+		parentDir.cd(".");
+		setRootIndex(model->getRootIndex());
 	}else{
+		QDir parentDir(model->rootPath());
 		if(parentDir.isRoot())
 			return;
-		directory=parentDir.currentPath();
+		directory=parentDir.dirName();
 		parentDir.cdUp();
+		setRootIndex(model->setRootPath(parentDir.absolutePath()));
 	}
-	model->setRootPath(parentDir.absolutePath());
-	setRootIndex(model->getRootIndex());
-	selectionModel()->select(selection,QItemSelectionModel::Select);
+
 	emit dirChanged(model->rootPath(), this->index);
 
 }
@@ -77,7 +81,6 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 	//qDebug()<<event->key();
 	QString filter;
 	QModelIndex index;
-	//QModelIndexList items = selectionModel()->selectedIndexes();
 	if(selectedIndexes().size()>0)
 		index = currentIndex();
 	else
@@ -106,7 +109,7 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 		QAbstractItemView::keyPressEvent(event);
 		break;
 	}
-	qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();
+	//qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();
 }
 
 void TabbedListView::init(){
@@ -117,22 +120,20 @@ void TabbedListView::init(){
 }
 
 void TabbedListView::setCurrentSelection(QString){
-	//qDebug()<<"Sel: "<<sel<<" |";
-	//QString dotdot("..");
-	int rows = model->rowCount(rootIndex());
-	QModelIndex ind;
-	for(int i=0;i<rows;i++){
-		ind = rootIndex().child(i,0);
-		//qDebug()<< "Index: "<<i<<" filename: " << model->fileInfo(ind).fileName() << " directory: "<<directory;
-		if(!directory.compare(model->fileInfo(ind).fileName()))
-			break;
+	if(prevSelection && prevSelection->isValid()){
+		setCurrentIndex(*prevSelection);
+		return;
 	}
-
-	if(ind.isValid())
-		setCurrentIndex(ind);
-
-	selectionModel()->select(currentIndex(), QItemSelectionModel::Select);
-	//qDebug()<<model->fileInfo(currentIndex()).fileName();
+	int rows = model->rowCount(rootIndex());
+	QModelIndex index = rootIndex().child(0,0);
+	for(int i=0;i<rows;i++){
+		auto ind = rootIndex().child(i,0);
+		if(!directory.compare(model->fileInfo(ind).fileName())){
+			index = ind;
+			break;
+		}
+	}
+	setCurrentIndex(index);
 }
 
 void TabbedListView::headerClicked(int section){
@@ -210,6 +211,7 @@ void TabbedListView::setSelection(Action act){
 	QItemSelectionModel::SelectionFlag selectionType;
 	switch(act){
 	case PLUS:
+		this->clearSelection();
 		selectionType = QItemSelectionModel::Select;
 		queryDialog(filter, PLUS);
 		break;
@@ -230,6 +232,7 @@ void TabbedListView::setSelection(Action act){
 			continue;
 
 		if(filter.isEmpty() || model->fileInfo(ind).fileName().contains(reg)){
+			qDebug()<<model->fileInfo(ind).fileName();
 			selectionModel()->select(ind, selectionType );
 			for(int j=1;j<columnCount;j++)
 			selectionModel()->select(rootIndex().child(i,j), selectionType);
@@ -237,14 +240,21 @@ void TabbedListView::setSelection(Action act){
 	}
 }
 
-
 void TabbedListView::rowsRemoved(const QModelIndex &parent, int first, int){
-	auto prevSelection = parent.child(first, 0);
-	setCurrentIndex(prevSelection);
+	delete prevSelection;
+	prevSelection = new QModelIndex(parent.child(first, 0));
+	qDebug()<<"prevSelections set at deletion";
+	qDebug()<<prevSelection->row() << " "<<prevSelection->column();
 }
 
-void TabbedListView::rowsInserted(const QModelIndex &parent, int first, int){
-	auto prevSelection = parent.child(first, 0);
-	setCurrentIndex(prevSelection);
-	model->sort();
+void TabbedListView::rowsInserted(const QModelIndex &parent, int first, int last){
+	qDebug()<<"rows inserted: "<<first <<" "<<last;
+	delete prevSelection;
+	prevSelection = nullptr;
+	if(!first || !last)
+		return;
+	//prevSelection = new QModelIndex(parent.child(first, 0));
+	qDebug()<<"prevSelections set at insertion";
+	//qDebug()<<prevSelection->row() << " "<<prevSelection->column();
+	//model->sort();
 }

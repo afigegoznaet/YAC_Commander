@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
 	ui->setupUi(this);
@@ -9,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->rightTabWidget->tabBar()->setFocusPolicy(Qt::NoFocus);
 
 	movementProgress = new ProgressDialog(this);
+	searchDlg = new SearchDialog(this);
 
 	readSettings();
 	ui->commandsBox->setMain(this);
@@ -41,8 +43,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->commandsBox->setEditable(true);
 	//ui->commandsBox->addItem(" ");
 
-	ui->leftTabWidget->setFocus();
-	ui->rightTabWidget->setFocus();
+	QEvent* event1 = new QKeyEvent (QEvent::KeyPress,Qt::Key_Tab,Qt::NoModifier);
+	QEvent* event2 = new QKeyEvent (QEvent::KeyRelease,Qt::Key_Tab,Qt::NoModifier);
+	qApp->postEvent(ui->leftTabWidget,event1);
+	qApp->postEvent(ui->leftTabWidget,event2);
 	qDebug()<<QStandardPaths::AppConfigLocation;
 }
 
@@ -98,6 +102,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 	case Qt::Key_F8:
 	case Qt::Key_Delete:
 		deleteFiles();
+		break;
+	case Qt::Key_F10:
+		searchDlg->show(getFocusedTab()->GetDirectory());
 		break;
 	default:
 		QMainWindow::keyPressEvent(event);

@@ -14,6 +14,7 @@
 #include <utility>
 #include "textviewer.h"
 #include "dropdown.h"
+#include "searchdialog.h"
 
 #define DEF_EDITOR "undefined"
 
@@ -58,6 +59,7 @@ private slots:
 private:
 	Ui::MainWindow *ui;
 	ProgressDialog* movementProgress;
+	SearchDialog* searchDlg;
 	QString editor;
 	bool leftFocusOut;
 

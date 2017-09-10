@@ -20,12 +20,19 @@ public:
 	QModelIndex setRootPath(const QString& rootPath) const {
 		return mapFromSource(sourceModel()->setRootPath(rootPath));
 	}
+
 	QModelIndex getRootIndex() const {
 		return mapFromSource(sourceModel()->index(sourceModel()->rootPath()));
 	}
+
+	QModelIndex getSourceRootIndex() const {
+		return (sourceModel()->index(sourceModel()->rootPath()));
+	}
+
 	QFileInfo fileInfo(QModelIndex index) const {
 		return sourceModel()->fileInfo(mapToSource(index));
 	}
+
 	void setFilter(QDir::Filters filt) const {
 		sourceModel()->setFilter(filt);
 	}
@@ -35,10 +42,10 @@ public:
 	void sort(){
 		sort(column, order);
 	}
-
+	QFileSystemModel *sourceModel() const;
 
 private:
-	QFileSystemModel *sourceModel() const;
+
 	int column = 0;
 	Qt::SortOrder order = Qt::AscendingOrder;
 };
