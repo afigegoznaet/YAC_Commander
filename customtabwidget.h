@@ -9,8 +9,6 @@
 #include <QMouseEvent>
 #include "tab.h"
 
-
-
 class CustomTabWidget : public QTabWidget
 {
 	Q_OBJECT
@@ -19,6 +17,9 @@ public:
 	~CustomTabWidget();
 	TabbedListView *addNewTab(bool dup=false, QString dir="");
 	void readSettings();
+	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
+	QLabel* getLabel(){return infoLabel;}
+	void init();
 
 public slots:
 	void onDirChanged(const QString dirName, int tabIndex);
@@ -37,8 +38,11 @@ protected:
 
 private:
 	virtual void mousePressEvent(QMouseEvent *event);
+
+private:
 	QMetaObject::Connection currentHeaderResizedConnection;
 	QMetaObject::Connection currentHeaderMovedConnection;
+	QLabel* infoLabel;
 };
 
 #endif // CUSTOMTABWIDGET_H

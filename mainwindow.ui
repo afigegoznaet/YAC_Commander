@@ -21,68 +21,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="CustomTabWidget" name="leftTabWidget">
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="acceptDrops">
-         <bool>true</bool>
-        </property>
-        <property name="accessibleDescription">
-         <string>Left</string>
-        </property>
-        <property name="currentIndex">
-         <number>-1</number>
-        </property>
-        <property name="tabsClosable">
-         <bool>true</bool>
-        </property>
-        <property name="movable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="CustomTabWidget" name="rightTabWidget">
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="acceptDrops">
-         <bool>true</bool>
-        </property>
-        <property name="accessibleDescription">
-         <string>Right</string>
-        </property>
-        <property name="tabShape">
-         <enum>QTabWidget::Rounded</enum>
-        </property>
-        <property name="currentIndex">
-         <number>-1</number>
-        </property>
-        <property name="documentMode">
-         <bool>false</bool>
-        </property>
-        <property name="tabsClosable">
-         <bool>true</bool>
-        </property>
-        <property name="movable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0">
-     <widget class="DropDown" name="commandsBox">
-      <property name="focusPolicy">
-       <enum>Qt::ClickFocus</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
+    <item row="3" column="0">
      <layout class="QHBoxLayout" name="buttons">
       <item>
        <widget class="QPushButton" name="F3">
@@ -164,7 +103,89 @@
       </item>
      </layout>
     </item>
+    <item row="2" column="0">
+     <widget class="DropDown" name="commandsBox">
+      <property name="focusPolicy">
+       <enum>Qt::ClickFocus</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="CustomTabWidget" name="leftTabWidget">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="acceptDrops">
+         <bool>true</bool>
+        </property>
+        <property name="accessibleDescription">
+         <string>Left</string>
+        </property>
+        <property name="currentIndex">
+         <number>-1</number>
+        </property>
+        <property name="tabsClosable">
+         <bool>true</bool>
+        </property>
+        <property name="movable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="CustomTabWidget" name="rightTabWidget">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="acceptDrops">
+         <bool>true</bool>
+        </property>
+        <property name="accessibleDescription">
+         <string>Right</string>
+        </property>
+        <property name="tabShape">
+         <enum>QTabWidget::Rounded</enum>
+        </property>
+        <property name="currentIndex">
+         <number>-1</number>
+        </property>
+        <property name="documentMode">
+         <bool>false</bool>
+        </property>
+        <property name="tabsClosable">
+         <bool>true</bool>
+        </property>
+        <property name="movable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="rightLabel">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="leftLabel">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
+   <zorder>commandsBox</zorder>
+   <zorder></zorder>
+   <zorder>horizontalLayoutWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -172,7 +193,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>18</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">

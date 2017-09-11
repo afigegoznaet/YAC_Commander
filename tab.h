@@ -15,6 +15,7 @@
 #include <QItemSelectionModel>
 #include <QSettings>
 #include <QInputDialog>
+#include <QLabel>
 #include "orderedfilesystemmodel.h"
 
 class TabbedListView : public QTableView
@@ -59,7 +60,8 @@ private:
 	QString directory;
 	OrderedFileSystemModel* model;
 	int index;
-	QTabWidget* metaTab;
+	QLabel* infoLabel = nullptr;
+	QTabWidget* metaTab = nullptr;
 	QModelIndex* prevSelection = nullptr;
 
 	virtual void mousePressEvent(QMouseEvent *event);

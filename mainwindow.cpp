@@ -3,11 +3,9 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
 	ui->setupUi(this);
-
-	ui->leftTabWidget->setTabsClosable(false);
-	ui->rightTabWidget->setTabsClosable(false);
-	ui->leftTabWidget->tabBar()->setFocusPolicy(Qt::NoFocus);
-	ui->rightTabWidget->tabBar()->setFocusPolicy(Qt::NoFocus);
+	setStatusBar(nullptr);
+	ui->leftTabWidget->init();
+	ui->rightTabWidget->init();
 
 	movementProgress = new ProgressDialog(this);
 	searchDlg = new SearchDialog(this);

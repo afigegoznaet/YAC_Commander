@@ -5,6 +5,16 @@ CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent) {
 
 }
 
+void CustomTabWidget::init(){
+	setTabsClosable(false);
+	tabBar()->setFocusPolicy(Qt::NoFocus);
+	foreach (auto& child, tabBar()->children()) {
+		if(child->isWidgetType())
+			((QWidget*)child)->setFocusPolicy(Qt::NoFocus);
+	}
+
+}
+
 void CustomTabWidget::indexChanged(int index){
 	//qDebug()<<objectName()<<" got a new index "<<index;
 	disconnect(currentHeaderResizedConnection);

@@ -75,7 +75,11 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 }
 
 void ProgressDialog::onWrite(uint percentsWritten){
-	progress->progressBar->setValue(percentsWritten);
+	if(percentsWritten > (uint)progress->progressBar->value())
+		progress->progressBar->setValue(percentsWritten);
+	if(100 == percentsWritten)
+		progress->progressBar->setValue(0);
+
 }
 
 QMessageBox::StandardButton ProgressDialog::showError(int result){
