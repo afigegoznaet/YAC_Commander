@@ -24,15 +24,22 @@ void DropDown::processCommand(){
 		QProcess proc;
 		QString dir(mainWindow->getDirInFocus());
 		//QDir::setCurrent(dir);
+		QString program;
 		QStringList args;
 #ifdef _WIN32
-		args = cmd.split(" ");
-		QString program = args.first();
+
+		if(cmd.startsWith("\"")){
+			args = cmd.split("\" ");
+			program = args.first()+"\"";
+		}else{
+			args = cmd.split(" ");
+			program = args.first();
+		}
 		args.removeFirst();
 #else
 		args << "-exec";
 		args.append(cmd);
-		QString program = "sh";
+		program = "sh";
 		//args.removeFirst();
 #endif
 		qDebug()<<proc.startDetached(program, args, dir);

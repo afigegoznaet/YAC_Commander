@@ -40,11 +40,9 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
 			this,	SLOT(rowsRemoved(QModelIndex,int,int)));
 	//qDebug()<<directory.absolutePath();
-	setStyleSheet("QTableView::item::focus{\
-	   selection-background-color: Qt::blue;}\
-		QTableView::item::previous-focused{\
-	   selection-background-color: Qt::blue;\
-	}");
+
+	setStyleSheet("QTableView::item::focus { selection-background-color: solid blue; border: 1px solid green;\
+				  row-background-color: solid-green}");
 }
 
 
