@@ -106,6 +106,12 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 	case Qt::Key_Asterisk:
 		setSelection(ASTERISK);
 		break;
+	case Qt::Key_Right:
+	case Qt::Key_Left:
+		break;
+	case Qt::Key_Space:
+		selectionModel()->setCurrentIndex(index,
+			QItemSelectionModel::Select | QItemSelectionModel::Rows);
 	case Qt::Key_Down:
 		index = rootIndex().child(index.row()+1,0);
 		if(index.isValid())
@@ -182,9 +188,12 @@ void TabbedListView::focusOutEvent(QFocusEvent *event){
 QFileInfoList TabbedListView::getSelectedFiles(){
 	QFileInfoList selectedFiles;
 	QModelIndexList items = selectionModel()->selectedRows();
-	foreach (auto fileIndex, items) {
-		selectedFiles.append(model->fileInfo(fileIndex));
-	}
+	if(!items.size())
+		selectedFiles.append(
+					model->fileInfo(selectionModel()->currentIndex()));
+	else
+		foreach (auto fileIndex, items)
+			selectedFiles.append(model->fileInfo(fileIndex));
 	return selectedFiles;
 }
 
