@@ -111,7 +111,7 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 		break;
 	case Qt::Key_Space:
 		selectionModel()->setCurrentIndex(index,
-			QItemSelectionModel::Select | QItemSelectionModel::Rows);
+			QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
 	case Qt::Key_Down:
 		index = rootIndex().child(index.row()+1,0);
 		if(index.isValid())
