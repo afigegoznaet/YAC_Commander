@@ -16,7 +16,10 @@
 #include <QSettings>
 #include <QInputDialog>
 #include <QLabel>
+#include <QTimer>
 #include "orderedfilesystemmodel.h"
+#include "tableitemdelegate.h"
+#include <QGuiApplication>
 
 class TabbedListView : public QTableView
 {
@@ -36,6 +39,8 @@ public:
 	}
 	QFileInfoList getSelectedFiles();
 	void cdTo(const QString&);
+	TableItemDelegate *itemDelegate() const{
+		return (TableItemDelegate*)QTableView::itemDelegate();}
 
 signals:
 	//void activated(const QModelIndex &index);

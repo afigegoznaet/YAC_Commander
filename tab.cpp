@@ -27,11 +27,12 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	model->setRootPath(this->directory);
 	model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System | QDir::Hidden);
 
-	setSelectionMode(QAbstractItemView::ExtendedSelection);
+	setSelectionMode(QAbstractItemView::NoSelection);
 	setModel(model);
 	model->setFilterRegExp("");
 	setRootIndex(model->getRootIndex());
 	verticalHeader()->setVisible(false);
+
 	//this is needed for clever file selection whn moving up and down
 	connect(fModel,	SIGNAL(directoryLoaded(QString)),
 			this, SLOT(setCurrentSelection(QString)));
@@ -39,10 +40,56 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 			this, SLOT(rowsInserted(QModelIndex,int,int)));
 	connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
 			this,	SLOT(rowsRemoved(QModelIndex,int,int)));
-	//qDebug()<<directory.absolutePath();
 
-	setStyleSheet("QTableView::item::focus { selection-background-color: solid blue; border: 1px solid green;\
-				  row-background-color: solid-green}");
+	auto delegate = new TableItemDelegate(this);
+	setItemDelegate(delegate);
+	connect(horizontalHeader(), &QHeaderView::geometriesChanged,
+			[&](){itemDelegate()->setRect(horizontalHeader()->geometry());});
+	connect(selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+			delegate, SLOT(currentChanged(QModelIndex,QModelIndex)));
+	connect(selectionModel(), &QItemSelectionModel::currentChanged,
+			[&](QModelIndex current, QModelIndex prev){
+				for(int i=0;i<4;i++)
+					update(current.sibling(current.row(),i));
+				for(int i=0;i<4;i++)
+					update(prev.sibling(prev.row(),i));
+			});
+	setStyleSheet("\
+		QTableView {\
+			show-decoration-selected: 1;\
+		}\
+		\
+		QTableView::item {\
+			border: 1px solid #d9d9d9;\
+			border-top-color: transparent;\
+			border-bottom-color: transparent;\
+		}\
+		\
+		QTableView::item:hover {\
+			background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
+			border: 1px solid #bfcde4;\
+		}\
+		QTableView::item:focus {\
+			background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
+			border: 1px solid #bfcde4;\
+		}\
+		\
+		QTableView::row:selected {\
+			background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
+			border: 1px solid #bfcde4;\
+		}\
+		\
+		QTableView::item:selected {\
+			border: 1px solid #567dbc;\
+		}\
+		\
+		QTableView::item:selected:active{\
+			background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);\
+		}\
+		\
+		QTableView::item:selected:!active {\
+			background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6f9be8, stop: 1 #517fbf);\
+		}");
 }
 
 
@@ -61,6 +108,7 @@ void TabbedListView::on_doubleClicked(const QModelIndex &index){
 void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 	delete prevSelection;
 	prevSelection = nullptr;
+	selectionModel()->clear();
 	if(in_out == IN){
 		directory="..";//clever selection
 		QDir parentDir(model->fileInfo(index).absoluteFilePath());
@@ -90,6 +138,10 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 	else
 		index = rootIndex().child(0,0);
 	auto key = event->key();
+	QFlags<QItemSelectionModel::SelectionFlag> flags = QItemSelectionModel::NoUpdate;
+	auto modifiers = ((QGuiApplication*)QGuiApplication::instance())->keyboardModifiers();
+	if(modifiers & Qt::ShiftModifier)
+		flags = QItemSelectionModel::Toggle | QItemSelectionModel::Rows;
 	switch (key) {
 	case Qt::Key_Return:
 		on_doubleClicked(index);
@@ -113,12 +165,16 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 		selectionModel()->setCurrentIndex(index,
 			QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
 	case Qt::Key_Down:
+		selectionModel()->setCurrentIndex(index,
+									  flags);
 		index = rootIndex().child(index.row()+1,0);
 		if(index.isValid())
 			selectionModel()->setCurrentIndex(index,
 										  QItemSelectionModel::NoUpdate);
 		break;
 	case Qt::Key_Up:
+		selectionModel()->setCurrentIndex(index,
+									  flags);
 		index = rootIndex().child(index.row()-1,0);
 		if(index.isValid())
 			selectionModel()->setCurrentIndex(index,
@@ -138,12 +194,13 @@ void TabbedListView::init(){
 	connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
 	horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
 	auto hz = connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
+	selectionModel()->select(QModelIndex(rootIndex().child(1,0)),  QItemSelectionModel::Current);
 	qDebug()<<hz;
 }
 
 void TabbedListView::setCurrentSelection(QString){
 	if(prevSelection && prevSelection->isValid()){
-		selectionModel()->setCurrentIndex(*prevSelection, QItemSelectionModel::NoUpdate);
+		selectionModel()->setCurrentIndex(*prevSelection, QItemSelectionModel::Current);
 		//setCurrentIndex(*prevSelection);
 		//selectionModel()->select(*prevSelection, QItemSelectionModel::SelectCurrent | QItemSelectionModel::Columns);
 		return;

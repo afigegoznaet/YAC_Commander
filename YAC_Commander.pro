@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     orderedfilesystemmodel.cpp \
     searchdialog.cpp \
     customdropdown.cpp \
-    filefindingsmodel.cpp
+    filefindingsmodel.cpp \
+    tableitemdelegate.cpp
 
 HEADERS  += mainwindow.h \
     tab.h \
@@ -47,7 +48,8 @@ HEADERS  += mainwindow.h \
     orderedfilesystemmodel.h \
     searchdialog.h \
     customdropdown.h \
-    filefindingsmodel.h
+    filefindingsmodel.h \
+    tableitemdelegate.h
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

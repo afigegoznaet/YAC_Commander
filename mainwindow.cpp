@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
 	ui->setupUi(this);
@@ -41,10 +40,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->commandsBox->setEditable(true);
 	//ui->commandsBox->addItem(" ");
 
-	QEvent* event1 = new QKeyEvent (QEvent::KeyPress,Qt::Key_Tab,Qt::NoModifier);
-	QEvent* event2 = new QKeyEvent (QEvent::KeyRelease,Qt::Key_Tab,Qt::NoModifier);
-	qApp->postEvent(ui->leftTabWidget,event1);
-	qApp->postEvent(ui->leftTabWidget,event2);
+	QTimer::singleShot(200, [&](){
+		QEvent* event1 = new QKeyEvent (QEvent::KeyPress,Qt::Key_Tab,Qt::NoModifier);
+		QEvent* event2 = new QKeyEvent (QEvent::KeyRelease,Qt::Key_Tab,Qt::NoModifier);
+		qApp->postEvent(ui->leftTabWidget,event1);
+		qApp->postEvent(ui->leftTabWidget,event2);
+	});
 	qDebug()<<QStandardPaths::AppConfigLocation;
 }
 

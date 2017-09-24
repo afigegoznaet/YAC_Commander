@@ -77,8 +77,8 @@ TabbedListView* CustomTabWidget::addNewTab(bool dup, QString dir){
 	newTab->horizontalHeader()->restoreState(headerState);
 	setCurrentIndex(index);
 	newTab->setFocus();
-
 	emit currentChanged(index);
+	//newTab->setCurrentIndex(newTab->currentIndex().sibling(0,0));
 
 	return newTab;
 }

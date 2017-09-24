@@ -1,0 +1,26 @@
+#ifndef TABLEITEMDELEGATE_H
+#define TABLEITEMDELEGATE_H
+
+#include <QItemDelegate>
+#include <QPainter>
+#include <QDebug>
+class TableItemDelegate : public QItemDelegate
+{
+	Q_OBJECT
+public:
+	TableItemDelegate(QObject *parent = Q_NULLPTR);
+	void setRect(QRect rect){this->rect=rect;}
+protected:
+	void paint(QPainter *painter, const QStyleOptionViewItem &option,
+					const QModelIndex &index) const override;
+	virtual void drawFocus ( QPainter * /*painter*/,
+							 const QStyleOptionViewItem & /*option*/,
+							 const QRect & /*rect*/ ) const {}
+public slots:
+	void currentChanged(QModelIndex current,QModelIndex);
+private:
+	QModelIndex current;
+	QRect rect;
+};
+
+#endif // TABLEITEMDELEGATE_H
