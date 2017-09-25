@@ -130,7 +130,7 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 
 void TabbedListView::keyPressEvent(QKeyEvent *event){
 
-	qDebug()<<styleSheet();
+	//qDebug()<<styleSheet();
 	QString filter;
 	QModelIndex index;
 	if(currentIndex().isValid())
@@ -193,9 +193,8 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 void TabbedListView::init(){
 	connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
 	horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
-	auto hz = connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
+	connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
 	selectionModel()->select(QModelIndex(rootIndex().child(1,0)),  QItemSelectionModel::Current);
-	qDebug()<<hz;
 }
 
 void TabbedListView::setCurrentSelection(QString){
@@ -214,7 +213,9 @@ void TabbedListView::setCurrentSelection(QString){
 			break;
 		}
 	}
-	selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
+	selectionModel()->select(index, QItemSelectionModel::NoUpdate);
+	qDebug()<<"Current index";
+	qDebug()<<currentIndex();
 	//setCurrentIndex(index);
 }
 
