@@ -6,6 +6,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->leftTabWidget->init();
 	ui->rightTabWidget->init();
 
+	ui->leftLabel->setText("Left");
+	ui->rightLabel->setText("Right");
+
 	movementProgress = new ProgressDialog(this);
 	searchDlg = new SearchDialog(this);
 

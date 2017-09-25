@@ -209,11 +209,13 @@ void TabbedListView::setCurrentSelection(QString){
 	for(int i=0;i<rows;i++){
 		auto ind = rootIndex().child(i,0);
 		if(!directory.compare(model->fileInfo(ind).fileName())){
+			qDebug()<<"Found index";
 			index = ind;
+			qDebug()<<currentIndex();
 			break;
 		}
 	}
-	selectionModel()->select(index, QItemSelectionModel::NoUpdate);
+	selectionModel()->setCurrentIndex(index,QItemSelectionModel::NoUpdate );
 	qDebug()<<"Current index";
 	qDebug()<<currentIndex();
 	//setCurrentIndex(index);
