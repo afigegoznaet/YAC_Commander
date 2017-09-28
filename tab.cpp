@@ -41,6 +41,8 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
 			this,	SLOT(rowsRemoved(QModelIndex,int,int)));
 
+	connect(this, SIGNAL(setInfo()), this, SLOT(updateInfo()));
+
 	auto delegate = new TableItemDelegate(this);
 	setItemDelegate(delegate);
 	connect(horizontalHeader(), &QHeaderView::geometriesChanged,
@@ -108,7 +110,6 @@ void TabbedListView::on_doubleClicked(const QModelIndex &index){
 void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 	delete prevSelection;
 	prevSelection = nullptr;
-	selectionModel()->clear();
 	if(in_out == IN){
 		directory="..";//clever selection
 		QDir parentDir(model->fileInfo(index).absoluteFilePath());
@@ -123,7 +124,10 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 		parentDir.cdUp();
 		setRootIndex(model->setRootPath(parentDir.absolutePath()));
 	}
-
+	if(selectionModel()->selectedRows().size()){
+		selectionModel()->clear();
+		emit setInfo();
+	}
 	emit dirChanged(model->rootPath(), this->index);
 
 }
@@ -237,6 +241,7 @@ void TabbedListView::focusInEvent(QFocusEvent *event){
 	//cout<<"Focus in! "<<event->gotFocus();
 	QWidget::focusInEvent(event);
 	emit focusEvent(true);
+	emit setInfo();
 }
 
 void TabbedListView::focusOutEvent(QFocusEvent *event){
@@ -331,20 +336,48 @@ void TabbedListView::setSelection(Action act){
 void TabbedListView::rowsRemoved(const QModelIndex &parent, int first, int){
 	delete prevSelection;
 	prevSelection = new QModelIndex(parent.child(first, 0));
-	qDebug()<<"prevSelections set at deletion";
-	qDebug()<<prevSelection->row() << " "<<prevSelection->column();
+	//qDebug()<<"prevSelections set at deletion";
+	//qDebug()<<prevSelection->row() << " "<<prevSelection->column();
 }
 
 void TabbedListView::rowsInserted(const QModelIndex &parent, int first, int last){
-	qDebug()<<"rows inserted: "<<first <<" "<<last;
-	qDebug()<<parent.child(first, 0);
+	//qDebug()<<"rows inserted: "<<first <<" "<<last;
+	//qDebug()<<parent.child(first, 0);
 	delete prevSelection;
 	prevSelection = nullptr;
 	if(!first || !last)
 		return;
 	//prevSelection = new QModelIndex(parent.child(first, 0));
-	qDebug()<<"prevSelections set at insertion";
+	//qDebug()<<"prevSelections set at insertion";
 	//qDebug()<<prevSelection->row() << " "<<prevSelection->column();
 	//model->sort();
 }
 
+void TabbedListView::updateInfo(){
+	QStorageInfo storage(model->rootPath());
+	QString fmt;
+	double sizeTotal, sizeRemaining;
+	QString typeTotal, typeRemaining;
+	if(storage.bytesTotal() > 1024*1024*1024){
+		sizeTotal = storage.bytesTotal() /1024.0/1024/1024;
+		typeTotal = "GB";
+	}else{
+		sizeTotal = storage.bytesTotal() /1024.0/1024;
+		typeTotal = "MB";
+	}
+
+	if(storage.bytesAvailable() > 1024*1024*1024){
+		sizeRemaining = storage.bytesAvailable() /1024.0/1024/1024;
+		typeRemaining = "GB";
+	}else{
+		sizeRemaining = storage.bytesAvailable() /1024.0/1024;
+		typeRemaining = "MB";
+	}
+	fmt +=QString::number(sizeRemaining)+" "+typeRemaining  +" available of "+QString::number(sizeTotal)+  " "+typeTotal;
+	fmt += "\t" + QString::number(selectionModel()->selectedRows().size()) + " selected of "+QString::number(model->rowCount()) +" directory items";
+	qDebug() << "size:" << sizeTotal << "MB";
+	qDebug() << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB";
+	qDebug() << "Selected: "<<selectionModel()->selectedRows().size()<<" of "<<model->rowCount();
+
+	infoLabel->setText(fmt);
+}

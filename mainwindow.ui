@@ -111,7 +111,7 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="tabViewLayout">
       <item>
        <widget class="CustomTabWidget" name="leftTabWidget">
         <property name="focusPolicy">
@@ -165,16 +165,16 @@
      </layout>
     </item>
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QHBoxLayout" name="labelLayout">
       <item>
-       <widget class="QLabel" name="rightLabel">
+       <widget class="QLabel" name="leftLabel">
         <property name="text">
          <string>TextLabel</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="leftLabel">
+       <widget class="QLabel" name="rightLabel">
         <property name="text">
          <string>TextLabel</string>
         </property>
@@ -184,8 +184,6 @@
     </item>
    </layout>
    <zorder>commandsBox</zorder>
-   <zorder></zorder>
-   <zorder>horizontalLayoutWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -6,8 +6,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->leftTabWidget->init();
 	ui->rightTabWidget->init();
 
+	ui->leftTabWidget->setLabel(ui->leftLabel);
+	ui->rightTabWidget->setLabel(ui->rightLabel);
+
 	ui->leftLabel->setText("Left");
 	ui->rightLabel->setText("Right");
+
+	ui->leftLabel->setStyleSheet("border: 1px solid green; background: white");
+	ui->rightLabel->setStyleSheet("border: 1px solid green; background: white");
 
 	movementProgress = new ProgressDialog(this);
 	searchDlg = new SearchDialog(this);

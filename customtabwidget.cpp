@@ -12,7 +12,6 @@ void CustomTabWidget::init(){
 		if(child->isWidgetType())
 			((QWidget*)child)->setFocusPolicy(Qt::NoFocus);
 	}
-
 }
 
 void CustomTabWidget::indexChanged(int index){
@@ -73,6 +72,7 @@ TabbedListView* CustomTabWidget::addNewTab(bool dup, QString dir){
 
 	auto defaultState = newTab->horizontalHeader()->saveState();//header state
 	QSettings settings;
+	newTab->setLabel(infoLabel);
 	auto headerState = settings.value("Columns", defaultState).toByteArray();
 	newTab->horizontalHeader()->restoreState(headerState);
 	setCurrentIndex(index);

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 4.8.7
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,19 +10,19 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QApplication>
-#include <QtGui/QButtonGroup>
-#include <QtGui/QGridLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLabel>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMenu>
-#include <QtGui/QMenuBar>
-#include <QtGui/QPushButton>
-#include <QtGui/QStatusBar>
-#include <QtGui/QWidget>
+#include <QtWidgets/QAction>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QWidget>
 #include "customtabwidget.h"
 #include "customtoolbar.h"
 #include "dropdown.h"
@@ -44,12 +44,12 @@ public:
     QPushButton *F7;
     QPushButton *F8;
     DropDown *commandsBox;
-    QHBoxLayout *horizontalLayout;
+    QHBoxLayout *tabViewLayout;
     CustomTabWidget *leftTabWidget;
     CustomTabWidget *rightTabWidget;
-    QHBoxLayout *horizontalLayout_3;
-    QLabel *rightLabel;
+    QHBoxLayout *labelLayout;
     QLabel *leftLabel;
+    QLabel *rightLabel;
     QMenuBar *menubar;
     QMenu *menuFiles;
     QMenu *menuCommand;
@@ -64,7 +64,7 @@ public:
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
-            MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
+            MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(800, 600);
         QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
@@ -72,47 +72,47 @@ public:
         sizePolicy.setHeightForWidth(MainWindow->sizePolicy().hasHeightForWidth());
         MainWindow->setSizePolicy(sizePolicy);
         actionDisk = new QAction(MainWindow);
-        actionDisk->setObjectName(QString::fromUtf8("actionDisk"));
+        actionDisk->setObjectName(QStringLiteral("actionDisk"));
         actionRefresh = new QAction(MainWindow);
-        actionRefresh->setObjectName(QString::fromUtf8("actionRefresh"));
+        actionRefresh->setObjectName(QStringLiteral("actionRefresh"));
         centralwidget = new QWidget(MainWindow);
-        centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
+        centralwidget->setObjectName(QStringLiteral("centralwidget"));
         gridLayout = new QGridLayout(centralwidget);
-        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
         buttons = new QHBoxLayout();
-        buttons->setObjectName(QString::fromUtf8("buttons"));
+        buttons->setObjectName(QStringLiteral("buttons"));
         F3 = new QPushButton(centralwidget);
-        F3->setObjectName(QString::fromUtf8("F3"));
+        F3->setObjectName(QStringLiteral("F3"));
         F3->setFocusPolicy(Qt::NoFocus);
 
         buttons->addWidget(F3);
 
         F4 = new QPushButton(centralwidget);
-        F4->setObjectName(QString::fromUtf8("F4"));
+        F4->setObjectName(QStringLiteral("F4"));
         F4->setFocusPolicy(Qt::NoFocus);
 
         buttons->addWidget(F4);
 
         F5 = new QPushButton(centralwidget);
-        F5->setObjectName(QString::fromUtf8("F5"));
+        F5->setObjectName(QStringLiteral("F5"));
         F5->setFocusPolicy(Qt::NoFocus);
 
         buttons->addWidget(F5);
 
         F6 = new QPushButton(centralwidget);
-        F6->setObjectName(QString::fromUtf8("F6"));
+        F6->setObjectName(QStringLiteral("F6"));
         F6->setFocusPolicy(Qt::NoFocus);
 
         buttons->addWidget(F6);
 
         F7 = new QPushButton(centralwidget);
-        F7->setObjectName(QString::fromUtf8("F7"));
+        F7->setObjectName(QStringLiteral("F7"));
         F7->setFocusPolicy(Qt::NoFocus);
 
         buttons->addWidget(F7);
 
         F8 = new QPushButton(centralwidget);
-        F8->setObjectName(QString::fromUtf8("F8"));
+        F8->setObjectName(QStringLiteral("F8"));
         F8->setFocusPolicy(Qt::NoFocus);
 
         buttons->addWidget(F8);
@@ -121,24 +121,24 @@ public:
         gridLayout->addLayout(buttons, 3, 0, 1, 1);
 
         commandsBox = new DropDown(centralwidget);
-        commandsBox->setObjectName(QString::fromUtf8("commandsBox"));
+        commandsBox->setObjectName(QStringLiteral("commandsBox"));
         commandsBox->setFocusPolicy(Qt::ClickFocus);
 
         gridLayout->addWidget(commandsBox, 2, 0, 1, 1);
 
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        tabViewLayout = new QHBoxLayout();
+        tabViewLayout->setObjectName(QStringLiteral("tabViewLayout"));
         leftTabWidget = new CustomTabWidget(centralwidget);
-        leftTabWidget->setObjectName(QString::fromUtf8("leftTabWidget"));
+        leftTabWidget->setObjectName(QStringLiteral("leftTabWidget"));
         leftTabWidget->setFocusPolicy(Qt::NoFocus);
         leftTabWidget->setAcceptDrops(true);
         leftTabWidget->setTabsClosable(true);
         leftTabWidget->setMovable(true);
 
-        horizontalLayout->addWidget(leftTabWidget);
+        tabViewLayout->addWidget(leftTabWidget);
 
         rightTabWidget = new CustomTabWidget(centralwidget);
-        rightTabWidget->setObjectName(QString::fromUtf8("rightTabWidget"));
+        rightTabWidget->setObjectName(QStringLiteral("rightTabWidget"));
         rightTabWidget->setFocusPolicy(Qt::NoFocus);
         rightTabWidget->setAcceptDrops(true);
         rightTabWidget->setTabShape(QTabWidget::Rounded);
@@ -146,51 +146,51 @@ public:
         rightTabWidget->setTabsClosable(true);
         rightTabWidget->setMovable(true);
 
-        horizontalLayout->addWidget(rightTabWidget);
+        tabViewLayout->addWidget(rightTabWidget);
 
 
-        gridLayout->addLayout(horizontalLayout, 1, 0, 1, 1);
+        gridLayout->addLayout(tabViewLayout, 1, 0, 1, 1);
 
-        horizontalLayout_3 = new QHBoxLayout();
-        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
-        rightLabel = new QLabel(centralwidget);
-        rightLabel->setObjectName(QString::fromUtf8("rightLabel"));
-
-        horizontalLayout_3->addWidget(rightLabel);
-
+        labelLayout = new QHBoxLayout();
+        labelLayout->setObjectName(QStringLiteral("labelLayout"));
         leftLabel = new QLabel(centralwidget);
-        leftLabel->setObjectName(QString::fromUtf8("leftLabel"));
+        leftLabel->setObjectName(QStringLiteral("leftLabel"));
 
-        horizontalLayout_3->addWidget(leftLabel);
+        labelLayout->addWidget(leftLabel);
+
+        rightLabel = new QLabel(centralwidget);
+        rightLabel->setObjectName(QStringLiteral("rightLabel"));
+
+        labelLayout->addWidget(rightLabel);
 
 
-        gridLayout->addLayout(horizontalLayout_3, 0, 0, 1, 1);
+        gridLayout->addLayout(labelLayout, 0, 0, 1, 1);
 
         MainWindow->setCentralWidget(centralwidget);
         commandsBox->raise();
         menubar = new QMenuBar(MainWindow);
-        menubar->setObjectName(QString::fromUtf8("menubar"));
+        menubar->setObjectName(QStringLiteral("menubar"));
         menubar->setGeometry(QRect(0, 0, 800, 19));
         menuFiles = new QMenu(menubar);
-        menuFiles->setObjectName(QString::fromUtf8("menuFiles"));
+        menuFiles->setObjectName(QStringLiteral("menuFiles"));
         menuCommand = new QMenu(menubar);
-        menuCommand->setObjectName(QString::fromUtf8("menuCommand"));
+        menuCommand->setObjectName(QStringLiteral("menuCommand"));
         menuCommands = new QMenu(menubar);
-        menuCommands->setObjectName(QString::fromUtf8("menuCommands"));
+        menuCommands->setObjectName(QStringLiteral("menuCommands"));
         menuNet = new QMenu(menubar);
-        menuNet->setObjectName(QString::fromUtf8("menuNet"));
+        menuNet->setObjectName(QStringLiteral("menuNet"));
         menuShow = new QMenu(menubar);
-        menuShow->setObjectName(QString::fromUtf8("menuShow"));
+        menuShow->setObjectName(QStringLiteral("menuShow"));
         menuConfiguration = new QMenu(menubar);
-        menuConfiguration->setObjectName(QString::fromUtf8("menuConfiguration"));
+        menuConfiguration->setObjectName(QStringLiteral("menuConfiguration"));
         menuStart = new QMenu(menubar);
-        menuStart->setObjectName(QString::fromUtf8("menuStart"));
+        menuStart->setObjectName(QStringLiteral("menuStart"));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
-        statusbar->setObjectName(QString::fromUtf8("statusbar"));
+        statusbar->setObjectName(QStringLiteral("statusbar"));
         MainWindow->setStatusBar(statusbar);
         quickBar = new CustomToolbar(MainWindow);
-        quickBar->setObjectName(QString::fromUtf8("quickBar"));
+        quickBar->setObjectName(QStringLiteral("quickBar"));
         QSizePolicy sizePolicy1(QSizePolicy::Maximum, QSizePolicy::Fixed);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
@@ -220,54 +220,54 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-		MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
-		actionDisk->setText(QApplication::translate("MainWindow", "Disk", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
+        actionDisk->setText(QApplication::translate("MainWindow", "Disk", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-		actionDisk->setToolTip(QApplication::translate("MainWindow", "Disk", 0));
+        actionDisk->setToolTip(QApplication::translate("MainWindow", "Disk", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-		actionRefresh->setText(QApplication::translate("MainWindow", "Refresh", 0));
+        actionRefresh->setText(QApplication::translate("MainWindow", "Refresh", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-		actionRefresh->setToolTip(QApplication::translate("MainWindow", "Refresh", 0));
+        actionRefresh->setToolTip(QApplication::translate("MainWindow", "Refresh", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
 #ifndef QT_NO_TOOLTIP
-		F3->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#00aa00;\">View file in text mode</span></p></body></html>", 0));
+        F3->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#00aa00;\">View file in text mode</span></p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-		F3->setText(QApplication::translate("MainWindow", "F3 View", 0));
+        F3->setText(QApplication::translate("MainWindow", "F3 View", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-		F4->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ff5500;\">Edit file in %s</span></p></body></html>", 0));
+        F4->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ff5500;\">Edit file in %s</span></p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-		F4->setText(QApplication::translate("MainWindow", "F4 Edit", 0));
+        F4->setText(QApplication::translate("MainWindow", "F4 Edit", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-		F5->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#00aa00;\">Copy selected items to whatever folder is opened in the opposite tab</span></p></body></html>", 0));
+        F5->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#00aa00;\">Copy selected items to whatever folder is opened in the opposite tab</span></p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-		F5->setText(QApplication::translate("MainWindow", "F5 Copy", 0));
+        F5->setText(QApplication::translate("MainWindow", "F5 Copy", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-		F6->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#00aa00;\">Move selected items to whatever folder is opened in the opposite tab</span></p></body></html>", 0));
+        F6->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#00aa00;\">Move selected items to whatever folder is opened in the opposite tab</span></p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-		F6->setText(QApplication::translate("MainWindow", "F6 Move", 0));
+        F6->setText(QApplication::translate("MainWindow", "F6 Move", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-		F7->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#00aa00;\">Create a new folder</span></p></body></html>", 0));
+        F7->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#00aa00;\">Create a new folder</span></p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-		F7->setText(QApplication::translate("MainWindow", "F7 New Folder", 0));
+        F7->setText(QApplication::translate("MainWindow", "F7 New Folder", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
-		F8->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ff0000;\">Delete selected items</span></p></body></html>", 0));
+        F8->setToolTip(QApplication::translate("MainWindow", "<html><head/><body><p><span style=\" color:#ff0000;\">Delete selected items</span></p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-		F8->setText(QApplication::translate("MainWindow", "F8 Delete", 0));
+        F8->setText(QApplication::translate("MainWindow", "F8 Delete", Q_NULLPTR));
 #ifndef QT_NO_ACCESSIBILITY
-		leftTabWidget->setAccessibleDescription(QApplication::translate("MainWindow", "Left", 0));
+        leftTabWidget->setAccessibleDescription(QApplication::translate("MainWindow", "Left", Q_NULLPTR));
 #endif // QT_NO_ACCESSIBILITY
 #ifndef QT_NO_ACCESSIBILITY
-		rightTabWidget->setAccessibleDescription(QApplication::translate("MainWindow", "Right", 0));
+        rightTabWidget->setAccessibleDescription(QApplication::translate("MainWindow", "Right", Q_NULLPTR));
 #endif // QT_NO_ACCESSIBILITY
-		rightLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0));
-		leftLabel->setText(QApplication::translate("MainWindow", "TextLabel", 0));
-		menuFiles->setTitle(QApplication::translate("MainWindow", "Files", 0));
-		menuCommand->setTitle(QApplication::translate("MainWindow", "Mark", 0));
-		menuCommands->setTitle(QApplication::translate("MainWindow", "Commands", 0));
-		menuNet->setTitle(QApplication::translate("MainWindow", "Net", 0));
-		menuShow->setTitle(QApplication::translate("MainWindow", "Show", 0));
-		menuConfiguration->setTitle(QApplication::translate("MainWindow", "Configuration", 0));
-		menuStart->setTitle(QApplication::translate("MainWindow", "Start", 0));
+        leftLabel->setText(QApplication::translate("MainWindow", "TextLabel", Q_NULLPTR));
+        rightLabel->setText(QApplication::translate("MainWindow", "TextLabel", Q_NULLPTR));
+        menuFiles->setTitle(QApplication::translate("MainWindow", "Files", Q_NULLPTR));
+        menuCommand->setTitle(QApplication::translate("MainWindow", "Mark", Q_NULLPTR));
+        menuCommands->setTitle(QApplication::translate("MainWindow", "Commands", Q_NULLPTR));
+        menuNet->setTitle(QApplication::translate("MainWindow", "Net", Q_NULLPTR));
+        menuShow->setTitle(QApplication::translate("MainWindow", "Show", Q_NULLPTR));
+        menuConfiguration->setTitle(QApplication::translate("MainWindow", "Configuration", Q_NULLPTR));
+        menuStart->setTitle(QApplication::translate("MainWindow", "Start", Q_NULLPTR));
     } // retranslateUi
 
 };

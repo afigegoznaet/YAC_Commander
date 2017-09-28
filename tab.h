@@ -17,6 +17,7 @@
 #include <QInputDialog>
 #include <QLabel>
 #include <QTimer>
+#include <QStorageInfo>
 #include "orderedfilesystemmodel.h"
 #include "tableitemdelegate.h"
 #include <QGuiApplication>
@@ -40,12 +41,16 @@ public:
 	QFileInfoList getSelectedFiles();
 	void cdTo(const QString&);
 	TableItemDelegate *itemDelegate() const{
-		return (TableItemDelegate*)QTableView::itemDelegate();}
+		return (TableItemDelegate*)QTableView::itemDelegate();
+	}
+	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
+	QLabel* getLabel(){return infoLabel;}
 
 signals:
 	//void activated(const QModelIndex &index);
 	void dirChanged(const QString dirName, int index);
 	void focusEvent(bool);
+	void setInfo();
 	//void fileMovement(QItemSelectionModel* model, FileMovementAction action);
 
 public slots:
@@ -54,6 +59,7 @@ public slots:
 	void headerClicked(int section);
 	void rowsRemoved(const QModelIndex &parent, int first, int);
 	void rowsInserted(const QModelIndex &parent, int first, int);
+	void updateInfo();
 protected:
 	virtual void keyPressEvent(QKeyEvent * event);
 	void chDir(const QModelIndex &index, bool in_out);
