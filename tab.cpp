@@ -3,7 +3,6 @@
 
 #define IN 1
 #define OUT 0
-#define cout qDebug()
 
 TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	QTableView(parent),
@@ -51,7 +50,6 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 			delegate, SLOT(currentChanged(QModelIndex,QModelIndex)));
 	connect(selectionModel(), &QItemSelectionModel::currentChanged,
 			[&](QModelIndex current, QModelIndex prev){
-				qDebug()<<"Current changed: "<<current<<" "<<prev;
 				for(int i=0;i<4;i++)
 					update(current.sibling(current.row(),i));
 				for(int i=0;i<4;i++)
@@ -127,8 +125,6 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 }
 
 void TabbedListView::keyPressEvent(QKeyEvent *event){
-
-	qDebug()<<currentIndex();
 	QString filter;
 	QModelIndex index;
 	if(currentIndex().isValid())
@@ -204,27 +200,14 @@ void TabbedListView::setCurrentSelection(QString){
 	int i;
 	for(i=0;i<rows;i++){
 		auto ind = rootIndex.child(i,0);
-		qDebug()<<"Dir: "<<directory<<" _ "<<model->fileInfo(ind).fileName();
+		//qDebug()<<"Dir: "<<directory<<" _ "<<model->fileInfo(ind).fileName();
 		if(!directory.compare(model->fileInfo(ind).fileName())){
 			index = ind;
-			//break;
+			break;
 		}
 	}
 
-	qDebug()<<"Index: "<<index;
-
-	if(index.row() == 0){
-		qDebug()<<"Rows: "<<rows;
-		qDebug()<<"Orig rows:"<< model->sourceModel()->rowCount(rootIndex);
-		qDebug()<<"Current index: "<<currentIndex();
-		qDebug()<<"Index: "<< index;
-	}
-	qDebug()<<"Current index before: "<<currentIndex();
 	selectionModel()->setCurrentIndex(index,QItemSelectionModel::NoUpdate );
-	qDebug()<<"Current index after: "<<currentIndex();
-	qDebug()<<"Index: "<< index;
-
-	//setCurrentIndex(index);
 }
 
 void TabbedListView::headerClicked(int section){
@@ -260,10 +243,10 @@ QFileInfoList TabbedListView::getSelectedFiles(){
 }
 
 void TabbedListView::cdTo(const QString &dir){
-	qDebug()<<"Cd event!!! "<<dir;
 	model->setRootPath(dir);
 	setRootIndex(model->getRootIndex());
 	emit dirChanged(dir, this->index);
+	updateInfo();
 }
 
 void TabbedListView::mousePressEvent(QMouseEvent *event){
@@ -322,7 +305,7 @@ void TabbedListView::setSelection(Action act){
 			continue;
 
 		if(filter.isEmpty() || model->fileInfo(ind).fileName().contains(reg)){
-			qDebug()<<model->fileInfo(ind).fileName();
+			//qDebug()<<model->fileInfo(ind).fileName();
 			selectionModel()->select(ind, selectionType );
 			for(int j=1;j<columnCount;j++)
 			selectionModel()->select(rootIndex().child(i,j), selectionType);
@@ -343,10 +326,10 @@ void TabbedListView::rowsInserted(const QModelIndex, int first, int last){
 }
 
 void TabbedListView::updateInfo(){
-	qDebug()<<"***************************************************";
-	qDebug()<<"Root path:"<< model->rootPath();
+	//qDebug()<<"***************************************************";
+	//qDebug()<<"Root path:"<< model->rootPath();
 	QStorageInfo storage(model->rootPath());
-	qDebug()<<"Root path:"<< storage.rootPath();
+	//qDebug()<<"Root path:"<< storage.rootPath();
 	QString fmt;
 	double sizeTotal, sizeRemaining;
 	QString typeTotal, typeRemaining;
@@ -367,9 +350,9 @@ void TabbedListView::updateInfo(){
 	}
 	fmt +=QString::number(sizeRemaining)+" "+typeRemaining  +" available of "+QString::number(sizeTotal)+  " "+typeTotal;
 	fmt += "\t" + QString::number(selectionModel()->selectedRows().size()) + " selected of "+QString::number(model->rowCount()) +" directory items";
-	qDebug() << "size:" << sizeTotal << "MB";
-	qDebug() << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB";
-	qDebug() << "Selected: "<<selectionModel()->selectedRows().size()<<" of "<<model->rowCount();
+	//qDebug() << "size:" << sizeTotal << "MB";
+	//qDebug() << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB";
+	//qDebug() << "Selected: "<<selectionModel()->selectedRows().size()<<" of "<<model->rowCount();
 
 	infoLabel->setText(fmt);
 }
