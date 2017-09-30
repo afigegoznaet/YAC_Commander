@@ -43,6 +43,7 @@ void OrderedFileSystemModel::sort(int column, Qt::SortOrder order){
 	this->column = column;
 	this->order = order;
 	QSortFilterProxyModel::sort(column, order);
+	emit directoryLoaded("");
 }
 
 QFileSystemModel* OrderedFileSystemModel::sourceModel() const{

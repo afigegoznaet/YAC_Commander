@@ -8,12 +8,6 @@ TableItemDelegate::TableItemDelegate(QObject *parent) :
 void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 							  const QModelIndex &index) const{
 
-	/*qDebug()<<"***********************";
-	qDebug()<<index;
-	qDebug()<<option.viewItemPosition;
-	qDebug()<<painter->pen();
-	qDebug()<<painter->brush().color();
-	qDebug()<<"***********************";*/
 	QItemDelegate::paint(painter, option, index);
 	if(index.row()==current.row()){
 
@@ -41,6 +35,5 @@ void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 
 void TableItemDelegate::currentChanged(QModelIndex current,QModelIndex prev){
-	qDebug()<<current << " _ "<<prev;
 	this->current = current;
 }

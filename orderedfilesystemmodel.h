@@ -43,7 +43,8 @@ public:
 		sort(column, order);
 	}
 	QFileSystemModel *sourceModel() const;
-
+signals:
+	void directoryLoaded(QString);
 private:
 
 	int column = 0;

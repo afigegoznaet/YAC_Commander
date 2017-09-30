@@ -58,7 +58,7 @@ public slots:
 	void setCurrentSelection(QString);
 	void headerClicked(int section);
 	void rowsRemoved(const QModelIndex &parent, int first, int);
-	void rowsInserted(const QModelIndex &parent, int first, int);
+	void rowsInserted(const QModelIndex, int first, int);
 	void updateInfo();
 protected:
 	virtual void keyPressEvent(QKeyEvent * event);
