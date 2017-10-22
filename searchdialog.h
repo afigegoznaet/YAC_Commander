@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "ui_searchdialog.h"
+#include "filefindingsmodel.h"
 
 namespace Ui {
 class SearchDialog;
@@ -21,6 +22,7 @@ private:
 	Ui::SearchDialog *ui;
 	QString updateCombo(CustomDropDown* combo);
 	void searchRecursion(QString& pattern, QString startDir, searchFlags = NAME);
+	FileFindingsModel* model;
 };
 
 #endif // SEARCHDIALOG_H

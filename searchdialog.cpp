@@ -9,6 +9,8 @@ SearchDialog::SearchDialog(QWidget *parent) :
 	ui->fileMaskcombo->setEditable(true);
 	ui->startDirCombo->setParentDlg(this);
 	ui->startDirCombo->setEditable(true);
+
+	model = new FileFindingsModel(this);
 }
 
 SearchDialog::~SearchDialog()
