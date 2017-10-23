@@ -119,7 +119,7 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QTableView" name="tableView"/>
+    <widget class="QListView" name="listView"/>
    </item>
   </layout>
  </widget>
@@ -136,7 +136,7 @@
   <tabstop>pushButton_2</tabstop>
   <tabstop>pushButton</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>tableView</tabstop>
+  <tabstop>listView</tabstop>
  </tabstops>
  <resources/>
  <connections/>

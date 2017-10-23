@@ -11,6 +11,7 @@ SearchDialog::SearchDialog(QWidget *parent) :
 	ui->startDirCombo->setEditable(true);
 
 	model = new FileFindingsModel(this);
+	ui->listView->setModel(model);
 }
 
 SearchDialog::~SearchDialog()
