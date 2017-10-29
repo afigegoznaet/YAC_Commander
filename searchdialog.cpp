@@ -10,7 +10,12 @@ SearchDialog::SearchDialog(QWidget *parent) :
 	ui->startDirCombo->setParentDlg(this);
 	ui->startDirCombo->setEditable(true);
 
-	model = new FileFindingsModel(this);
+	//model = new FileFindingsModel(this);
+
+	ui->listView->setSelectionMode(QAbstractItemView::SingleSelection);
+	ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+	model = new QStringListModel(this);
 	ui->listView->setModel(model);
 }
 
@@ -25,12 +30,6 @@ void SearchDialog::show(const QString &startDir){
 	QDialog::show();
 }
 
-void SearchDialog::startSearch(){
-	QString fileMask = updateCombo(ui->fileMaskcombo);
-	QString startDir = updateCombo(ui->startDirCombo);
-
-}
-
 QString SearchDialog::updateCombo(CustomDropDown* combo){
 	QString text(combo->lineEdit()->text());
 	if(combo->findText(text)<0)
@@ -38,6 +37,43 @@ QString SearchDialog::updateCombo(CustomDropDown* combo){
 	return text;
 }
 
-void SearchDialog::searchRecursion(QString& pattern, QString startDir, searchFlags){
+void SearchDialog::searchRecursion(QString& pattern, QString& startDir, searchFlags){
+	if(startDir.length()<1)
+		return;
 
+	QDir dir(startDir);
+	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern), QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
+	QFuture<void> fut;
+	addBlocker.lock();
+	qDebug()<<"Starting search recusrion in: "<<startDir;
+	foreach (auto file, dirEntries){
+		//qDebug()<<"Adding file from:"<<startDir;
+
+		/*qDebug()<<file.isDir();
+		qDebug()<<file.absoluteDir();
+		qDebug()<<file.absoluteFilePath();*/
+		if(file.isDir()){
+			qDebug()<<file.absoluteFilePath()<<" is dir";
+			fut = QtConcurrent::run([&](){searchRecursion(pattern,file.absoluteFilePath());});
+
+		}
+		else
+			addFile(file.absoluteFilePath());
+	}
+	addBlocker.unlock();
+	qDebug()<<"Finished search recusrion in: "<<startDir;
+}
+
+void SearchDialog::on_searchButton_clicked(){
+	QString fileMask = updateCombo(ui->fileMaskcombo);
+	QString startDir = updateCombo(ui->startDirCombo);
+	searchRecursion(fileMask, startDir);
+}
+
+void SearchDialog::addFile(QString& newFile){
+	qDebug()<<"Adding new file: "<<newFile;
+	int row = model->rowCount();
+	//qDebug()<<row;
+	if(model->insertRow(row))
+		model->setData(model->index(row),newFile);
 }

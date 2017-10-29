@@ -79,7 +79,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="cancelButton">
              <property name="text">
               <string>Cancel</string>
              </property>
@@ -99,7 +99,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="searchButton">
              <property name="text">
               <string>Search</string>
              </property>
@@ -133,8 +133,8 @@
  <tabstops>
   <tabstop>fileMaskcombo</tabstop>
   <tabstop>startDirCombo</tabstop>
-  <tabstop>pushButton_2</tabstop>
-  <tabstop>pushButton</tabstop>
+  <tabstop>searchButton</tabstop>
+  <tabstop>cancelButton</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>listView</tabstop>
  </tabstops>

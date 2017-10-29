@@ -9,7 +9,7 @@ CustomDropDown::CustomDropDown(QWidget *parent) : QComboBox(parent) {
 void CustomDropDown::processCommand(){
 	SearchDialog* parent = dynamic_cast<SearchDialog*>(parentDlg);
 	if(parent)
-		parent->startSearch();
+		parent->on_searchButton_clicked();
 }
 
 void CustomDropDown::keyPressEvent(QKeyEvent *event){
