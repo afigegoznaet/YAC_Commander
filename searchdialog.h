@@ -6,8 +6,12 @@
 #include <QDir>
 #include <QFileInfoList>
 #include <QtConcurrent/QtConcurrent>
+#include <QQueue>
+#include <QRegularExpression>
+
 #include "ui_searchdialog.h"
 #include "filefindingsmodel.h"
+
 
 namespace Ui {
 class SearchDialog;
@@ -21,16 +25,23 @@ public:
 	explicit SearchDialog(QWidget *parent = 0);
 	~SearchDialog();
 	void show(const QString &startDir);
+
+signals:
+	void startSearchRecursion(QString pattern, QString startDir);
+
 public slots:
 	void on_searchButton_clicked();
+	void searchRecursion(QString pattern, QString startDir, searchFlags = NAME);
+
 
 private:
 	Ui::SearchDialog *ui;
 	QStringListModel* model;
 	QMutex addBlocker;
+	QQueue<QString> dirQ;
+	QFuture<void> fut;
 
 	QString updateCombo(CustomDropDown* combo);
-	void searchRecursion(QString& pattern, QString& startDir, searchFlags = NAME);
 	void addFile(QString& newFile);
 };
 

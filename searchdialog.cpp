@@ -17,6 +17,10 @@ SearchDialog::SearchDialog(QWidget *parent) :
 
 	model = new QStringListModel(this);
 	ui->listView->setModel(model);
+
+	auto conn = connect(this, SIGNAL(startSearchRecursion(QString,QString)), this,
+			SLOT(searchRecursion(QString,QString)), Qt::QueuedConnection);
+	qDebug()<<"Conn: "<<conn;
 }
 
 SearchDialog::~SearchDialog()
@@ -37,14 +41,17 @@ QString SearchDialog::updateCombo(CustomDropDown* combo){
 	return text;
 }
 
-void SearchDialog::searchRecursion(QString& pattern, QString& startDir, searchFlags){
-	if(startDir.length()<1)
-		return;
+void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
 
+	qDebug()<<pattern <<" "<<startDir;
+	QRegularExpression re(pattern);
+
+	if(re.globalMatch(startDir).hasNext())
+		addFile(startDir);
 	QDir dir(startDir);
-	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern), QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
-	QFuture<void> fut;
-	addBlocker.lock();
+	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern),
+				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
+
 	qDebug()<<"Starting search recusrion in: "<<startDir;
 	foreach (auto file, dirEntries){
 		//qDebug()<<"Adding file from:"<<startDir;
@@ -53,15 +60,21 @@ void SearchDialog::searchRecursion(QString& pattern, QString& startDir, searchFl
 		qDebug()<<file.absoluteDir();
 		qDebug()<<file.absoluteFilePath();*/
 		if(file.isDir()){
-			qDebug()<<file.absoluteFilePath()<<" is dir";
-			fut = QtConcurrent::run([&](){searchRecursion(pattern,file.absoluteFilePath());});
-
+			//qDebug()<<file.absoluteFilePath()<<" is dir";
+			dirQ.push_back(file.absoluteFilePath());
 		}
 		else
 			addFile(file.absoluteFilePath());
 	}
-	addBlocker.unlock();
-	qDebug()<<"Finished search recusrion in: "<<startDir;
+
+	qDebug()<<"Finished search recusrion in: "<<dir.absolutePath();
+	if(dirQ.size()){
+		//fut = QtConcurrent::run([&](){
+			auto nextDir = dirQ.first();
+			dirQ.pop_front();
+			emit startSearchRecursion(pattern,nextDir);
+		//});
+	}
 }
 
 void SearchDialog::on_searchButton_clicked(){
