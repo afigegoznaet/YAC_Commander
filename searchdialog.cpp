@@ -1,7 +1,8 @@
 #include "searchdialog.h"
+#include "mainwindow.h"
 
-SearchDialog::SearchDialog(QWidget *parent) :
-	QDialog(parent),
+SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
+	QDialog(parent, f),
 	ui(new Ui::SearchDialog)
 {
 	ui->setupUi(this);
@@ -14,13 +15,17 @@ SearchDialog::SearchDialog(QWidget *parent) :
 
 	ui->listView->setSelectionMode(QAbstractItemView::SingleSelection);
 	ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
+	ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	model = new QStringListModel(this);
 	ui->listView->setModel(model);
 
-	auto conn = connect(this, SIGNAL(startSearchRecursion(QString,QString)), this,
+	connect(this, SIGNAL(startSearchRecursion(QString,QString)), this,
 			SLOT(searchRecursion(QString,QString)), Qt::QueuedConnection);
-	qDebug()<<"Conn: "<<conn;
+	connect(ui->listView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
+	searching = false;
+
+	parentWindow = qobject_cast<MainWindow*>(parent);
 }
 
 SearchDialog::~SearchDialog()
@@ -29,8 +34,10 @@ SearchDialog::~SearchDialog()
 }
 
 void SearchDialog::show(const QString &startDir){
-	ui->fileMaskcombo->lineEdit()->setText("*.*");
-	ui->startDirCombo->lineEdit()->setText(startDir);
+	if(!searching){
+		ui->fileMaskcombo->lineEdit()->setText("*.*");
+		ui->startDirCombo->lineEdit()->setText(startDir);
+	}
 	QDialog::show();
 }
 
@@ -43,50 +50,69 @@ QString SearchDialog::updateCombo(CustomDropDown* combo){
 
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
 
-	qDebug()<<pattern <<" "<<startDir;
+	//qDebug()<<pattern <<" "<<startDir;
 	QRegularExpression re(pattern);
-
-	if(re.globalMatch(startDir).hasNext())
-		addFile(startDir);
 	QDir dir(startDir);
+	if(re.globalMatch(dir.dirName()).hasNext())
+		addFile(dir.absolutePath());
+
 	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern),
 				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
 
-	qDebug()<<"Starting search recusrion in: "<<startDir;
+	//qDebug()<<"Starting search recusrion in: "<<startDir;
 	foreach (auto file, dirEntries){
 		//qDebug()<<"Adding file from:"<<startDir;
 
 		/*qDebug()<<file.isDir();
 		qDebug()<<file.absoluteDir();
 		qDebug()<<file.absoluteFilePath();*/
-		if(file.isDir()){
-			//qDebug()<<file.absoluteFilePath()<<" is dir";
-			dirQ.push_back(file.absoluteFilePath());
-		}
-		else
+		if(file.isFile()){
 			addFile(file.absoluteFilePath());
+		}else if(file.isDir()){
+			dirQ.push_back(file.absoluteFilePath());
+			/*qDebug()<<"file is dir: "<<file.fileName();
+			qDebug()<<file.baseName();
+			qDebug()<<file.isBundle();
+			qDebug()<<file.isDir();
+			qDebug()<<file.isFile();
+			qDebug()<<file.isExecutable();*/
+		}
+
 	}
 
-	qDebug()<<"Finished search recusrion in: "<<dir.absolutePath();
+	//qDebug()<<"Finished search recusrion in: "<<dir.absolutePath();
 	if(dirQ.size()){
-		//fut = QtConcurrent::run([&](){
-			auto nextDir = dirQ.first();
-			dirQ.pop_front();
-			emit startSearchRecursion(pattern,nextDir);
-		//});
+		auto nextDir = dirQ.first();
+		dirQ.pop_front();
+		emit startSearchRecursion(pattern,nextDir);
+	}else{
+		ui->searchButton->setText("Search");
+		searching = false;
 	}
 }
 
 void SearchDialog::on_searchButton_clicked(){
+	if(searching){
+		ui->searchButton->setText("Search");
+		searching = false;
+		return;
+	}
 	QString fileMask = updateCombo(ui->fileMaskcombo);
 	QString startDir = updateCombo(ui->startDirCombo);
+	model->setStringList( QStringList{} );
+	ui->searchButton->setText("Stop search");
 	searchRecursion(fileMask, startDir);
 }
 
 void SearchDialog::addFile(QString& newFile){
-	qDebug()<<"Adding new file: "<<newFile;
+	//qDebug()<<"Adding new file: "<<newFile;
 	int row = model->rowCount();
 	//qDebug()<<row;
 	if(model->insertRow(row))
 		model->setData(model->index(row),newFile);
+}
+
+void SearchDialog::on_doubleClicked(const QModelIndex &index){
+	QString info=model->data(index, 0).toString();
+	parentWindow->getFocusedTab()->goToFile(info);
 }

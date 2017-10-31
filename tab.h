@@ -45,6 +45,7 @@ public:
 	}
 	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
 	QLabel* getLabel(){return infoLabel;}
+	void goToFile(QString& fullFilePath);
 
 signals:
 	//void activated(const QModelIndex &index);

@@ -356,3 +356,14 @@ void TabbedListView::updateInfo(){
 
 	infoLabel->setText(fmt);
 }
+
+void TabbedListView::goToFile(QString& fullFilePath){
+	//qDebug()<<fullFilePath;
+	QFileInfo info(fullFilePath);
+	//qDebug()<<info.absolutePath();
+	cdTo(info.absolutePath());
+	directory = info.fileName();
+	delete prevSelection;
+	prevSelection = nullptr;
+	setCurrentSelection("");
+}
