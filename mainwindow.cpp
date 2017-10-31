@@ -25,11 +25,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	connect(ui->commandsBox,SIGNAL(focusPreviouslyFocused()), this, SLOT(focusPreviouslyFocused()));
 	connect(ui->quickBar,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
 
-	connect(ui->leftTabWidget,&CustomTabWidget::focusLost,[=](){
-		leftFocusOut = true;
-	});
-	connect(ui->rightTabWidget,&CustomTabWidget::focusLost,[=](){
+	connect(ui->leftTabWidget,&CustomTabWidget::focusAquired,[=](){
 		leftFocusOut = false;
+	});
+	connect(ui->rightTabWidget,&CustomTabWidget::focusAquired,[=](){
+		leftFocusOut = true;
 	});
 
 
@@ -231,9 +231,9 @@ TabbedListView* MainWindow::getFocusedTab(void){
 	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
 
 
-	if(left->hasFocus())
-		return left;
-	return right;
+	if(leftFocusOut)
+		return right;
+	return left;
 }
 
 void MainWindow::cdTo(const QString &dir){

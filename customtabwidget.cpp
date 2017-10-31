@@ -39,14 +39,14 @@ void CustomTabWidget::onFocusEvent(bool focused){
 		disconnect(currentHeaderMovedConnection);
 		currentHeaderResizedConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionResized(int,int,int)), this, SLOT(sectionResized(int,int,int)));
 		currentHeaderMovedConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionMoved(int,int,int)), this, SLOT(sectionMoved(int,int,int)));
-
+		emit focusAquired();
 	}
 	else{
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
 		setStyleSheet(defaultStyle);
 		setStyleSheet("selection-background-color: lightblue");
-		emit focusLost();
+
 	}
 }
 

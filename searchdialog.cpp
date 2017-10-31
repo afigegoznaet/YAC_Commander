@@ -16,6 +16,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	ui->listView->setSelectionMode(QAbstractItemView::SingleSelection);
 	ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	setFocusPolicy(Qt::NoFocus);
 
 	model = new QStringListModel(this);
 	ui->listView->setModel(model);

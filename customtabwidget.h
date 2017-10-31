@@ -31,7 +31,7 @@ public slots:
 signals:
 	void gotResized(int logicalIndex, int oldSize, int newSize);
 	void gotMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
-	void focusLost();
+	void focusAquired();
 
 protected:
 	QString defaultStyle;
