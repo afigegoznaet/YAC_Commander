@@ -8,7 +8,6 @@ Things to add:
 * Context menu
 * chown / chmod
 * soft/hard linking
-* Search capability
 * Plugins support
 * Add home directory / custom links to mountpoints bar
 * TBU
@@ -26,8 +25,10 @@ Implemented sutff:
 * View file (in hex mode) -> using this project: https://github.com/virinext/QHexView
 * Command line
 * selection filters
+* Search capability (only by name, at the moment, but it's being updated)
 
 Known issues:
 * On Linux, dir doesn't refresh if some action is performed in the other tab, containing the same dir
+* Intense search generates flickering and seems to block the GUI thread.
 
 # NEED VOLUNTEERS! TESTERS, DEVELOPERS and IDEAS

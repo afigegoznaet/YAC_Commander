@@ -21,8 +21,9 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	model = new QStringListModel(this);
 	ui->listView->setModel(model);
 
-	connect(this, SIGNAL(startSearchRecursion(QString,QString)), this,
-			SLOT(searchRecursion(QString,QString)), Qt::QueuedConnection);
+	connect(this, &SearchDialog::startSearchRecursion, this, [&](QString pattern,QString dir){
+		fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,pattern, dir, NAME);
+	}, Qt::QueuedConnection);
 	connect(ui->listView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
 	searching = false;
 
@@ -50,8 +51,9 @@ QString SearchDialog::updateCombo(CustomDropDown* combo){
 }
 
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
-	addBlocker.lock();
+	//addBlocker.lock();
 	//qDebug()<<pattern <<" "<<startDir;
+	qDebug()<<QThread::currentThreadId();
 	QRegularExpression re(pattern);
 	QDir dir(startDir);
 	if(re.globalMatch(dir.dirName()).hasNext())
@@ -86,14 +88,16 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 		auto nextDir = dirQ.first();
 		dirQ.pop_front();
 		emit startSearchRecursion(pattern,nextDir);
+		//fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,pattern, nextDir, NAME);
 	}else{
 		ui->searchButton->setText("Search");
 		searching = false;
 	}
-	addBlocker.unlock();
+	//addBlocker.unlock();
 }
 
 void SearchDialog::on_searchButton_clicked(){
+	qDebug()<<"GUI tread ID: "<<QThread::currentThreadId();
 	if(searching){
 		ui->searchButton->setText("Search");
 		searching = false;
@@ -108,6 +112,7 @@ void SearchDialog::on_searchButton_clicked(){
 }
 
 void SearchDialog::addFile(QString& newFile){
+	qDebug()<<"Add tread ID: "<<QThread::currentThreadId();
 	//qDebug()<<"Adding new file: "<<newFile;
 	int row = model->rowCount();
 	//qDebug()<<row;
@@ -122,8 +127,11 @@ void SearchDialog::on_doubleClicked(const QModelIndex &index){
 }
 
 void SearchDialog::paintEvent(QPaintEvent *event){
-	qDebug()<<event;
-	addBlocker.lock();
+	if(searching)
+		qDebug()<<"Paint tread ID: "<<QThread::currentThreadId();
+	//qDebug()<<event;
+	//addBlocker.lock();
 	QDialog::paintEvent(event);
-	addBlocker.unlock();
+	//addBlocker.unlock();
 }
+
