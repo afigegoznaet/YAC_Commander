@@ -42,11 +42,13 @@ private:
 	QMutex addBlocker;
 	QQueue<QString> dirQ;
 	QFuture<void> fut;
+	bool searching;
+	MainWindow* parentWindow;
 
 	QString updateCombo(CustomDropDown* combo);
 	void addFile(QString& newFile);
-	bool searching;
-	MainWindow* parentWindow;
+	void paintEvent(QPaintEvent *event) override;
+
 };
 
 #endif // SEARCHDIALOG_H

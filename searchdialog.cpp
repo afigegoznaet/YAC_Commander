@@ -50,7 +50,7 @@ QString SearchDialog::updateCombo(CustomDropDown* combo){
 }
 
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
-
+	addBlocker.lock();
 	//qDebug()<<pattern <<" "<<startDir;
 	QRegularExpression re(pattern);
 	QDir dir(startDir);
@@ -82,7 +82,7 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 	}
 
 	//qDebug()<<"Finished search recusrion in: "<<dir.absolutePath();
-	if(dirQ.size()){
+	if(dirQ.size() && searching){
 		auto nextDir = dirQ.first();
 		dirQ.pop_front();
 		emit startSearchRecursion(pattern,nextDir);
@@ -90,6 +90,7 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 		ui->searchButton->setText("Search");
 		searching = false;
 	}
+	addBlocker.unlock();
 }
 
 void SearchDialog::on_searchButton_clicked(){
@@ -98,11 +99,12 @@ void SearchDialog::on_searchButton_clicked(){
 		searching = false;
 		return;
 	}
+	searching = true;
 	QString fileMask = updateCombo(ui->fileMaskcombo);
 	QString startDir = updateCombo(ui->startDirCombo);
 	model->setStringList( QStringList{} );
 	ui->searchButton->setText("Stop search");
-	searchRecursion(fileMask, startDir);
+	fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,fileMask, startDir, NAME);
 }
 
 void SearchDialog::addFile(QString& newFile){
@@ -111,9 +113,17 @@ void SearchDialog::addFile(QString& newFile){
 	//qDebug()<<row;
 	if(model->insertRow(row))
 		model->setData(model->index(row),newFile);
+
 }
 
 void SearchDialog::on_doubleClicked(const QModelIndex &index){
 	QString info=model->data(index, 0).toString();
 	parentWindow->getFocusedTab()->goToFile(info);
+}
+
+void SearchDialog::paintEvent(QPaintEvent *event){
+	qDebug()<<event;
+	addBlocker.lock();
+	QDialog::paintEvent(event);
+	addBlocker.unlock();
 }
