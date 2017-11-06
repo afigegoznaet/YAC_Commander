@@ -30,6 +30,7 @@ public:
 
 signals:
 	void startSearchRecursion(QString pattern, QString startDir);
+	void rowsInserted(const QModelIndex &parent, int first, int last);
 
 public slots:
 	void on_searchButton_clicked();
@@ -44,10 +45,11 @@ private:
 	QFuture<void> fut;
 	bool searching;
 	MainWindow* parentWindow;
+	int firstRow;
 
 	QString updateCombo(CustomDropDown* combo);
-	void addFile(QString& newFile);
-	void paintEvent(QPaintEvent *event) override;
+	void addFile(const QString &newFile);
+	//void paintEvent(QPaintEvent *event) override;
 
 };
 
