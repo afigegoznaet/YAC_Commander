@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>608</width>
-    <height>478</height>
+    <width>691</width>
+    <height>631</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,99 +19,167 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="defaultTab">
+      <attribute name="title">
+       <string>Basic search</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="fileLabel">
+         <property name="text">
+          <string>File mask: </string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="CustomDropDown" name="fileMaskcombo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="dirLabel">
+         <property name="text">
+          <string>Starting directory: </string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="CustomDropDown" name="startDirCombo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="searchTextLabel">
+         <property name="text">
+          <string>Search text:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="CustomDropDown" name="textSearchCombo"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="advancedTab">
+      <attribute name="title">
+       <string>Advanced search</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="3" colspan="2">
+        <widget class="QDateTimeEdit" name="dateTimeTo"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="attributesCheck">
+         <property name="text">
+          <string>File attributes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QCheckBox" name="readableBox">
+         <property name="text">
+          <string>Readable</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QComboBox" name="unitCombo"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="dateCheck">
+         <property name="text">
+          <string>Date between</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QCheckBox" name="executableBox">
+         <property name="text">
+          <string>Execuatble</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="size_Check">
+         <property name="text">
+          <string>File size</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="cmpCombo"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="dirBox">
+         <property name="text">
+          <string>Directory</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QSpinBox" name="sizeSpin"/>
+       </item>
+       <item row="0" column="1" colspan="2">
+        <widget class="QDateTimeEdit" name="dateTimeFrom"/>
+       </item>
+       <item row="2" column="3">
+        <widget class="QCheckBox" name="writableBox">
+         <property name="text">
+          <string>Writable</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QTabWidget" name="tabWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="currentIndex">
-        <number>0</number>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>534</width>
+         <height>26</height>
+        </size>
        </property>
-       <widget class="QWidget" name="defaultTab">
-        <attribute name="title">
-         <string>Basic search</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>File mask: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="CustomDropDown" name="fileMaskcombo">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Starting directory: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="CustomDropDown" name="startDirCombo">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="searchButton">
-             <property name="text">
-              <string>Search</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="advancedTab">
-        <attribute name="title">
-         <string>Advanced search</string>
-        </attribute>
-       </widget>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="searchButton">
+       <property name="text">
+        <string>Search</string>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QListView" name="listView"/>
    </item>
   </layout>
@@ -126,8 +194,6 @@
  <tabstops>
   <tabstop>fileMaskcombo</tabstop>
   <tabstop>startDirCombo</tabstop>
-  <tabstop>searchButton</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>listView</tabstop>
  </tabstops>
  <resources/>

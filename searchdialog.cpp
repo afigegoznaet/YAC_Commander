@@ -10,6 +10,8 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	ui->fileMaskcombo->setEditable(true);
 	ui->startDirCombo->setParentDlg(this);
 	ui->startDirCombo->setEditable(true);
+	ui->textSearchCombo->setParentDlg(this);
+	ui->textSearchCombo->setEditable(true);
 
 	//model = new FileFindingsModel(this);
 
@@ -41,6 +43,7 @@ void SearchDialog::show(const QString &startDir){
 	if(!searching){
 		ui->fileMaskcombo->lineEdit()->setText("*.*");
 		ui->startDirCombo->lineEdit()->setText(startDir);
+		ui->textSearchCombo->lineEdit()->setText("*");
 	}
 	QDialog::show();
 }
