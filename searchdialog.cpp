@@ -13,7 +13,19 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	ui->textSearchCombo->setParentDlg(this);
 	ui->textSearchCombo->setEditable(true);
 
+	ui->cmpCombo->addItem("=",0);
+	ui->cmpCombo->addItem(">",1);
+	ui->cmpCombo->addItem("<",2);
+
+	ui->unitCombo->addItem("Bytes",0);
+	ui->unitCombo->addItem("KBytes",1);
+	ui->unitCombo->addItem("MBytes",2);
+	ui->unitCombo->addItem("GBytes",3);
 	//model = new FileFindingsModel(this);
+
+	ui->dateTimeFrom->setTime(QTime());
+	ui->dateTimeTo->setDate(QDate::currentDate());
+	ui->dateTimeTo->setTime(QTime::currentTime());
 
 	ui->listView->setSelectionMode(QAbstractItemView::SingleSelection);
 	ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -40,12 +52,42 @@ SearchDialog::~SearchDialog()
 }
 
 void SearchDialog::show(const QString &startDir){
-	if(!searching){
-		ui->fileMaskcombo->lineEdit()->setText("*.*");
+	if(!searching && !model->rowCount()){
 		ui->startDirCombo->lineEdit()->setText(startDir);
-		ui->textSearchCombo->lineEdit()->setText("*");
+		resetGuiState();
 	}
 	QDialog::show();
+}
+
+void SearchDialog::resetGuiState(){
+	ui->fileMaskcombo->lineEdit()->setText("*.*");
+	ui->textSearchCombo->lineEdit()->setText("*");
+
+	ui->dateCheck->setChecked(false);
+	ui->dateTimeFrom->setDate(QDate());
+	ui->dateTimeFrom->setTime(QTime());
+	ui->dateTimeTo->setDate(QDate::currentDate());
+	ui->dateTimeTo->setTime(QTime::currentTime());
+	ui->dateTimeFrom->setDisabled(true);
+	ui->dateTimeTo->setDisabled(true);
+
+	ui->sizeCheck->setChecked(false);
+	ui->cmpCombo->setCurrentIndex(1);
+	ui->sizeSpin->setValue(0);
+	ui->unitCombo->setCurrentIndex(2);
+	ui->cmpCombo->setDisabled(true);
+	ui->sizeSpin->setDisabled(true);
+	ui->unitCombo->setDisabled(true);
+
+	ui->attributesCheck->setChecked(false);
+	ui->dirBox->setChecked(false);
+	ui->executableBox->setChecked(false);
+	ui->writableBox->setChecked(false);
+	ui->readableBox->setChecked(false);
+	ui->dirBox->setDisabled(true);
+	ui->executableBox->setDisabled(true);
+	ui->writableBox->setDisabled(true);
+	ui->readableBox->setDisabled(true);
 }
 
 QString SearchDialog::updateCombo(CustomDropDown* combo){
@@ -66,14 +108,11 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern),
 				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
 
-	foreach (auto file, dirEntries){
-		if(file.isFile()){
-			addFile(file.absoluteFilePath());
-		}else if(file.isDir()){
+	foreach (auto file, dirEntries)
+		if(file.isFile())
+			validateFile(file);
+		else if(file.isDir())
 			dirQ.push_back(file.absoluteFilePath());
-		}
-
-	}
 
 	int lastRow = model->rowCount()-1;
 	if(lastRow-firstRow > 50){
@@ -106,6 +145,28 @@ void SearchDialog::on_searchButton_clicked(){
 	searching = true;
 	QString fileMask = updateCombo(ui->fileMaskcombo);
 	QString startDir = updateCombo(ui->startDirCombo);
+	QString textPattern = updateCombo(ui->textSearchCombo);
+	if(textPattern.compare("*")){
+		attrs.togglesFlags = Pattern;
+		attrs.pattern = textPattern;
+	}
+	if(ui->dateCheck->isChecked()){
+		attrs.togglesFlags |= Date;
+		attrs.startDate = ui->dateTimeFrom->dateTime();
+		attrs.endDate = ui->dateTimeTo->dateTime();
+	}
+	if(ui->sizeCheck->isChecked()){
+		attrs.togglesFlags |= Size;
+		attrs.op = (SizeOp)ui->cmpCombo->currentData().toInt();
+		attrs.size = ui->sizeSpin->value();
+		int mod = 10*ui->unitCombo->currentData().toInt();
+		attrs.size *= pow(2,mod);
+	}
+	if(ui->attributesCheck->isChecked()){
+		attrs.togglesFlags |= Attributes;
+		attrs.attrFlags = (ui->executableBox->isChecked()?1:0) | (ui->writableBox->isChecked()?2:0)
+				| (ui->readableBox->isChecked()?4:0) | (ui->dirBox->isChecked()?8:0) ;
+	}
 	model->setStringList( QStringList{} );
 	ui->searchButton->setText("Stop search");
 	fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,fileMask, startDir, NAME);
@@ -125,6 +186,11 @@ void SearchDialog::on_doubleClicked(const QModelIndex &index){
 	QString info=model->data(index, 0).toString();
 	parentWindow->getFocusedTab()->goToFile(info);
 }
+
+void SearchDialog::validateFile(QFileInfo &theFile){
+
+	addFile(theFile.absoluteFilePath());
+}
 /*
 void SearchDialog::paintEvent(QPaintEvent *event){
 	if(searching)
@@ -135,3 +201,46 @@ void SearchDialog::paintEvent(QPaintEvent *event){
 	//addBlocker.unlock();
 }
 */
+
+void SearchDialog::on_clearButton_clicked(){
+	searching = true;
+	on_searchButton_clicked();
+	model->setStringList( QStringList{} );
+	resetGuiState();
+}
+
+void SearchDialog::on_dateCheck_toggled(bool checked){
+	if(checked){
+		ui->dateTimeFrom->setEnabled(true);
+		ui->dateTimeTo->setEnabled(true);
+		return;
+	}
+	ui->dateTimeFrom->setDisabled(true);
+	ui->dateTimeTo->setDisabled(true);
+}
+
+void SearchDialog::on_sizeCheck_toggled(bool checked){
+	if(checked){
+		ui->cmpCombo->setEnabled(true);
+		ui->sizeSpin->setEnabled(true);
+		ui->unitCombo->setEnabled(true);
+		return;
+	}
+	ui->cmpCombo->setDisabled(true);
+	ui->sizeSpin->setDisabled(true);
+	ui->unitCombo->setDisabled(true);
+}
+
+void SearchDialog::on_attributesCheck_toggled(bool checked){
+	if(checked){
+		ui->dirBox->setEnabled(true);
+		ui->executableBox->setEnabled(true);
+		ui->writableBox->setEnabled(true);
+		ui->readableBox->setEnabled(true);
+		return;
+	}
+	ui->dirBox->setDisabled(true);
+	ui->executableBox->setDisabled(true);
+	ui->writableBox->setDisabled(true);
+	ui->readableBox->setDisabled(true);
+}

@@ -17,6 +17,31 @@ namespace Ui {
 class SearchDialog;
 }
 
+enum FileAttrib{
+	X = 1, W = 2, R = 4, D = 8
+};
+enum SearchToggles{
+	Pattern = 1, Date = 2, Size = 4, Attributes = 8
+};
+
+enum SizeOp{
+	EQ, G, L
+};
+
+enum SizeMod{
+	Byte, KByte, MByte, GByte
+};
+
+struct SearchAttrib{
+	QString pattern;
+	quint8 attrFlags;
+	quint8 togglesFlags;
+	QDateTime startDate;
+	QDateTime endDate;
+	SizeOp op;
+	quint64 size;
+};
+
 class MainWindow;
 
 class SearchDialog : public QDialog
@@ -37,6 +62,15 @@ public slots:
 	void searchRecursion(QString pattern, QString startDir, searchFlags = NAME);
 	void on_doubleClicked(const QModelIndex &index);
 
+private slots:
+	void on_clearButton_clicked();
+
+	void on_dateCheck_toggled(bool checked);
+
+	void on_sizeCheck_toggled(bool checked);
+
+	void on_attributesCheck_toggled(bool checked);
+
 private:
 	Ui::SearchDialog *ui;
 	QStringListModel* model;
@@ -46,9 +80,12 @@ private:
 	bool searching;
 	MainWindow* parentWindow;
 	int firstRow;
+	SearchAttrib attrs;
 
 	QString updateCombo(CustomDropDown* combo);
 	void addFile(const QString &newFile);
+	void validateFile(QFileInfo& theFile);
+	void resetGuiState();
 	//void paintEvent(QPaintEvent *event) override;
 
 };
