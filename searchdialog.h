@@ -21,7 +21,7 @@ enum FileAttrib{
 	X = 1, W = 2, R = 4, D = 8
 };
 enum SearchToggles{
-	Pattern = 1, Date = 2, Size = 4, Attributes = 8
+	TextPattern = 1, Date = 2, Size = 4, Attributes = 8
 };
 
 enum SizeOp{

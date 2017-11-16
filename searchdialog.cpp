@@ -147,7 +147,7 @@ void SearchDialog::on_searchButton_clicked(){
 	QString startDir = updateCombo(ui->startDirCombo);
 	QString textPattern = updateCombo(ui->textSearchCombo);
 	if(textPattern.compare("*")){
-		attrs.togglesFlags = Pattern;
+		attrs.togglesFlags = TextPattern;
 		attrs.pattern = textPattern;
 	}
 	if(ui->dateCheck->isChecked()){
@@ -185,9 +185,29 @@ void SearchDialog::addFile(const QString& newFile){
 void SearchDialog::on_doubleClicked(const QModelIndex &index){
 	QString info=model->data(index, 0).toString();
 	parentWindow->getFocusedTab()->goToFile(info);
+	hide();
 }
 
 void SearchDialog::validateFile(QFileInfo &theFile){
+	if(attrs.togglesFlags & TextPattern){
+		auto file = new QFile(theFile.absoluteFilePath());
+		if(!file->open(QIODevice::ReadOnly))
+			return;
+		QString line;
+		QTextStream in(file);
+		QRegExp rx(attrs.pattern);
+		bool found = false;
+		while (!in.atEnd()) {
+			if (!searching)
+				break;
+			line = in.readLine();
+			if (line.contains(rx)){
+				found = true;
+			}
+		}
+		if(!found)
+			return;
+	}
 
 	addFile(theFile.absoluteFilePath());
 }
