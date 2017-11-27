@@ -14,13 +14,13 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	ui->textSearchCombo->setEditable(true);
 
 	ui->cmpCombo->addItem("=",0);
-	ui->cmpCombo->addItem(">",1);
-	ui->cmpCombo->addItem("<",2);
+	ui->cmpCombo->addItem(">=",1);
+	ui->cmpCombo->addItem("<=",2);
 
-	ui->unitCombo->addItem("Bytes",0);
-	ui->unitCombo->addItem("KBytes",1);
-	ui->unitCombo->addItem("MBytes",2);
-	ui->unitCombo->addItem("GBytes",3);
+	ui->unitCombo->addItem("Bytes",1);
+	ui->unitCombo->addItem("KBytes",1024);
+	ui->unitCombo->addItem("MBytes",1048576);
+	ui->unitCombo->addItem("GBytes",1073741824);
 	//model = new FileFindingsModel(this);
 
 	ui->dateTimeFrom->setTime(QTime());
@@ -52,10 +52,11 @@ SearchDialog::~SearchDialog()
 }
 
 void SearchDialog::show(const QString &startDir){
-	if(!searching && !model->rowCount()){
+	if(!searching )
 		ui->startDirCombo->lineEdit()->setText(startDir);
+	if(!model->rowCount())
 		resetGuiState();
-	}
+
 	QDialog::show();
 }
 
@@ -108,12 +109,12 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern),
 				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
 
-	foreach (auto file, dirEntries)
-		if(file.isFile())
+	foreach (auto file, dirEntries){
+		if(file.isFile() || ui->dirBox)
 			validateFile(file);
-		else if(file.isDir())
+		if(file.isDir())
 			dirQ.push_back(file.absoluteFilePath());
-
+	}
 	int lastRow = model->rowCount()-1;
 	if(lastRow-firstRow > 50){
 		model->blockSignals(false);
@@ -206,6 +207,53 @@ void SearchDialog::validateFile(QFileInfo &theFile){
 			}
 		}
 		if(!found)
+			return;
+	}
+
+	if(attrs.togglesFlags & Date){
+
+		auto startDate = ui->dateTimeFrom->dateTime();
+		auto endDate = ui->dateTimeTo->dateTime();
+
+		if(theFile.created()<startDate || theFile.created() > endDate)
+			return;
+	}
+
+	if(attrs.togglesFlags & Size){
+
+		qulonglong searchedSize = ui->sizeSpin->value();
+		auto operation = ui->cmpCombo->currentData().toInt();
+		auto multiplier = ui->unitCombo->currentData().toULongLong();
+
+		//	ui->cmpCombo->addItem("=",0);
+		//ui->cmpCombo->addItem(">=",1);
+		//ui->cmpCombo->addItem("<=",2);
+
+		switch (operation) {
+		case 0:
+			if(theFile.size() * multiplier != searchedSize)
+				return;
+			break;
+		case 1:
+			if(theFile.size() * multiplier < searchedSize)
+				return;
+			break;
+		case 2:
+			if(theFile.size() * multiplier > searchedSize)
+				return;
+			break;
+		}
+	}
+
+	if(attrs.togglesFlags & Attributes){
+		/*qDebug()<<"Flags test: "<<theFile.permission(QFileDevice::Permission(attrs.attrFlags));
+		qDebug()<<theFile.isDir();
+		qDebug()<<theFile.isExecutable();
+		qDebug()<<theFile.isReadable();
+		qDebug()<<theFile.isWritable();*/
+		if( (attrs.attrFlags & 8) && (!theFile.isDir()))
+			return;
+		if(!(attrs.attrFlags & 8) && !theFile.permission(QFileDevice::Permission(attrs.attrFlags &7)))
 			return;
 	}
 

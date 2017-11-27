@@ -349,7 +349,7 @@ void TabbedListView::updateInfo(){
 		typeRemaining = "MB";
 	}
 	fmt +=QString::number(sizeRemaining)+" "+typeRemaining  +" available of "+QString::number(sizeTotal)+  " "+typeTotal;
-	fmt += "\t" + QString::number(selectionModel()->selectedRows().size()) + " selected of "+QString::number(model->rowCount()) +" directory items";
+	fmt += "\t" + QString::number(selectionModel()->selectedRows().size()) + " selected of "+QString::number(model->rowCount(rootIndex())) +" directory items";
 	//qDebug() << "size:" << sizeTotal << "MB";
 	//qDebug() << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB";
 	//qDebug() << "Selected: "<<selectionModel()->selectedRows().size()<<" of "<<model->rowCount();
