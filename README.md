@@ -25,7 +25,7 @@ Implemented sutff:
 * View file (in hex mode) -> using this project: https://github.com/virinext/QHexView
 * Command line
 * selection filters
-* Search capability (only by name, at the moment, but it's being updated)
+* Search capability (by name, contents and file properties )
 
 Known issues:
 * On Linux, dir doesn't refresh if some action is performed in the other tab, containing the same dir
