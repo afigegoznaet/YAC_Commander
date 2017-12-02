@@ -22,14 +22,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->commandsBox->setMain(this);
 
 	connect(ui->commandsBox,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
-	connect(ui->commandsBox,SIGNAL(focusPreviouslyFocused()), this, SLOT(focusPreviouslyFocused()));
+	connect(ui->commandsBox,SIGNAL(focusPreviouslyFocused()), this,
+			SLOT(focusPreviouslyFocused()), Qt::QueuedConnection);
 	connect(ui->quickBar,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
 
 	connect(ui->leftTabWidget,&CustomTabWidget::focusAquired,[=](){
-		leftFocusOut = false;
+		leftTabHasFocus = true;
 	});
 	connect(ui->rightTabWidget,&CustomTabWidget::focusAquired,[=](){
-		leftFocusOut = true;
+		leftTabHasFocus = false;
 	});
 
 
@@ -211,10 +212,13 @@ void MainWindow::deleteFiles(){
 QString MainWindow::getDirInFocus(bool opposite){
 	auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
 	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
-	if(!(left->hasFocus() ^ opposite))
-		return right->GetDirectory();
-	else
+	bool focus = leftTabHasFocus;
+	if(opposite)
+		focus = !leftTabHasFocus;
+	if(focus)
 		return left->GetDirectory();
+	else
+		return right->GetDirectory();
 }
 
 QFileInfoList MainWindow::getSelectedFiles(){
@@ -231,9 +235,9 @@ TabbedListView* MainWindow::getFocusedTab(void){
 	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
 
 
-	if(leftFocusOut)
-		return right;
-	return left;
+	if(leftTabHasFocus)
+		return left;
+	return right;
 }
 
 void MainWindow::cdTo(const QString &dir){
@@ -334,7 +338,7 @@ void MainWindow::on_F7_clicked(){
 }
 
 void MainWindow::focusPreviouslyFocused(){
-	if(leftFocusOut)
+	if(leftTabHasFocus)
 		ui->leftTabWidget->currentWidget()->setFocus();
 	else
 		ui->rightTabWidget->currentWidget()->setFocus();

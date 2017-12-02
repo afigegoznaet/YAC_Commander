@@ -14,7 +14,7 @@ void DropDown::setMain(MainWindow *mainWindow){
 
 void DropDown::processCommand(){
 	QString cmd(lineEdit()->text());
-	emit focusPreviouslyFocused();
+
 	if(findText(cmd)<0)
 		insertItem(0,cmd);
 	if(cmd.startsWith("cd")){
@@ -47,6 +47,7 @@ void DropDown::processCommand(){
 	}
 
 	clearEditText();
+	emit focusPreviouslyFocused();
 }
 
 void DropDown::keyPressEvent(QKeyEvent *event){

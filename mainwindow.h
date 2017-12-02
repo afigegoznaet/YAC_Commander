@@ -62,7 +62,7 @@ private:
 	ProgressDialog* movementProgress;
 	SearchDialog* searchDlg;
 	QString editor;
-	bool leftFocusOut;
+	bool leftTabHasFocus;
 
 	virtual void keyPressEvent(QKeyEvent *event);
 	void copyFiles();
