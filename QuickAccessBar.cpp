@@ -49,6 +49,9 @@ void QuickAccessBar::refreshMountPoints(){
 		addSeparator();
 	}
 
+    DriveButton *button = new DriveButton(QDir::homePath(), this);
+    addWidget(button);
+
 }
 
 void QuickAccessBar::sendSignal(const QString &dir) const{
