@@ -1,4 +1,4 @@
-#include "customtoolbar.h"
+#include "QuickAccessBar.h"
 
 DriveButton::DriveButton(QString root, QWidget *parent) :
 	QPushButton(root, parent), rootPath(root){
@@ -9,7 +9,7 @@ DriveButton::DriveButton(QString root, QWidget *parent) :
 
 void DriveButton::click(){
 	qDebug()<<rootPath;
-	((CustomToolbar*)parent())->sendSignal(rootPath);
+	((QuickAccessBar*)parent())->sendSignal(rootPath);
 }
 /*
 bool DriveButton::event(QEvent *e){
@@ -23,7 +23,7 @@ bool DriveButton::event(QEvent *e){
 //bool QPushButton::event(QEvent *e)
 
 
-CustomToolbar::CustomToolbar(QWidget *parent) : QToolBar(parent){
+QuickAccessBar::QuickAccessBar(QWidget *parent) : QToolBar(parent){
 	volumes = QStorageInfo::mountedVolumes();
 	refreshMountPoints();
 	QTimer *timer = new QTimer(this);
@@ -31,7 +31,7 @@ CustomToolbar::CustomToolbar(QWidget *parent) : QToolBar(parent){
 	timer->start(1000);
 }
 
-void CustomToolbar::update(){
+void QuickAccessBar::update(){
 	auto newVols = QStorageInfo::mountedVolumes();
 	if(newVols.size() != volumes.size()){
 		//do I need to *free* volumes first?
@@ -40,7 +40,7 @@ void CustomToolbar::update(){
 	}
 }
 
-void CustomToolbar::refreshMountPoints(){
+void QuickAccessBar::refreshMountPoints(){
 	clear();//clear mountpoint buttons from toolbar
 
 	for(auto &drive :  volumes){
@@ -51,6 +51,6 @@ void CustomToolbar::refreshMountPoints(){
 
 }
 
-void CustomToolbar::sendSignal(const QString &dir) const{
+void QuickAccessBar::sendSignal(const QString &dir) const{
 	emit cdTo(dir);
 }

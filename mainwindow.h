@@ -2,9 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "customtabwidget.h"
+#include "FileTabSelector.h"
 #include "progressDialog.h"
-#include "tab.h"
+#include "FileTab.h"
 #include "ui_mainwindow.h"
 #include "ui_progressDialog.h"
 #include <QMessageBox>
@@ -13,7 +13,7 @@
 #include <newdir.h>
 #include <utility>
 #include "textviewer.h"
-#include "dropdown.h"
+#include "CommandDropdown.h"
 #include "searchdialog.h"
 
 #define DEF_EDITOR "undefined"
@@ -45,9 +45,12 @@ public:
 	~MainWindow();
 	TabbedListView* getFocusedTab(void);
 
+signals:
+    void setFocus(FileTabSelector* tab);
 public slots:
 	void cdTo(const QString&);
 	void focusPreviouslyFocused();
+    void setFocusSlot(FileTabSelector* tab);
 private slots:
 	void on_F3_clicked();
 	void on_F4_clicked();

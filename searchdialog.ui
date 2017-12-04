@@ -44,7 +44,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="CustomDropDown" name="fileMaskcombo">
+        <widget class="EditableDropDown" name="fileMaskcombo">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -61,7 +61,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="CustomDropDown" name="startDirCombo">
+        <widget class="EditableDropDown" name="startDirCombo">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -78,7 +78,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="CustomDropDown" name="textSearchCombo"/>
+        <widget class="EditableDropDown" name="textSearchCombo"/>
        </item>
       </layout>
      </widget>
@@ -193,9 +193,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CustomDropDown</class>
+   <class>EditableDropDown</class>
    <extends>QComboBox</extends>
-   <header>customdropdown.h</header>
+   <header>EditableDropdown.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

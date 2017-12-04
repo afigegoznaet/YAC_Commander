@@ -1,18 +1,18 @@
-#include "customdropdown.h"
+#include "EditableDropdown.h"
 #include "searchdialog.h"
 
-CustomDropDown::CustomDropDown(QWidget *parent) : QComboBox(parent) {
+EditableDropDown::EditableDropDown(QWidget *parent) : QComboBox(parent) {
 
 }
 
 
-void CustomDropDown::processCommand(){
+void EditableDropDown::processCommand(){
 	SearchDialog* parent = dynamic_cast<SearchDialog*>(parentDlg);
 	if(parent)
 		parent->on_searchButton_clicked();
 }
 
-void CustomDropDown::keyPressEvent(QKeyEvent *event){
+void EditableDropDown::keyPressEvent(QKeyEvent *event){
 	auto key = event->key();
 	switch (key) {
 		default:

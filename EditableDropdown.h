@@ -8,10 +8,10 @@
 
 class SearchDialog;
 
-class CustomDropDown : public QComboBox{
+class EditableDropDown : public QComboBox{
 	Q_OBJECT
 public:
-	CustomDropDown(QWidget *parent);
+	EditableDropDown(QWidget *parent);
 	void setParentDlg(QDialog* parentDlg){
 		this->parentDlg = parentDlg;
 	}

@@ -91,7 +91,7 @@ void SearchDialog::resetGuiState(){
 	ui->readableBox->setDisabled(true);
 }
 
-QString SearchDialog::updateCombo(CustomDropDown* combo){
+QString SearchDialog::updateCombo(EditableDropDown *combo){
 	QString text(combo->lineEdit()->text());
 	if(combo->findText(text)<0)
 		combo->insertItem(0,text);

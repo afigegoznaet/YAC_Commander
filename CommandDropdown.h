@@ -9,12 +9,12 @@
 
 class MainWindow;
 
-class DropDown : public QComboBox
+class CommandDropDown : public QComboBox
 {
 	Q_OBJECT
 public:
-	explicit DropDown(QWidget *parent = Q_NULLPTR);
-	~DropDown();
+	explicit CommandDropDown(QWidget *parent = Q_NULLPTR);
+	~CommandDropDown();
 	void setMain(MainWindow* mainWindow);
 	void readSettings();
 signals:

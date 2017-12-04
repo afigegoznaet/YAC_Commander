@@ -26,10 +26,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 			SLOT(focusPreviouslyFocused()), Qt::QueuedConnection);
 	connect(ui->quickBar,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
 
-	connect(ui->leftTabWidget,&CustomTabWidget::focusAquired,[=](){
+    connect(ui->leftTabWidget,&FileTabSelector::focusAquired,[=](){
 		leftTabHasFocus = true;
 	});
-	connect(ui->rightTabWidget,&CustomTabWidget::focusAquired,[=](){
+    connect(ui->rightTabWidget,&FileTabSelector::focusAquired,[=](){
 		leftTabHasFocus = false;
 	});
 
@@ -50,18 +50,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->commandsBox->setEditable(true);
 	//ui->commandsBox->addItem(" ");
 
-	QTimer::singleShot(200, [&](){
-		QEvent* event1 = new QKeyEvent (QEvent::KeyPress,Qt::Key_Tab,Qt::NoModifier);
-		QEvent* event2 = new QKeyEvent (QEvent::KeyRelease,Qt::Key_Tab,Qt::NoModifier);
-		qApp->postEvent(ui->leftTabWidget,event1);
-		qApp->postEvent(ui->leftTabWidget,event2);
-	});
-	qDebug()<<QStandardPaths::AppConfigLocation;
+    QTimer::singleShot(200, [&](){emit setFocus(ui->leftTabWidget);});
+
+    connect(ui->leftTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
+    connect(ui->rightTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
+
+    qDebug()<<QStandardPaths::AppConfigLocation;
 }
 
 MainWindow::~MainWindow(){
 	writeSettings();
 	delete ui;
+}
+
+void MainWindow::setFocusSlot(FileTabSelector *tab){
+    if(leftTabHasFocus && tab == ui->leftTabWidget)
+        return;
+    QEvent* event1 = new QKeyEvent (QEvent::KeyPress,Qt::Key_Tab,Qt::NoModifier);
+    QEvent* event2 = new QKeyEvent (QEvent::KeyRelease,Qt::Key_Tab,Qt::NoModifier);
+    qApp->postEvent(tab,event1);
+    qApp->postEvent(tab,event2);
+    //tab->setFocus();
 }
 
 void MainWindow::writeSettings(){

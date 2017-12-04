@@ -23,9 +23,9 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
-#include "customtabwidget.h"
-#include "customtoolbar.h"
-#include "dropdown.h"
+#include "FileTabSelector.h"
+#include "QuickAccessBar.h"
+#include "CommandDropdown.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -43,10 +43,10 @@ public:
     QPushButton *F6;
     QPushButton *F7;
     QPushButton *F8;
-    DropDown *commandsBox;
+    CommandDropDown *commandsBox;
     QHBoxLayout *tabViewLayout;
-    CustomTabWidget *leftTabWidget;
-    CustomTabWidget *rightTabWidget;
+    FileTabSelector *leftTabWidget;
+    FileTabSelector *rightTabWidget;
     QHBoxLayout *labelLayout;
     QLabel *leftLabel;
     QLabel *rightLabel;
@@ -59,7 +59,7 @@ public:
     QMenu *menuConfiguration;
     QMenu *menuStart;
     QStatusBar *statusbar;
-    CustomToolbar *quickBar;
+    QuickAccessBar *quickBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -120,7 +120,7 @@ public:
 
         gridLayout->addLayout(buttons, 3, 0, 1, 1);
 
-        commandsBox = new DropDown(centralwidget);
+        commandsBox = new CommandDropDown(centralwidget);
         commandsBox->setObjectName(QStringLiteral("commandsBox"));
         commandsBox->setFocusPolicy(Qt::ClickFocus);
 
@@ -128,7 +128,7 @@ public:
 
         tabViewLayout = new QHBoxLayout();
         tabViewLayout->setObjectName(QStringLiteral("tabViewLayout"));
-        leftTabWidget = new CustomTabWidget(centralwidget);
+        leftTabWidget = new FileTabSelector(centralwidget);
         leftTabWidget->setObjectName(QStringLiteral("leftTabWidget"));
         leftTabWidget->setFocusPolicy(Qt::NoFocus);
         leftTabWidget->setAcceptDrops(true);
@@ -137,7 +137,7 @@ public:
 
         tabViewLayout->addWidget(leftTabWidget);
 
-        rightTabWidget = new CustomTabWidget(centralwidget);
+        rightTabWidget = new FileTabSelector(centralwidget);
         rightTabWidget->setObjectName(QStringLiteral("rightTabWidget"));
         rightTabWidget->setFocusPolicy(Qt::NoFocus);
         rightTabWidget->setAcceptDrops(true);
@@ -189,7 +189,7 @@ public:
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QStringLiteral("statusbar"));
         MainWindow->setStatusBar(statusbar);
-        quickBar = new CustomToolbar(MainWindow);
+        quickBar = new QuickAccessBar(MainWindow);
         quickBar->setObjectName(QStringLiteral("quickBar"));
         QSizePolicy sizePolicy1(QSizePolicy::Maximum, QSizePolicy::Fixed);
         sizePolicy1.setHorizontalStretch(0);

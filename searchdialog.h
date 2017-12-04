@@ -8,7 +8,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QQueue>
 #include <QRegularExpression>
-
+#include "EditableDropdown.h"
 #include "ui_searchdialog.h"
 #include "filefindingsmodel.h"
 
@@ -82,7 +82,7 @@ private:
 	int firstRow;
 	SearchAttrib attrs;
 
-	QString updateCombo(CustomDropDown* combo);
+    QString updateCombo(EditableDropDown* combo);
 	void addFile(const QString &newFile);
 	void validateFile(QFileInfo& theFile);
 	void resetGuiState();

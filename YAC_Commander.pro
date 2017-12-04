@@ -18,38 +18,38 @@ FORMS    +=     mainwindow.ui \
 
 SOURCES += main.cpp\
 		mainwindow.cpp \
-    tab.cpp \
-    customtabwidget.cpp \
     filemover.cpp \
     progressDialog.cpp \
-    customtoolbar.cpp \
     newdir.cpp \
     textviewer.cpp \
     HexView/QHexView.cpp \
-    dropdown.cpp \
     orderedfilesystemmodel.cpp \
     searchdialog.cpp \
-    customdropdown.cpp \
     filefindingsmodel.cpp \
-    tableitemdelegate.cpp
+    tableitemdelegate.cpp \
+    CommandDropdown.cpp \
+    EditableDropdown.cpp \
+    QuickAccessBar.cpp \
+    FileTab.cpp \
+    FileTabSelector.cpp
 
 HEADERS  += mainwindow.h \
-    tab.h \
-    customtabwidget.h \
     filemover.h \
     progressDialog.h \
-    customtoolbar.h \
     newdir.h \
     textviewer.h \
     HexView/QHexView.h \
     ui_mainwindow.h \
     ui_progressDialog.h \
-    dropdown.h \
     orderedfilesystemmodel.h \
     searchdialog.h \
-    customdropdown.h \
     filefindingsmodel.h \
-    tableitemdelegate.h
+    tableitemdelegate.h \
+    CommandDropdown.h \
+    EditableDropdown.h \
+    QuickAccessBar.h \
+    FileTab.h \
+    FileTabSelector.h
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

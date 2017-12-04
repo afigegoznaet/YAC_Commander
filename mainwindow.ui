@@ -104,7 +104,7 @@
      </layout>
     </item>
     <item row="2" column="0">
-     <widget class="DropDown" name="commandsBox">
+     <widget class="CommandDropDown" name="commandsBox">
       <property name="focusPolicy">
        <enum>Qt::ClickFocus</enum>
       </property>
@@ -113,7 +113,7 @@
     <item row="1" column="0">
      <layout class="QHBoxLayout" name="tabViewLayout">
       <item>
-       <widget class="CustomTabWidget" name="leftTabWidget">
+       <widget class="FileTabSelector" name="leftTabWidget">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -135,7 +135,7 @@
        </widget>
       </item>
       <item>
-       <widget class="CustomTabWidget" name="rightTabWidget">
+       <widget class="FileTabSelector" name="rightTabWidget">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -183,7 +183,6 @@
      </layout>
     </item>
    </layout>
-   <zorder>commandsBox</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -191,7 +190,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
@@ -238,7 +237,7 @@
    <addaction name="menuStart"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="CustomToolbar" name="quickBar">
+  <widget class="QuickAccessBar" name="quickBar">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
      <horstretch>0</horstretch>
@@ -278,20 +277,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CustomTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>customtabwidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CustomToolbar</class>
-   <extends>QToolBar</extends>
-   <header>customtoolbar.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DropDown</class>
+   <class>CommandDropDown</class>
    <extends>QComboBox</extends>
-   <header>dropdown.h</header>
+   <header>CommandDropdown.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QuickAccessBar</class>
+   <extends>QToolBar</extends>
+   <header>QuickAccessBar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FileTabSelector</class>
+   <extends>QTabWidget</extends>
+   <header>FileTabSelector.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

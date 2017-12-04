@@ -24,10 +24,10 @@ private:
 	const QString rootPath;
 };
 
-class CustomToolbar : public QToolBar{
+class QuickAccessBar : public QToolBar{
 	Q_OBJECT
 public:
-	explicit CustomToolbar(QWidget *parent = 0);
+    explicit QuickAccessBar(QWidget *parent = 0);
 	void sendSignal(const QString&) const;
 
 signals:

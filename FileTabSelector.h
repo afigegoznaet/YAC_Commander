@@ -7,14 +7,14 @@
 #include <QTabBar>
 #include <QMenu>
 #include <QMouseEvent>
-#include "tab.h"
+#include "FileTab.h"
 
-class CustomTabWidget : public QTabWidget
+class FileTabSelector : public QTabWidget
 {
 	Q_OBJECT
 public:
-	CustomTabWidget(QWidget* parent = Q_NULLPTR);
-	~CustomTabWidget();
+    FileTabSelector(QWidget* parent = Q_NULLPTR);
+    ~FileTabSelector();
 	TabbedListView *addNewTab(bool dup=false, QString dir="");
 	void readSettings();
 	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
@@ -32,6 +32,7 @@ signals:
 	void gotResized(int logicalIndex, int oldSize, int newSize);
 	void gotMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
 	void focusAquired();
+    void setFocusSig(FileTabSelector* tab);
 
 protected:
 	QString defaultStyle;

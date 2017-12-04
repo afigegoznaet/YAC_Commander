@@ -1,5 +1,5 @@
-#include "tab.h"
-#include "customtabwidget.h"
+#include "FileTab.h"
+#include "FileTabSelector.h"
 
 #define IN 1
 #define OUT 0
@@ -8,7 +8,7 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 	QTableView(parent),
 	directory(directory.absolutePath()){
 
-	infoLabel = ((CustomTabWidget*)parent)->getLabel();
+    infoLabel = ((FileTabSelector*)parent)->getLabel();
 
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setTabKeyNavigation(false);

@@ -1,18 +1,18 @@
-#include "dropdown.h"
+#include "CommandDropdown.h"
 #include "mainwindow.h"
 
-DropDown::DropDown(QWidget *parent) : QComboBox(parent) {
+CommandDropDown::CommandDropDown(QWidget *parent) : QComboBox(parent) {
 	qDebug()<<"helo";
 
 }
 
-void DropDown::setMain(MainWindow *mainWindow){
+void CommandDropDown::setMain(MainWindow *mainWindow){
 	this->mainWindow=mainWindow;
 	//readSettings();
-	QTimer::singleShot(200, this, &DropDown::clearEditText);	//An ugly hack - never use it
+    QTimer::singleShot(200, this, &CommandDropDown::clearEditText);	//An ugly hack - never use it
 }
 
-void DropDown::processCommand(){
+void CommandDropDown::processCommand(){
 	QString cmd(lineEdit()->text());
 
 	if(findText(cmd)<0)
@@ -50,7 +50,7 @@ void DropDown::processCommand(){
 	emit focusPreviouslyFocused();
 }
 
-void DropDown::keyPressEvent(QKeyEvent *event){
+void CommandDropDown::keyPressEvent(QKeyEvent *event){
 	auto key = event->key();
 	switch (key) {
 		default:
@@ -64,7 +64,7 @@ void DropDown::keyPressEvent(QKeyEvent *event){
 }
 
 
-DropDown::~DropDown(){
+CommandDropDown::~CommandDropDown(){
 
 	QSettings settings;
 	int count=this->count();
@@ -76,7 +76,7 @@ DropDown::~DropDown(){
 	settings.endArray();
 }
 
-void DropDown::readSettings(){
+void CommandDropDown::readSettings(){
 	//return;
 	QSettings settings;
 	int count = settings.beginReadArray("Commands");

@@ -1,11 +1,11 @@
-#include "customtabwidget.h"
+#include "FileTabSelector.h"
 
-CustomTabWidget::CustomTabWidget(QWidget *parent) : QTabWidget(parent) {
+FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 	defaultStyle = styleSheet();
-
+    connect(this->tabBar(), &QTabBar::tabBarClicked,[&](){emit setFocusSig(this);});
 }
 
-void CustomTabWidget::init(){
+void FileTabSelector::init(){
 	setTabsClosable(false);
 	tabBar()->setFocusPolicy(Qt::NoFocus);
 	foreach (auto& child, tabBar()->children()) {
@@ -14,7 +14,7 @@ void CustomTabWidget::init(){
 	}
 }
 
-void CustomTabWidget::indexChanged(int index){
+void FileTabSelector::indexChanged(int index){
 	//qDebug()<<objectName()<<" got a new index "<<index;
 	disconnect(currentHeaderResizedConnection);
 	disconnect(currentHeaderMovedConnection);;
@@ -22,7 +22,7 @@ void CustomTabWidget::indexChanged(int index){
 	currentHeaderMovedConnection = connect(((TabbedListView*)currentWidget())->horizontalHeader(),SIGNAL(sectionMoved(int,int,int)), this, SLOT(sectionMoved(int,int,int)));
 }
 
-void CustomTabWidget::onDirChanged(const QString dirName, int tabIndex){
+void FileTabSelector::onDirChanged(const QString dirName, int tabIndex){
 	setTabText(tabIndex, dirName);
 	tabBar()->setDrawBase(true);
 	tabBar()->setExpanding(true);
@@ -31,7 +31,7 @@ void CustomTabWidget::onDirChanged(const QString dirName, int tabIndex){
 	qDebug()<<this->isEnabled();
 }
 
-void CustomTabWidget::onFocusEvent(bool focused){
+void FileTabSelector::onFocusEvent(bool focused){
 	if(focused){
 		setStyleSheet("border: 1px solid green");
 		//setStyleSheet("");
@@ -50,7 +50,7 @@ void CustomTabWidget::onFocusEvent(bool focused){
 	}
 }
 
-TabbedListView* CustomTabWidget::addNewTab(bool dup, QString dir){
+TabbedListView* FileTabSelector::addNewTab(bool dup, QString dir){
 	TabbedListView* newTab;
 	int index;
 	if(dup){
@@ -83,7 +83,7 @@ TabbedListView* CustomTabWidget::addNewTab(bool dup, QString dir){
 	return newTab;
 }
 
-void CustomTabWidget::sectionResized(int logicalIndex, int oldSize, int newSize){
+void FileTabSelector::sectionResized(int logicalIndex, int oldSize, int newSize){
 
 	//qDebug()<< objectName()<<" Resized: "<<logicalIndex<<" "<<oldSize<<" "<<newSize;
 
@@ -104,7 +104,7 @@ void CustomTabWidget::sectionResized(int logicalIndex, int oldSize, int newSize)
 		emit gotResized(logicalIndex, oldSize, newSize);
 }
 
-void CustomTabWidget::sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex){
+void FileTabSelector::sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex){
 	//qDebug()<< objectName()<<" Moved: "<<logicalIndex<<" "<<oldVisualIndex<<" "<<newVisualIndex;
 	for(int i=0;i<count();i++)
 			if(currentWidget()->hasFocus() && i==currentIndex())
@@ -116,7 +116,7 @@ void CustomTabWidget::sectionMoved(int logicalIndex, int oldVisualIndex, int new
 		emit gotMoved(logicalIndex, oldVisualIndex, newVisualIndex);
 }
 
-void CustomTabWidget::mousePressEvent(QMouseEvent *event){
+void FileTabSelector::mousePressEvent(QMouseEvent *event){
 	if(event->button() != Qt::RightButton)
 		return;
 
@@ -134,7 +134,7 @@ void CustomTabWidget::mousePressEvent(QMouseEvent *event){
 	menu->exec(QCursor::pos());
 }
 
-CustomTabWidget::~CustomTabWidget(){
+FileTabSelector::~FileTabSelector(){
 
 	QSettings settings;
 	int count=this->count();
@@ -146,7 +146,7 @@ CustomTabWidget::~CustomTabWidget(){
 	settings.endArray();
 }
 
-void CustomTabWidget::readSettings(){
+void FileTabSelector::readSettings(){
 	QSettings settings;
 	int count = settings.beginReadArray(objectName());
 	int i=0;
