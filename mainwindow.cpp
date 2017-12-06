@@ -82,7 +82,10 @@ void MainWindow::writeSettings(){
 	settings.endGroup();
 
 	TabbedListView* current = (TabbedListView*)ui->leftTabWidget->currentWidget();
-	settings.setValue("Columns", current->horizontalHeader()->saveState());
+    settings.setValue("LeftColumns", current->horizontalHeader()->saveState());
+
+    current = (TabbedListView*)ui->rightTabWidget->currentWidget();
+    settings.setValue("RightColumns", current->horizontalHeader()->saveState());
 }
 
 void MainWindow::readSettings(){

@@ -72,11 +72,19 @@ TabbedListView* FileTabSelector::addNewTab(bool dup, QString dir){
 
 	auto defaultState = newTab->horizontalHeader()->saveState();//header state
 	QSettings settings;
+    QString settingsSection("LeftColumns");
+    if(this->objectName().startsWith("right"))
+        settingsSection = ("RightColumns");
 	newTab->setLabel(infoLabel);
-	auto headerState = settings.value("Columns", defaultState).toByteArray();
-	newTab->horizontalHeader()->restoreState(headerState);
+    auto headerState = settings.value(settingsSection, defaultState).toByteArray();
+    auto header = newTab->horizontalHeader();
+    header->restoreState(headerState);
+
 	setCurrentIndex(index);
 	newTab->setFocus();
+
+    newTab->getModel()->sort(header->sortIndicatorSection(), header->sortIndicatorOrder());
+
 	emit currentChanged(index);
 	//newTab->setCurrentIndex(newTab->currentIndex().sibling(0,0));
 

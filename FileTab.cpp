@@ -10,82 +10,6 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 
     infoLabel = ((FileTabSelector*)parent)->getLabel();
 
-	setSelectionBehavior(QAbstractItemView::SelectRows);
-	setTabKeyNavigation(false);
-	horizontalHeader()->setStretchLastSection(true);
-	horizontalHeader()->setSectionsMovable(true);
-	horizontalHeader()->setSectionsClickable(true);
-	horizontalHeader()->setSortIndicatorShown(true);
-
-	verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-	verticalHeader()->setDefaultSectionSize(fontMetrics().height()+4);
-
-	model = new OrderedFileSystemModel(this);
-	auto fModel = new QFileSystemModel(this);
-	model->setSourceModel(fModel);
-	model->setRootPath(this->directory);
-	model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System | QDir::Hidden);
-
-	setSelectionMode(QAbstractItemView::NoSelection);
-	setModel(model);
-	model->setFilterRegExp("");
-	setRootIndex(model->getRootIndex());
-	verticalHeader()->setVisible(false);
-
-	//this is needed for clever file selection whn moving up and down
-	connect(fModel,	&QFileSystemModel::directoryLoaded,
-			[&](){model->sort();});
-	connect(model,	SIGNAL(directoryLoaded(QString)),
-			this, SLOT(setCurrentSelection(QString)));
-	connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
-			this,	SLOT(rowsRemoved(QModelIndex,int,int)));
-
-	connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &TabbedListView::updateInfo);
-
-	auto delegate = new TableItemDelegate(this);
-	setItemDelegate(delegate);
-	connect(horizontalHeader(), &QHeaderView::geometriesChanged,
-			[&](){itemDelegate()->setRect(horizontalHeader()->geometry());});
-	connect(selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-			delegate, SLOT(currentChanged(QModelIndex,QModelIndex)));
-	connect(selectionModel(), &QItemSelectionModel::currentChanged,
-			[&](QModelIndex current, QModelIndex prev){
-				for(int i=0;i<4;i++)
-					update(current.sibling(current.row(),i));
-				for(int i=0;i<4;i++)
-					update(prev.sibling(prev.row(),i));
-			});
-	setStyleSheet("\
-		QTableView {\
-			show-decoration-selected: 1;\
-		}\
-		\
-		QTableView::item {\
-			border: 1px solid #d9d9d9;\
-			border-top-color: transparent;\
-			border-bottom-color: transparent;\
-		}\
-		\
-		QTableView::item:hover {\
-			background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
-			border: 1px solid #bfcde4;\
-		}\
-		QTableView::item:focus {\
-			background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
-			border: 1px solid #bfcde4;\
-		}\
-		\
-		QTableView::item:selected {\
-			border: 1px solid #567dbc;\
-		}\
-		\
-		QTableView::item:selected:active{\
-			background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);\
-		}\
-		\
-		QTableView::item:selected:!active {\
-			background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6f9be8, stop: 1 #517fbf);\
-		}");
 }
 
 
@@ -182,10 +106,92 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 }
 
 void TabbedListView::init(){
+
+
+
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setTabKeyNavigation(false);
+    horizontalHeader()->setStretchLastSection(true);
+    horizontalHeader()->setSectionsMovable(true);
+    horizontalHeader()->setSectionsClickable(true);
+    horizontalHeader()->setSortIndicatorShown(true);
+
+    verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    verticalHeader()->setDefaultSectionSize(fontMetrics().height()+4);
+
+    model = new OrderedFileSystemModel(this);
+    auto fModel = new QFileSystemModel(this);
+    model->setSourceModel(fModel);
+    model->setRootPath(this->directory);
+    model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System | QDir::Hidden);
+
+    setSelectionMode(QAbstractItemView::NoSelection);
+    setModel(model);
+    model->setFilterRegExp("");
+    setRootIndex(model->getRootIndex());
+    verticalHeader()->setVisible(false);
+
 	connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
 	horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
 	connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
 	selectionModel()->select(QModelIndex(rootIndex().child(1,0)),  QItemSelectionModel::Current);
+
+
+    //this is needed for clever file selection whn moving up and down
+    connect(fModel,	&QFileSystemModel::directoryLoaded,
+            [&](){model->sort();});
+    connect(model,	SIGNAL(directoryLoaded(QString)),
+            this, SLOT(setCurrentSelection(QString)));
+    connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+            this,	SLOT(rowsRemoved(QModelIndex,int,int)));
+
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &TabbedListView::updateInfo);
+
+    auto delegate = new TableItemDelegate(this);
+    setItemDelegate(delegate);
+    connect(horizontalHeader(), &QHeaderView::geometriesChanged,
+            [&](){itemDelegate()->setRect(horizontalHeader()->geometry());});
+    connect(selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            delegate, SLOT(currentChanged(QModelIndex,QModelIndex)));
+    connect(selectionModel(), &QItemSelectionModel::currentChanged,
+            [&](QModelIndex current, QModelIndex prev){
+                for(int i=0;i<4;i++)
+                    update(current.sibling(current.row(),i));
+                for(int i=0;i<4;i++)
+                    update(prev.sibling(prev.row(),i));
+            });
+    setStyleSheet("\
+        QTableView {\
+            show-decoration-selected: 1;\
+        }\
+        \
+        QTableView::item {\
+            border: 1px solid #d9d9d9;\
+            border-top-color: transparent;\
+            border-bottom-color: transparent;\
+        }\
+        \
+        QTableView::item:hover {\
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
+            border: 1px solid #bfcde4;\
+        }\
+        QTableView::item:focus {\
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
+            border: 1px solid #bfcde4;\
+        }\
+        \
+        QTableView::item:selected {\
+            border: 1px solid #567dbc;\
+        }\
+        \
+        QTableView::item:selected:active{\
+            background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);\
+        }\
+        \
+        QTableView::item:selected:!active {\
+            background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6f9be8, stop: 1 #517fbf);\
+        }");
+
 }
 
 void TabbedListView::setCurrentSelection(QString){
@@ -316,6 +322,8 @@ void TabbedListView::setSelection(Action act){
 void TabbedListView::rowsRemoved(const QModelIndex &parent, int first, int){
 	delete prevSelection;
 	prevSelection = new QModelIndex(parent.child(first, 0));
+    setCurrentIndex(parent.child(first, 0));
+    qDebug()<<currentIndex();
 }
 
 void TabbedListView::rowsInserted(const QModelIndex, int first, int last){
