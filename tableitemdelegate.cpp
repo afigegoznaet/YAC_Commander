@@ -29,11 +29,9 @@ void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 		//QStyleOptionViewItem opt(option);
 		//opt.palette.setColor(QPalette::Normal,QPalette::Background, tempBrush););
 	}
-
-
 }
 
 
-void TableItemDelegate::currentChanged(QModelIndex current,QModelIndex prev){
+void TableItemDelegate::currentChanged(QModelIndex current, QModelIndex){
 	this->current = current;
 }

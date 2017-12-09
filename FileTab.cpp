@@ -107,8 +107,6 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 
 void TabbedListView::init(){
 
-
-
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setTabKeyNavigation(false);
     horizontalHeader()->setStretchLastSection(true);
@@ -147,7 +145,7 @@ void TabbedListView::init(){
 
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &TabbedListView::updateInfo);
 
-    auto delegate = new TableItemDelegate(this);
+	delegate = new TableItemDelegate(this);
     setItemDelegate(delegate);
     connect(horizontalHeader(), &QHeaderView::geometriesChanged,
             [&](){itemDelegate()->setRect(horizontalHeader()->geometry());});
@@ -160,6 +158,7 @@ void TabbedListView::init(){
                 for(int i=0;i<4;i++)
                     update(prev.sibling(prev.row(),i));
             });
+	/*
     setStyleSheet("\
         QTableView {\
             show-decoration-selected: 1;\
@@ -191,13 +190,14 @@ void TabbedListView::init(){
         QTableView::item:selected:!active {\
             background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6f9be8, stop: 1 #517fbf);\
         }");
-
+*/
 }
 
 void TabbedListView::setCurrentSelection(QString){
 	if(prevSelection && prevSelection->isValid()){
-		qDebug()<<"Prev selection set: "<<prevSelection;
-		selectionModel()->setCurrentIndex(*prevSelection, QItemSelectionModel::Current);
+		qDebug()<<"Prev selection set: "<<prevSelection->row();
+		setCurrentIndex(*prevSelection);
+		qDebug()<<currentIndex();
 		return;
 	}
 	int rows = model->rowCount(rootIndex());
@@ -321,16 +321,20 @@ void TabbedListView::setSelection(Action act){
 
 void TabbedListView::rowsRemoved(const QModelIndex &parent, int first, int){
 	delete prevSelection;
-	prevSelection = new QModelIndex(parent.child(first, 0));
-    setCurrentIndex(parent.child(first, 0));
-    qDebug()<<currentIndex();
+	prevSelection = new QModelIndex(currentIndex().sibling(first, 0));
+
+	qDebug()<<"First: "<<first;
+	setCurrentIndex(*prevSelection);
+	qDebug()<<"Via new: "<<currentIndex();
+	//setCurrentIndex(parent.child(first, 0));
+	delegate->currentChanged(*prevSelection, *prevSelection);
+	qDebug()<<"Via sibling: "<<currentIndex();
 }
 
-void TabbedListView::rowsInserted(const QModelIndex, int first, int last){
-	delete prevSelection;
-	prevSelection = nullptr;
-	if(!first || !last)
-		return;
+void TabbedListView::rowsInserted(const QModelIndex &parent, int first, int last){
+	//delete prevSelection;
+	//prevSelection = new QModelIndex(parent.child(last, 0));
+	//setCurrentIndex(parent.child(last, 0));
 }
 
 void TabbedListView::updateInfo(){

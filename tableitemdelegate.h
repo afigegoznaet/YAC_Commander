@@ -17,7 +17,7 @@ protected:
 							 const QStyleOptionViewItem & /*option*/,
 							 const QRect & /*rect*/ ) const {}
 public slots:
-	void currentChanged(QModelIndex current, QModelIndex prev);
+	void currentChanged(QModelIndex current,QModelIndex);
 private:
 	QModelIndex current;
 	QRect rect;
