@@ -1,4 +1,4 @@
-#include "QuickAccessBar.h"
+#include "QuickAccessBar.hpp"
 
 DriveButton::DriveButton(QString root, QWidget *parent) :
 	QPushButton(root, parent), rootPath(root){

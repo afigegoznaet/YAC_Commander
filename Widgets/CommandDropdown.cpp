@@ -1,5 +1,5 @@
-#include "CommandDropdown.h"
-#include "mainwindow.h"
+#include "CommandDropdown.hpp"
+#include "mainwindow.hpp"
 
 CommandDropDown::CommandDropDown(QWidget *parent) : QComboBox(parent) {
 	qDebug()<<"helo";

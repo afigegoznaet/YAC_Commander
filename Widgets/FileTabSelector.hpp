@@ -7,7 +7,7 @@
 #include <QTabBar>
 #include <QMenu>
 #include <QMouseEvent>
-#include "FileTab.h"
+#include "Views/FileTabView.hpp"
 
 class FileTabSelector : public QTabWidget
 {
@@ -15,7 +15,7 @@ class FileTabSelector : public QTabWidget
 public:
     FileTabSelector(QWidget* parent = Q_NULLPTR);
     ~FileTabSelector();
-	TabbedListView *addNewTab(bool dup=false, QString dir="");
+	FileTableView *addNewTab(bool dup=false, QString dir="");
 	void readSettings();
 	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
 	QLabel* getLabel(){return infoLabel;}
@@ -33,6 +33,7 @@ signals:
 	void gotMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
 	void focusAquired();
     void setFocusSig(FileTabSelector* tab);
+	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
 
 protected:
 	QString defaultStyle;

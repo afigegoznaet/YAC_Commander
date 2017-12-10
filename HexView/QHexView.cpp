@@ -1,4 +1,4 @@
-#include "QHexView.h"
+#include "Views/QHexView.hpp"
 #include <QScrollBar>
 #include <QPainter>
 #include <QSize>

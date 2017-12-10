@@ -1,10 +1,10 @@
-#include "FileTab.h"
-#include "FileTabSelector.h"
+#include "Views/FileTabView.hpp"
+#include "Widgets/FileTabSelector.hpp"
 
 #define IN 1
 #define OUT 0
 
-TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
+FileTableView::FileTableView(QDir directory, QWidget *parent) :
 	QTableView(parent),
 	directory(directory.absolutePath()){
 
@@ -13,7 +13,7 @@ TabbedListView::TabbedListView(QDir directory, QWidget *parent) :
 }
 
 
-void TabbedListView::on_doubleClicked(const QModelIndex &index){
+void FileTableView::on_doubleClicked(const QModelIndex &index){
 	QFileInfo info=model->fileInfo(index);//mapped
 	if(info.isDir()){
 		if(info.fileName().compare(".."))
@@ -25,7 +25,7 @@ void TabbedListView::on_doubleClicked(const QModelIndex &index){
 	}
 }
 
-void TabbedListView::chDir(const QModelIndex &index, bool in_out){
+void FileTableView::chDir(const QModelIndex &index, bool in_out){
 	delete prevSelection;
 	prevSelection = nullptr;
 	if(in_out == IN){
@@ -48,7 +48,7 @@ void TabbedListView::chDir(const QModelIndex &index, bool in_out){
 
 }
 
-void TabbedListView::keyPressEvent(QKeyEvent *event){
+void FileTableView::keyPressEvent(QKeyEvent *event){
 	QString filter;
 	QModelIndex index;
 	if(currentIndex().isValid())
@@ -105,7 +105,7 @@ void TabbedListView::keyPressEvent(QKeyEvent *event){
 	//qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();
 }
 
-void TabbedListView::init(){
+void FileTableView::init(){
 
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setTabKeyNavigation(false);
@@ -123,7 +123,7 @@ void TabbedListView::init(){
     model->setRootPath(this->directory);
     model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System | QDir::Hidden);
 
-    setSelectionMode(QAbstractItemView::NoSelection);
+	setSelectionMode(QAbstractItemView::NoSelection);
     setModel(model);
     model->setFilterRegExp("");
     setRootIndex(model->getRootIndex());
@@ -143,7 +143,7 @@ void TabbedListView::init(){
     connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
             this,	SLOT(rowsRemoved(QModelIndex,int,int)));
 
-    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &TabbedListView::updateInfo);
+	connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileTableView::updateInfo);
 
 	delegate = new TableItemDelegate(this);
     setItemDelegate(delegate);
@@ -158,42 +158,17 @@ void TabbedListView::init(){
                 for(int i=0;i<4;i++)
                     update(prev.sibling(prev.row(),i));
             });
-	/*
-    setStyleSheet("\
-        QTableView {\
-            show-decoration-selected: 1;\
-        }\
-        \
-        QTableView::item {\
-            border: 1px solid #d9d9d9;\
-            border-top-color: transparent;\
-            border-bottom-color: transparent;\
-        }\
-        \
-        QTableView::item:hover {\
-            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
-            border: 1px solid #bfcde4;\
-        }\
-        QTableView::item:focus {\
-            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\
-            border: 1px solid #bfcde4;\
-        }\
-        \
-        QTableView::item:selected {\
-            border: 1px solid #567dbc;\
-        }\
-        \
-        QTableView::item:selected:active{\
-            background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);\
-        }\
-        \
-        QTableView::item:selected:!active {\
-            background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 #6f9be8, stop: 1 #517fbf);\
-        }");
-*/
+
+	connect(model, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
+			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
+	setDragEnabled(true);
+	//setAcceptDrops(true);
+	//setSelectionMode(QAbstractItemView::ExtendedSelection);
+	setDragDropMode(QAbstractItemView::DragDrop);
+	setDropIndicatorShown(true);
 }
 
-void TabbedListView::setCurrentSelection(QString){
+void FileTableView::setCurrentSelection(QString){
 	if(prevSelection && prevSelection->isValid()){
 		qDebug()<<"Prev selection set: "<<prevSelection->row();
 		setCurrentIndex(*prevSelection);
@@ -216,7 +191,7 @@ void TabbedListView::setCurrentSelection(QString){
 	selectionModel()->setCurrentIndex(index,QItemSelectionModel::NoUpdate );
 }
 
-void TabbedListView::headerClicked(int section){
+void FileTableView::headerClicked(int section){
 
 	Qt::SortOrder order = Qt::AscendingOrder;
 	if(section == horizontalHeader()->sortIndicatorSection())
@@ -225,18 +200,18 @@ void TabbedListView::headerClicked(int section){
 	model->sort(section, order);
 }
 
-void TabbedListView::focusInEvent(QFocusEvent *event){
+void FileTableView::focusInEvent(QFocusEvent *event){
 	QWidget::focusInEvent(event);
 	emit focusEvent(true);
 	updateInfo();
 }
 
-void TabbedListView::focusOutEvent(QFocusEvent *event){
+void FileTableView::focusOutEvent(QFocusEvent *event){
 	QWidget::focusOutEvent(event);
 	emit focusEvent(false);
 }
 
-QFileInfoList TabbedListView::getSelectedFiles(){
+QFileInfoList FileTableView::getSelectedFiles(){
 	QFileInfoList selectedFiles;
 	QModelIndexList items = selectionModel()->selectedRows();
 	if(!items.size())
@@ -248,23 +223,30 @@ QFileInfoList TabbedListView::getSelectedFiles(){
 	return selectedFiles;
 }
 
-void TabbedListView::cdTo(const QString &dir){
+void FileTableView::cdTo(const QString &dir){
 	model->setRootPath(dir);
 	setRootIndex(model->getRootIndex());
 	emit dirChanged(dir, this->index);
 	updateInfo();
 }
 
-void TabbedListView::mousePressEvent(QMouseEvent *event){
-	if(event->button() != Qt::RightButton){
-		QTableView::mousePressEvent(event);
-		return;
-	}
+void FileTableView::mousePressEvent(QMouseEvent *event){
+	setSelectionMode(QAbstractItemView::ExtendedSelection);
+	QTableView::mousePressEvent(event);
+	setSelectionMode(QAbstractItemView::NoSelection);
 
-	qDebug()<<"Right mouse!";
 }
 
-void TabbedListView::queryDialog(QString& filter, Action act){
+
+void FileTableView::mouseReleaseEvent(QMouseEvent *event){
+	auto modifiers =
+		((QGuiApplication*)QGuiApplication::instance())->keyboardModifiers();
+	if(!(modifiers & (Qt::ControlModifier|Qt::ShiftModifier)))
+		clearSelection();
+	QTableView::mouseReleaseEvent(event);
+}
+
+void FileTableView::queryDialog(QString& filter, Action act){
 	bool ok;
 	QString label;
 	switch (act) {
@@ -283,7 +265,7 @@ void TabbedListView::queryDialog(QString& filter, Action act){
 
 }
 
-void TabbedListView::setSelection(Action act){
+void FileTableView::setSelection(Action act){
 	QString filter("");
 	int rowCount = model->rowCount(rootIndex());
 	int columnCount = model->columnCount(rootIndex());
@@ -319,7 +301,7 @@ void TabbedListView::setSelection(Action act){
 	}
 }
 
-void TabbedListView::rowsRemoved(const QModelIndex &parent, int first, int){
+void FileTableView::rowsRemoved(const QModelIndex&, int first, int){
 	delete prevSelection;
 	prevSelection = new QModelIndex(currentIndex().sibling(first, 0));
 
@@ -329,15 +311,20 @@ void TabbedListView::rowsRemoved(const QModelIndex &parent, int first, int){
 	//setCurrentIndex(parent.child(first, 0));
 	delegate->currentChanged(*prevSelection, *prevSelection);
 	qDebug()<<"Via sibling: "<<currentIndex();
+	updateInfo();
 }
 
-void TabbedListView::rowsInserted(const QModelIndex &parent, int first, int last){
+void FileTableView::rowsInserted(const QModelIndex &parent, int first, int last){
+	Q_UNUSED(parent);
+	Q_UNUSED(first);
+	Q_UNUSED(last);
 	//delete prevSelection;
 	//prevSelection = new QModelIndex(parent.child(last, 0));
 	//setCurrentIndex(parent.child(last, 0));
+	updateInfo();
 }
 
-void TabbedListView::updateInfo(){
+void FileTableView::updateInfo(){
 	//qDebug()<<"***************************************************";
 	//qDebug()<<"Root path:"<< model->rootPath();
 	QStorageInfo storage(model->rootPath());
@@ -361,7 +348,8 @@ void TabbedListView::updateInfo(){
 		typeRemaining = "MB";
 	}
 	fmt +=QString::number(sizeRemaining)+" "+typeRemaining  +" available of "+QString::number(sizeTotal)+  " "+typeTotal;
-	fmt += "\t" + QString::number(selectionModel()->selectedRows().size()) + " selected of "+QString::number(model->rowCount(rootIndex())) +" directory items";
+	fmt += "\t" + QString::number(selectionModel()->selectedRows().size()) +
+		   " selected of "+QString::number(model->rowCount(rootIndex())-1) +" directory items";
 	//qDebug() << "size:" << sizeTotal << "MB";
 	//qDebug() << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB";
 	//qDebug() << "Selected: "<<selectionModel()->selectedRows().size()<<" of "<<model->rowCount();
@@ -369,7 +357,7 @@ void TabbedListView::updateInfo(){
 	infoLabel->setText(fmt);
 }
 
-void TabbedListView::goToFile(QString& fullFilePath){
+void FileTableView::goToFile(QString& fullFilePath){
 	//qDebug()<<fullFilePath;
 	QFileInfo info(fullFilePath);
 	//qDebug()<<info.absolutePath();

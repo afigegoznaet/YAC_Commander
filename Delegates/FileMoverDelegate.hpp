@@ -8,12 +8,12 @@
 
 bool isMovable(QString& from, QString& to);
 
-class FileMover : public QObject
+class FileMoverDelegate : public QObject
 {
 	Q_OBJECT
 public:
-	explicit FileMover(QString source, QString destination, QString action, QObject *parent = 0);
-	~FileMover();
+	explicit FileMoverDelegate(QString source, QString destination, QString action, QObject *parent = 0);
+	~FileMoverDelegate();
 	//void execute();
 	QMetaObject::Connection hz;
 

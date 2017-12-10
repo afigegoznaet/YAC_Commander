@@ -279,17 +279,17 @@
   <customwidget>
    <class>CommandDropDown</class>
    <extends>QComboBox</extends>
-   <header>CommandDropdown.h</header>
+   <header>Widgets/CommandDropdown.hpp</header>
   </customwidget>
   <customwidget>
    <class>QuickAccessBar</class>
    <extends>QToolBar</extends>
-   <header>QuickAccessBar.h</header>
+   <header>Widgets/QuickAccessBar.hpp</header>
   </customwidget>
   <customwidget>
    <class>FileTabSelector</class>
    <extends>QTabWidget</extends>
-   <header>FileTabSelector.h</header>
+   <header>Widgets/FileTabSelector.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

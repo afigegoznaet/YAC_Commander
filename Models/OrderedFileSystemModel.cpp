@@ -1,5 +1,5 @@
-#include "orderedfilesystemmodel.h"
-#include <QDateTime>
+#include "OrderedFileSystemModel.hpp"
+
 
 OrderedFileSystemModel::OrderedFileSystemModel(QObject *parent) :
 	QSortFilterProxyModel(parent){
@@ -48,4 +48,23 @@ void OrderedFileSystemModel::sort(int column, Qt::SortOrder order){
 
 QFileSystemModel* OrderedFileSystemModel::sourceModel() const{
 	return dynamic_cast<QFileSystemModel*>(QSortFilterProxyModel::sourceModel());
+}
+
+bool OrderedFileSystemModel::dropMimeData(const QMimeData *data,
+		Qt::DropAction action, int row,	int column, const QModelIndex &parent){
+	auto uriList = data->urls();
+	QFileInfoList itemsToMove;
+	foreach (auto& uri, uriList)
+		itemsToMove<<uri.toLocalFile();
+
+	emit setFileAction(itemsToMove,rootPath(), COPY);
+	return true;
+}
+
+Qt::ItemFlags OrderedFileSystemModel::flags(const QModelIndex &index) const{
+	Qt::ItemFlags defaultFlags = QSortFilterProxyModel::flags(index);
+	if (index.isValid())
+		return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
+	else
+		return Qt::ItemIsDropEnabled | defaultFlags;
 }

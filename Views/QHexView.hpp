@@ -12,7 +12,7 @@ class QHexView: public QAbstractScrollArea
 		class DataStorage
 		{
 			public:
-				virtual ~DataStorage() {};
+				virtual ~DataStorage() {}
 				virtual QByteArray getData(unsigned long long position, unsigned long long length) = 0;
 				virtual unsigned long long size() = 0;
 		};

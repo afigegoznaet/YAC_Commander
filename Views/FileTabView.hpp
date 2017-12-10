@@ -18,19 +18,21 @@
 #include <QLabel>
 #include <QTimer>
 #include <QStorageInfo>
-#include "orderedfilesystemmodel.h"
-#include "tableitemdelegate.h"
 #include <QGuiApplication>
+#include "Models/OrderedFileSystemModel.hpp"
+#include "Delegates/TableItemDelegate.hpp"
 
-class TabbedListView : public QTableView
+
+
+class FileTableView : public QTableView
 {
 	Q_OBJECT
 
 	enum Action{PLUS, MINUS, ASTERISK};
 public:
-	explicit TabbedListView(QDir directory, QWidget *parent = 0);
-	TabbedListView(QWidget *parent) : TabbedListView(QDir::homePath(),parent){}
-	~TabbedListView(){delete prevSelection;}
+	explicit FileTableView(QDir directory, QWidget *parent = 0);
+	FileTableView(QWidget *parent) : FileTableView(QDir::homePath(),parent){}
+	~FileTableView(){delete prevSelection;}
 	QString GetDirectory(){
 		return model->rootPath();
 	}
@@ -55,13 +57,13 @@ signals:
 	void dirChanged(const QString dirName, int index);
 	void focusEvent(bool);
 	void setInfo();
-	//void fileMovement(QItemSelectionModel* model, FileMovementAction action);
+	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
 
 public slots:
 	void on_doubleClicked(const QModelIndex &index);
 	void setCurrentSelection(QString);
 	void headerClicked(int section);
-	void rowsRemoved(const QModelIndex &parent, int first, int);
+	void rowsRemoved(const QModelIndex &, int first, int);
 	void rowsInserted(const QModelIndex &parent, int first, int);
 	void updateInfo();
 protected:
@@ -80,7 +82,8 @@ private:
 	QModelIndex* prevSelection = nullptr;
 	TableItemDelegate* delegate = nullptr;
 
-	virtual void mousePressEvent(QMouseEvent *event);
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
 	void queryDialog(QString& filter, Action act);
 	void setSelection(Action act);
 };

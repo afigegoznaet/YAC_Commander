@@ -195,7 +195,7 @@
   <customwidget>
    <class>EditableDropDown</class>
    <extends>QComboBox</extends>
-   <header>EditableDropdown.h</header>
+   <header>Widgets/EditableDropdown.hpp</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -9,7 +9,7 @@
 #include <QPlainTextDocumentLayout>
 #include <QMimeDatabase>
 #include <QMimeData>
-#include <HexView/QHexView.h>
+#include <Views/QHexView.hpp>
 
 
 namespace Ui {

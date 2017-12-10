@@ -10,7 +10,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
 #include <set>
-#include "filemover.h"
+#include "Delegates/FileMoverDelegate.hpp"
 
 enum ACTION {COPY, MOVE, LN, LN_S, ENUM_TERMINATOR} ;
 
@@ -22,15 +22,13 @@ class ProgressDialog : public QDialog
 {
 	Q_OBJECT
 
-	friend class MainWindow;
+	//friend class MainWindow;
 public:
 	explicit ProgressDialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
 	~ProgressDialog();
-	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
 
 private:
 	Ui::ProgressDialog *progress;
-
 	QFuture<void> stub;
 	bool status;
 	QWaitCondition cond;
@@ -55,6 +53,7 @@ public slots:
 	void dirMovementResult(int);
 	void errorMsg(QString errorText);
 	void hideDialogSlot();
+	void processFileAction(QFileInfoList fileList, QString destination, ACTION action);
 private slots:
 	void on_pauseButton_clicked();
 	void on_removeButton_clicked();

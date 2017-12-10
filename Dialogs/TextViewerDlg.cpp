@@ -1,4 +1,4 @@
-#include "textviewer.h"
+#include "TextViewerDlg.hpp"
 #include "ui_textviewer.h"
 
 

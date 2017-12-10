@@ -1,4 +1,4 @@
-#include "filemover.h"
+#include "Delegates/FileMoverDelegate.hpp"
 #include <QDebug>
 #include <QStorageInfo>
 
@@ -21,7 +21,7 @@ bool isMovable(QString &from, QString &to){
 	return in == out;
 }
 
-int FileMover::copy(){
+int FileMoverDelegate::copy(){
 	QFile sourceFile(source);
 	QFile destinationFile(destination);
 
@@ -67,7 +67,7 @@ int FileMover::copy(){
 	return true;
 }
 
-int FileMover::move(){
+int FileMoverDelegate::move(){
 
 	return 10 + (int)QFile::rename(source, destination);
 }
@@ -76,7 +76,7 @@ void FileMover::execute(){
 
 }
 */
-FileMover::~FileMover(){
+FileMoverDelegate::~FileMoverDelegate(){
 
 	int res = 0;
 	if(!action.compare("Copy",Qt::CaseInsensitive)){
@@ -93,12 +93,12 @@ FileMover::~FileMover(){
 
 }
 
-FileMover::FileMover(QString source, QString destination, QString action, QObject *parent) :
+FileMoverDelegate::FileMoverDelegate(QString source, QString destination, QString action, QObject *parent) :
 	QObject(parent), destination(destination), source(source), action(action), status(true){
 	qDebug()<<"Mover constructor"<<thread();
 }
 
-void FileMover::setStatus(int status){
+void FileMoverDelegate::setStatus(int status){
 	this->status = status;
 	qDebug()<<"*************************************";
 	qDebug()<<"status "<<status<<" emmitted";

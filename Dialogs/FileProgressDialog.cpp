@@ -1,7 +1,4 @@
-#include "progressDialog.h"
-//#include <QtTest/QTest>
-//#include <unistd.h>
-
+#include "FileProgressDialog.hpp"
 
 ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
 	QDialog(parent, f),
@@ -22,6 +19,13 @@ ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f) :
 	progress->progressBar->setMinimum(0);
 	progress->progressBar->setMaximum( 100 );
 	connect(this, SIGNAL(dirMoved(int)),this,SLOT(movementResult(int)));
+
+	connect(this, SIGNAL(sendErrMsg(QString )), this,SLOT(errorMsg(QString )), Qt::QueuedConnection);
+	connect(this, SIGNAL(hideDialogSignal()), this,SLOT(hideDialogSlot()), Qt::QueuedConnection);
+
+	QSettings settings;
+	auto headerState = settings.value("ProgressColumns").toByteArray();
+	progress->tableWidget->horizontalHeader()->restoreState(headerState);
 }
 
 ProgressDialog::~ProgressDialog(){
@@ -30,10 +34,13 @@ ProgressDialog::~ProgressDialog(){
 	delete progress;
 }
 
-void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, ACTION action){
+void ProgressDialog::processFileAction(QFileInfoList fileList, QString destination, ACTION action){
+	if(isHidden())
+		show();
 	if(!progress->tableWidget->rowCount())
 		status = 1;
 
+	int initialCount = progress->tableWidget->rowCount();
 	int newRow = progress->tableWidget->rowCount();
 
 
@@ -67,10 +74,9 @@ void ProgressDialog::setFileAction(QFileInfoList fileList, QString destination, 
 		progress->tableWidget->setItem(newRow,2,new QTableWidgetItem(destination));
 	}
 
-	connect(this, SIGNAL(sendErrMsg(QString )), this,SLOT(errorMsg(QString )), Qt::QueuedConnection);
-	connect(this, SIGNAL(hideDialogSignal()), this,SLOT(hideDialogSlot()), Qt::QueuedConnection);
 
-	QtConcurrent::run(this, &ProgressDialog::DoSomething);
+	if(0==initialCount)
+		QtConcurrent::run(this, &ProgressDialog::DoSomething);
 
 }
 
@@ -176,7 +182,7 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest, QList
 
 		destination.append(file.fileName());
 		setWindowTitle(file.fileName());
-		FileMover mover(source, destination, action, this);
+		FileMoverDelegate mover(source, destination, action, this);
 		connect(&mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
 		connect(&mover, SIGNAL(completed(int)),this,SLOT(dirMovementResult(int)));
 		connect(this, SIGNAL(setStatus(int)),&mover,SLOT(setStatus(int)), Qt::DirectConnection);
@@ -237,7 +243,7 @@ void ProgressDialog::DoSomething(void){
 
 
 		destination.append(fileName);
-		FileMover mover(source, destination, action, this);
+		FileMoverDelegate mover(source, destination, action, this);
 
 		connect(&mover,SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
 		connect(&mover, SIGNAL(completed(int)),this,SLOT(movementResult(int)), Qt::DirectConnection);
@@ -248,6 +254,7 @@ void ProgressDialog::DoSomething(void){
 
 	}else{
 		setWindowTitle("");
+		progress->pauseButton->setText(pauseButtonLabels[status]);
 		emit hideDialogSignal();
 	}
 

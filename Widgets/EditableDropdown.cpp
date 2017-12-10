@@ -1,5 +1,5 @@
-#include "EditableDropdown.h"
-#include "searchdialog.h"
+#include "EditableDropdown.hpp"
+#include "Dialogs/FileSearchDlg.hpp"
 
 EditableDropDown::EditableDropDown(QWidget *parent) : QComboBox(parent) {
 

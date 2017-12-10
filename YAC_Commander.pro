@@ -17,39 +17,38 @@ FORMS    +=     mainwindow.ui \
     searchdialog.ui
 
 SOURCES += main.cpp\
-		mainwindow.cpp \
-    filemover.cpp \
-    progressDialog.cpp \
-    newdir.cpp \
-    textviewer.cpp \
     HexView/QHexView.cpp \
-    orderedfilesystemmodel.cpp \
-    searchdialog.cpp \
-    filefindingsmodel.cpp \
-    tableitemdelegate.cpp \
-    CommandDropdown.cpp \
-    EditableDropdown.cpp \
-    QuickAccessBar.cpp \
-    FileTab.cpp \
-    FileTabSelector.cpp
+    Widgets/CommandDropdown.cpp \
+    Widgets/EditableDropdown.cpp \
+    Widgets/QuickAccessBar.cpp \
+    Dialogs/TextViewerDlg.cpp \
+    Models/FileFindingsModel.cpp \
+    Models/OrderedFileSystemModel.cpp \
+    Delegates/FileMoverDelegate.cpp \
+    Views/FileTabView.cpp \
+    Widgets/FileTabSelector.cpp \
+    MainWindow.cpp \
+    Dialogs/NewDirDlg.cpp \
+    Dialogs/FileProgressDialog.cpp \
+    Dialogs/FileSearchDlg.cpp \
+    Delegates/TableItemDelegate.cpp
 
-HEADERS  += mainwindow.h \
-    filemover.h \
-    progressDialog.h \
-    newdir.h \
-    textviewer.h \
-    HexView/QHexView.h \
-    ui_mainwindow.h \
-    ui_progressDialog.h \
-    orderedfilesystemmodel.h \
-    searchdialog.h \
-    filefindingsmodel.h \
-    tableitemdelegate.h \
-    CommandDropdown.h \
-    EditableDropdown.h \
-    QuickAccessBar.h \
-    FileTab.h \
-    FileTabSelector.h
+HEADERS  += \
+    Delegates/FileMoverDelegate.hpp \
+    Delegates/TableItemDelegate.hpp \
+    Dialogs/FileProgressDialog.hpp \
+    Dialogs/FileSearchDlg.hpp \
+    Dialogs/NewDirDlg.hpp \
+    Dialogs/TextViewerDlg.hpp \
+    Models/FileFindingsModel.hpp \
+    Models/OrderedFileSystemModel.hpp \
+    Widgets/CommandDropdown.hpp \
+    Widgets/EditableDropdown.hpp \
+    Widgets/FileTabSelector.hpp \
+    Widgets/QuickAccessBar.hpp \
+    mainwindow.hpp \
+    Views/QHexView.hpp \
+    Views/FileTabView.hpp
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

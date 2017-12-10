@@ -1,4 +1,4 @@
-#include "newdir.h"
+#include "NewDirDlg.hpp"
 
 NewDir::NewDir(QString &label, QString& dirName, QWidget *parent) :
 	QDialog(parent)

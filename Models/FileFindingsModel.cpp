@@ -1,4 +1,4 @@
-#include "filefindingsmodel.h"
+#include "FileFindingsModel.hpp"
 
 FileFindingsModel::FileFindingsModel(QObject *parent) : QAbstractListModel(parent){
 	files = {"asdf","fdsa"};

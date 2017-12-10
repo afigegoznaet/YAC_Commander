@@ -8,9 +8,9 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QQueue>
 #include <QRegularExpression>
-#include "EditableDropdown.h"
+#include "Widgets/EditableDropdown.hpp"
 #include "ui_searchdialog.h"
-#include "filefindingsmodel.h"
+#include "Models/FileFindingsModel.hpp"
 
 
 namespace Ui {

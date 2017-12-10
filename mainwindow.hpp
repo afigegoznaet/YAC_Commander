@@ -2,19 +2,19 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "FileTabSelector.h"
-#include "progressDialog.h"
-#include "FileTab.h"
+#include "Widgets/FileTabSelector.hpp"
+#include "Views/FileTabView.hpp"
 #include "ui_mainwindow.h"
 #include "ui_progressDialog.h"
 #include <QMessageBox>
 #include <QDir>
 #include <QApplication>
-#include <newdir.h>
+#include <Dialogs/NewDirDlg.hpp>
 #include <utility>
-#include "textviewer.h"
-#include "CommandDropdown.h"
-#include "searchdialog.h"
+#include "Views/QHexView.hpp"
+#include "Widgets/CommandDropdown.hpp"
+#include "Dialogs/FileSearchDlg.hpp"
+#include "Dialogs/TextViewerDlg.hpp"
 
 #define DEF_EDITOR "undefined"
 
@@ -43,10 +43,13 @@ public:
 	explicit MainWindow(QWidget *parent = 0);
 	QString getDirInFocus(bool opposite = false);
 	~MainWindow();
-	TabbedListView* getFocusedTab(void);
+	FileTableView* getFocusedTab(void);
+	ProgressDialog* getFileMover(){return movementProgress;}
 
 signals:
     void setFocus(FileTabSelector* tab);
+	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
+
 public slots:
 	void cdTo(const QString&);
 	void focusPreviouslyFocused();
@@ -58,7 +61,6 @@ private slots:
 	void on_F6_clicked();
 	void on_F7_clicked();
 	void on_F8_clicked();
-
 
 private:
 	Ui::MainWindow *ui;

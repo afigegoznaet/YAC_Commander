@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "mainwindow.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
 	ui->setupUi(this);
@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 		leftTabHasFocus = false;
 	});
 
-
 	connect(ui->leftTabWidget,SIGNAL(gotResized(int,int,int)),ui->rightTabWidget,SLOT(sectionResized(int,int,int)));
 	connect(ui->rightTabWidget,SIGNAL(gotResized(int,int,int)),ui->leftTabWidget,SLOT(sectionResized(int,int,int)));
 	connect(ui->leftTabWidget,SIGNAL(gotMoved(int,int,int)),ui->rightTabWidget,SLOT(sectionMoved(int,int,int)));
@@ -41,19 +40,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	connect(ui->leftTabWidget, SIGNAL(currentChanged(int)), ui->leftTabWidget, SLOT(indexChanged(int)) );
 	connect(ui->rightTabWidget, SIGNAL(currentChanged(int)), ui->rightTabWidget, SLOT(indexChanged(int)) );
 
-
-
-	QSettings settings;
-	auto headerState = settings.value("ProgressColumns").toByteArray();
-	movementProgress->progress->tableWidget->horizontalHeader()->restoreState(headerState);
-
 	ui->commandsBox->setEditable(true);
-	//ui->commandsBox->addItem(" ");
 
     QTimer::singleShot(200, [&](){emit setFocus(ui->leftTabWidget);});
 
     connect(ui->leftTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
     connect(ui->rightTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
+
+	connect(this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
+			movementProgress, SLOT(processFileAction(QFileInfoList,QString,ACTION)));
+	connect(ui->leftTabWidget, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
+			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
+	connect(ui->rightTabWidget, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
+			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
 
     qDebug()<<QStandardPaths::AppConfigLocation;
 }
@@ -81,10 +80,10 @@ void MainWindow::writeSettings(){
 	settings.setValue("editor", editor);
 	settings.endGroup();
 
-	TabbedListView* current = (TabbedListView*)ui->leftTabWidget->currentWidget();
+	FileTableView* current = (FileTableView*)ui->leftTabWidget->currentWidget();
     settings.setValue("LeftColumns", current->horizontalHeader()->saveState());
 
-    current = (TabbedListView*)ui->rightTabWidget->currentWidget();
+	current = (FileTableView*)ui->rightTabWidget->currentWidget();
     settings.setValue("RightColumns", current->horizontalHeader()->saveState());
 }
 
@@ -160,8 +159,7 @@ void MainWindow::copyFiles(){
 		dir.mkdir(destination);
 	}
 
-	movementProgress->show();
-	movementProgress->setFileAction(fileList, destination, COPY);
+	emit setFileAction(fileList, destination, COPY);
 }
 
 void MainWindow::moveFiles(){
@@ -183,8 +181,7 @@ void MainWindow::moveFiles(){
 		dir.mkdir(destination);
 	}
 
-	movementProgress->show();
-	movementProgress->setFileAction(fileList, destination, MOVE);
+	emit setFileAction(fileList, destination, MOVE);
 }
 
 void MainWindow::deleteFiles(){
@@ -222,8 +219,8 @@ void MainWindow::deleteFiles(){
 }
 
 QString MainWindow::getDirInFocus(bool opposite){
-	auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
-	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
+	auto left = (FileTableView*) ui->leftTabWidget->currentWidget();
+	auto right = (FileTableView*) ui->rightTabWidget->currentWidget();
 	bool focus = leftTabHasFocus;
 	if(opposite)
 		focus = !leftTabHasFocus;
@@ -242,9 +239,9 @@ QFileInfoList MainWindow::getSelectedFiles(){
 
 
 
-TabbedListView* MainWindow::getFocusedTab(void){
-	auto left = (TabbedListView*) ui->leftTabWidget->currentWidget();
-	auto right = (TabbedListView*) ui->rightTabWidget->currentWidget();
+FileTableView *MainWindow::getFocusedTab(void){
+	auto left = (FileTableView*) ui->leftTabWidget->currentWidget();
+	auto right = (FileTableView*) ui->rightTabWidget->currentWidget();
 
 
 	if(leftTabHasFocus)

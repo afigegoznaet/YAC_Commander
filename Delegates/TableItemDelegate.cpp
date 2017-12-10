@@ -1,4 +1,4 @@
-#include "tableitemdelegate.h"
+#include "TableItemDelegate.hpp"
 
 TableItemDelegate::TableItemDelegate(QObject *parent) :
 	QItemDelegate(parent), rect(0,0,1,1){
