@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QProcess>
+#include <QStandardItemModel>
 
 class MainWindow;
 

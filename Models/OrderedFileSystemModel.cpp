@@ -51,7 +51,7 @@ QFileSystemModel* OrderedFileSystemModel::sourceModel() const{
 }
 
 bool OrderedFileSystemModel::dropMimeData(const QMimeData *data,
-		Qt::DropAction action, int row,	int column, const QModelIndex &parent){
+        Qt::DropAction, int, int, const QModelIndex&){
 	auto uriList = data->urls();
 	QFileInfoList itemsToMove;
 	foreach (auto& uri, uriList)

@@ -15,8 +15,13 @@ void CommandDropDown::setMain(MainWindow *mainWindow){
 void CommandDropDown::processCommand(){
 	QString cmd(lineEdit()->text());
 
-	if(findText(cmd)<0)
+    QStandardItemModel* stModel = (QStandardItemModel*)model();
+    auto index = findText(cmd);
+    if(index<0)
 		insertItem(0,cmd);
+    else{
+        stModel->insertRow(0, stModel->takeRow(index));
+    }
 	if(cmd.startsWith("cd")){
 		cmd.remove(0,3);
 		emit cdTo(cmd.trimmed());
