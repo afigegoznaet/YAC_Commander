@@ -162,10 +162,11 @@ void FileTableView::init(){
 	connect(model, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
 			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
 	setDragEnabled(true);
-	//setAcceptDrops(true);
-	//setSelectionMode(QAbstractItemView::ExtendedSelection);
 	setDragDropMode(QAbstractItemView::DragDrop);
 	setDropIndicatorShown(true);
+
+	connect(this, SIGNAL(contextMenuRequested(QPoint)),
+			this, SLOT(openContextMenu(QPoint)));
 }
 
 void FileTableView::setCurrentSelection(QString){
@@ -231,6 +232,12 @@ void FileTableView::cdTo(const QString &dir){
 }
 
 void FileTableView::mousePressEvent(QMouseEvent *event){
+
+	if(event->button() == Qt::RightButton){
+		emit contextMenuRequested(event->pos());
+		return;
+	}
+
 	setSelectionMode(QAbstractItemView::ExtendedSelection);
 	QTableView::mousePressEvent(event);
 	setSelectionMode(QAbstractItemView::NoSelection);
@@ -366,4 +373,12 @@ void FileTableView::goToFile(QString& fullFilePath){
 	delete prevSelection;
 	prevSelection = nullptr;
 	setCurrentSelection("");
+}
+
+void FileTableView::openContextMenu(QPoint loc){
+	auto menu = new ItemContextMenu(this);
+	auto index = indexAt(loc);
+	qDebug()<<"Detected index: "<<index;
+	qDebug()<<"Detected file: "<<model->fileInfo(index).fileName();
+	menu->exec(QCursor::pos());
 }

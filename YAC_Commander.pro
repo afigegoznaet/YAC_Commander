@@ -8,7 +8,7 @@ QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = YAC_Commander
+TARGET = yc
 TEMPLATE = app
 
 FORMS    +=     mainwindow.ui \
@@ -17,7 +17,6 @@ FORMS    +=     mainwindow.ui \
     searchdialog.ui
 
 SOURCES += main.cpp\
-    HexView/QHexView.cpp \
     Widgets/CommandDropdown.cpp \
     Widgets/EditableDropdown.cpp \
     Widgets/QuickAccessBar.cpp \
@@ -31,7 +30,9 @@ SOURCES += main.cpp\
     Dialogs/NewDirDlg.cpp \
     Dialogs/FileProgressDialog.cpp \
     Dialogs/FileSearchDlg.cpp \
-    Delegates/TableItemDelegate.cpp
+    Delegates/TableItemDelegate.cpp \
+    Views/QHexView.cpp \
+    Menus/ItemContextMenu.cpp
 
 HEADERS  += \
     Delegates/FileMoverDelegate.hpp \
@@ -48,7 +49,8 @@ HEADERS  += \
     Widgets/QuickAccessBar.hpp \
     mainwindow.hpp \
     Views/QHexView.hpp \
-    Views/FileTabView.hpp
+    Views/FileTabView.hpp \
+    Menus/ItemContextMenu.hpp
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

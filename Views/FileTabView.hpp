@@ -21,8 +21,7 @@
 #include <QGuiApplication>
 #include "Models/OrderedFileSystemModel.hpp"
 #include "Delegates/TableItemDelegate.hpp"
-
-
+#include "Menus/ItemContextMenu.hpp"
 
 class FileTableView : public QTableView
 {
@@ -57,7 +56,8 @@ signals:
 	void dirChanged(const QString dirName, int index);
 	void focusEvent(bool);
 	void setInfo();
-	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
+	void setFileAction(QFileInfoList, QString, ACTION);
+	void contextMenuRequested(QPoint);
 
 public slots:
 	void on_doubleClicked(const QModelIndex &index);
@@ -66,6 +66,7 @@ public slots:
 	void rowsRemoved(const QModelIndex &, int first, int);
 	void rowsInserted(const QModelIndex &parent, int first, int);
 	void updateInfo();
+	void openContextMenu(QPoint loc);
 protected:
 	virtual void keyPressEvent(QKeyEvent * event);
 	void chDir(const QModelIndex &index, bool in_out);
