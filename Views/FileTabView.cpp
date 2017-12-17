@@ -62,6 +62,10 @@ void FileTableView::keyPressEvent(QKeyEvent *event){
 		flags = QItemSelectionModel::Toggle | QItemSelectionModel::Rows;
 	switch (key) {
 	case Qt::Key_Return:
+		if(editorIsOpen){
+			editorIsOpen = false;
+			return QAbstractItemView::keyPressEvent(event);
+		}
 		on_doubleClicked(index);
 		break;
 	case Qt::Key_Backspace:
@@ -107,57 +111,60 @@ void FileTableView::keyPressEvent(QKeyEvent *event){
 
 void FileTableView::init(){
 
-    setSelectionBehavior(QAbstractItemView::SelectRows);
-    setTabKeyNavigation(false);
-    horizontalHeader()->setStretchLastSection(true);
-    horizontalHeader()->setSectionsMovable(true);
-    horizontalHeader()->setSectionsClickable(true);
-    horizontalHeader()->setSortIndicatorShown(true);
+	setEditTriggers(QAbstractItemView::SelectedClicked
+					| QAbstractItemView::EditKeyPressed );
+	setSelectionBehavior(QAbstractItemView::SelectRows);
+	setTabKeyNavigation(false);
+	horizontalHeader()->setStretchLastSection(true);
+	horizontalHeader()->setSectionsMovable(true);
+	horizontalHeader()->setSectionsClickable(true);
+	horizontalHeader()->setSortIndicatorShown(true);
 
-    verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    verticalHeader()->setDefaultSectionSize(fontMetrics().height()+4);
+	verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+	verticalHeader()->setDefaultSectionSize(fontMetrics().height()+4);
 
-    model = new OrderedFileSystemModel(this);
-    auto fModel = new QFileSystemModel(this);
-    model->setSourceModel(fModel);
-    model->setRootPath(this->directory);
-    model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System | QDir::Hidden);
+	model = new OrderedFileSystemModel(this);
+	auto fModel = new QFileSystemModel(this);
+
+	model->setSourceModel(fModel);
+	model->setRootPath(this->directory);
+	model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System | QDir::Hidden);
 
 	setSelectionMode(QAbstractItemView::NoSelection);
-    setModel(model);
-    model->setFilterRegExp("");
-    setRootIndex(model->getRootIndex());
-    verticalHeader()->setVisible(false);
+	setModel(model);
+	model->setFilterRegExp("");
+	setRootIndex(model->getRootIndex());
+	verticalHeader()->setVisible(false);
 
 	connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
-	horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
+	//horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
 	connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(headerClicked(int)));
 	selectionModel()->select(QModelIndex(rootIndex().child(1,0)),  QItemSelectionModel::Current);
 
 
-    //this is needed for clever file selection whn moving up and down
-    connect(fModel,	&QFileSystemModel::directoryLoaded,
-            [&](){model->sort();});
-    connect(model,	SIGNAL(directoryLoaded(QString)),
-            this, SLOT(setCurrentSelection(QString)));
-    connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
-            this,	SLOT(rowsRemoved(QModelIndex,int,int)));
+	//this is needed for clever file selection whn moving up and down
+	connect(fModel,	&QFileSystemModel::directoryLoaded,
+			[&](){model->sort();});
+	connect(model,	SIGNAL(directoryLoaded(QString)),
+			this, SLOT(setCurrentSelection(QString)));
+	connect(fModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+			this,	SLOT(rowsRemoved(QModelIndex,int,int)));
 
 	connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileTableView::updateInfo);
 
 	delegate = new TableItemDelegate(this);
-    setItemDelegate(delegate);
-    connect(horizontalHeader(), &QHeaderView::geometriesChanged,
-            [&](){itemDelegate()->setRect(horizontalHeader()->geometry());});
-    connect(selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-            delegate, SLOT(currentChanged(QModelIndex,QModelIndex)));
-    connect(selectionModel(), &QItemSelectionModel::currentChanged,
-            [&](QModelIndex current, QModelIndex prev){
-                for(int i=0;i<4;i++)
-                    update(current.sibling(current.row(),i));
-                for(int i=0;i<4;i++)
-                    update(prev.sibling(prev.row(),i));
-            });
+	setItemDelegate(delegate);
+	connect(horizontalHeader(), &QHeaderView::geometriesChanged,
+			[&](){itemDelegate()->setRect(horizontalHeader()->geometry());});
+	connect(selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+			delegate, SLOT(currentChanged(QModelIndex,QModelIndex)));
+	connect(selectionModel(), &QItemSelectionModel::currentChanged,
+			[&](QModelIndex current, QModelIndex prev){
+				for(int i=0;i<4;i++)
+					update(current.sibling(current.row(),i));
+				for(int i=0;i<4;i++)
+					update(prev.sibling(prev.row(),i));
+			});
 
 	connect(model, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
 			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
@@ -167,13 +174,17 @@ void FileTableView::init(){
 
 	connect(this, SIGNAL(contextMenuRequested(QPoint)),
 			this, SLOT(openContextMenu(QPoint)));
+
+	connect(delegate, SIGNAL(commitData(QWidget*)),
+							 this, SLOT(commitingData(QWidget*)));
 }
 
 void FileTableView::setCurrentSelection(QString){
 	if(prevSelection && prevSelection->isValid()){
-		qDebug()<<"Prev selection set: "<<prevSelection->row();
+		//qDebug()<<"Prev selection set: "<<prevSelection->row();
 		setCurrentIndex(*prevSelection);
-		qDebug()<<currentIndex();
+		//qDebug()<<currentIndex();
+		scrollTo(currentIndex());
 		return;
 	}
 	int rows = model->rowCount(rootIndex());
@@ -190,6 +201,7 @@ void FileTableView::setCurrentSelection(QString){
 	}
 
 	selectionModel()->setCurrentIndex(index,QItemSelectionModel::NoUpdate );
+	scrollTo(currentIndex());
 }
 
 void FileTableView::headerClicked(int section){
@@ -235,6 +247,13 @@ void FileTableView::mousePressEvent(QMouseEvent *event){
 
 	if(event->button() == Qt::RightButton){
 		emit contextMenuRequested(event->pos());
+		return;
+	}
+
+	auto index = indexAt(event->pos());
+
+	if(currentIndex() == index){
+		editorIsOpen = edit(index, QAbstractItemView::AllEditTriggers, event);
 		return;
 	}
 
@@ -378,7 +397,23 @@ void FileTableView::goToFile(QString& fullFilePath){
 void FileTableView::openContextMenu(QPoint loc){
 	auto menu = new ItemContextMenu(this);
 	auto index = indexAt(loc);
-	qDebug()<<"Detected index: "<<index;
-	qDebug()<<"Detected file: "<<model->fileInfo(index).fileName();
+	auto info = model->fileInfo(index);
+	if(!index.isValid()){
+		info = model->fileInfo(rootIndex());
+		info.setFile(info.absoluteFilePath(), ".");
+	}
+	menu->init(info);
 	menu->exec(QCursor::pos());
+}
+
+void FileTableView::commitingData(QWidget* editor){
+	QString newName = editor->property("text").toString();
+
+	QFileInfo renamedFile = model->fileInfo(currentIndex());
+	QFile file(renamedFile.absoluteFilePath());
+	newName = renamedFile.absolutePath() + "/"+newName;
+	qDebug()<<newName;
+	bool status = file.rename(newName);
+	qDebug()<<status;
+
 }

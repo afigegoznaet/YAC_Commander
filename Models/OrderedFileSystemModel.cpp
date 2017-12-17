@@ -3,7 +3,6 @@
 
 OrderedFileSystemModel::OrderedFileSystemModel(QObject *parent) :
 	QSortFilterProxyModel(parent){
-
 }
 
 bool OrderedFileSystemModel::lessThan(const QModelIndex &left,
@@ -63,6 +62,8 @@ bool OrderedFileSystemModel::dropMimeData(const QMimeData *data,
 
 Qt::ItemFlags OrderedFileSystemModel::flags(const QModelIndex &index) const{
 	Qt::ItemFlags defaultFlags = QSortFilterProxyModel::flags(index);
+	if(0==index.column())
+		defaultFlags |= Qt::ItemIsEditable;
 	if (index.isValid())
 		return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
 	else

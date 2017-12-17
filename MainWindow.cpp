@@ -63,8 +63,13 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::setFocusSlot(FileTabSelector *tab){
-    if(leftTabHasFocus && tab == ui->leftTabWidget)
-        return;
+	if(leftTabHasFocus){
+		if(tab == ui->leftTabWidget)
+			return;
+	}else
+		if(tab == ui->rightTabWidget)
+			return;
+
     QEvent* event1 = new QKeyEvent (QEvent::KeyPress,Qt::Key_Tab,Qt::NoModifier);
     QEvent* event2 = new QKeyEvent (QEvent::KeyRelease,Qt::Key_Tab,Qt::NoModifier);
     qApp->postEvent(tab,event1);

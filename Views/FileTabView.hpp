@@ -59,6 +59,7 @@ signals:
 	void setFileAction(QFileInfoList, QString, ACTION);
 	void contextMenuRequested(QPoint);
 
+
 public slots:
 	void on_doubleClicked(const QModelIndex &index);
 	void setCurrentSelection(QString);
@@ -67,6 +68,8 @@ public slots:
 	void rowsInserted(const QModelIndex &parent, int first, int);
 	void updateInfo();
 	void openContextMenu(QPoint loc);
+	void commitingData(QWidget* editor);
+
 protected:
 	virtual void keyPressEvent(QKeyEvent * event);
 	void chDir(const QModelIndex &index, bool in_out);
@@ -82,6 +85,7 @@ private:
 	QTabWidget* metaTab = nullptr;
 	QModelIndex* prevSelection = nullptr;
 	TableItemDelegate* delegate = nullptr;
+	bool editorIsOpen = false;
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;

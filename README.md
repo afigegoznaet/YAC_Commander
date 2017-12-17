@@ -5,11 +5,11 @@ At the moment it performs all the basic file manager operations, like copy/move/
 
 Things to add:
 * Some sort of Directory action if a drive is removed(maybe just notification)
-* Context menu
+* Context menu (in progress)
 * chown / chmod
 * soft/hard linking
 * Plugins support
-* Add home directory / custom links to mountpoints bar
+* Addition of custom links to mountpoints bar
 * TBU
 
 Implemented sutff:
@@ -26,6 +26,8 @@ Implemented sutff:
 * Command line
 * selection filters
 * Search capability (by name, contents and file properties )
+* File renaming
+* drag and drop
 
 Known issues:
 * On Linux, dir doesn't refresh if some action is performed in the other tab, containing the same dir
