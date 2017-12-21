@@ -75,15 +75,11 @@ FileTableView *FileTabSelector::addNewTab(bool dup, QString dir){
 
 	index = addTab(newTab, newTab->GetDirectory());
 	newTab->setTabOrderIndex(index);
-	connect(newTab,            SIGNAL(dirChanged(QString,int)),
-			this,  SLOT(onDirChanged(QString,int))
-			);
-	connect(newTab,            SIGNAL(focusEvent(bool)),
-			this,  SLOT(onFocusEvent(bool))
-			);
-
-	connect(newTab, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
-			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
+	connect(newTab, SIGNAL(dirChanged(QString,int)),
+			this,  SLOT(onDirChanged(QString,int)));
+	connect(newTab, SIGNAL(focusEvent(bool)), this,  SLOT(onFocusEvent(bool)));
+	connect(newTab, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)),
+			this, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)));
 	newTab->setLabel(infoLabel);
 	auto defaultState = newTab->horizontalHeader()->saveState();//header state
 

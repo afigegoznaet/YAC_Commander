@@ -60,7 +60,7 @@ bool OrderedFileSystemModel::dropMimeData(const QMimeData *data,
 		itemsToMove<<uri.toLocalFile();
 	if(0 == row)// selection is ".."
 		dir.truncate(dir.lastIndexOf('/'));
-	emit setFileAction(itemsToMove,dir, COPY);
+	emit setFileAction(itemsToMove,dir, action);
 	return true;
 }
 

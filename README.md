@@ -5,7 +5,6 @@ At the moment it performs all the basic file manager operations, like copy/move/
 
 Things to add:
 * Some sort of Directory action if a drive is removed(maybe just notification)
-* Context menu (in progress)
 * chown / chmod
 * soft/hard linking
 * Plugins support
@@ -13,6 +12,7 @@ Things to add:
 * TBU
 
 Implemented sutff:
+* Context menu (copy, cut, paste, rename, delete)
 * File/Directory move/add/delete
 * tabs
 * Save state on exit

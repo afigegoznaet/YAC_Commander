@@ -48,7 +48,8 @@ public:
 
 signals:
     void setFocus(FileTabSelector* tab);
-	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
+	void setFileAction(QFileInfoList fileList, QString destination,
+					   Qt::DropAction action);
 
 public slots:
 	void cdTo(const QString&);
@@ -78,7 +79,7 @@ private:
 	void readSettings();
 
 	QFileInfoList getSelectedFiles();
-	bool getDir(QString &dirName, int numFiles=0, ACTION action=ENUM_TERMINATOR);
+	bool getDir(QString &dirName, int numFiles, Qt::DropAction action);
 
 };
 

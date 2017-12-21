@@ -39,15 +39,15 @@ public:
 	void sort(){sort(column, order);}
 	virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 	QFileSystemModel *sourceModel() const;
-	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row,
-					  int , const QModelIndex &) override;
+	bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+					  int row, int column, const QModelIndex &parent) override;
 
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 
 signals:
 	void directoryLoaded(QString);
-	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
+	void setFileAction(QFileInfoList fileList, QString destination, Qt::DropAction action);
 private:
 
 	int column = 0;

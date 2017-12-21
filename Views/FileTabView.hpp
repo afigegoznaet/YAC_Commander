@@ -32,31 +32,32 @@ public:
 	explicit FileTableView(QDir directory, QWidget *parent = 0);
 	FileTableView(QWidget *parent) : FileTableView(QDir::homePath(),parent){}
 	~FileTableView(){delete prevSelection;}
-	QString GetDirectory(){
-		return model->rootPath();
-	}
+
 	void init();
-	void setTabOrderIndex(int index){
-		this->index=index;
-	}
+
 	QFileInfoList getSelectedFiles();
 	void cdTo(const QString&);
 	TableItemDelegate *itemDelegate() const{
 		return (TableItemDelegate*)QTableView::itemDelegate();
 	}
-	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
+	OrderedFileSystemModel*  getModel(){ return model; }
+	QString GetDirectory(){ return model->rootPath(); }
 	QLabel* getLabel(){return infoLabel;}
+	void setTabOrderIndex(int index){ this->index=index; }
+	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
+
+
 	void goToFile(QString& fullFilePath);
-    OrderedFileSystemModel*  getModel(){
-        return model;
-    }
+	void openEditor(QModelIndex& index);
+	void deleteSelectedFiles();
 
 signals:
 	//void activated(const QModelIndex &index);
 	void dirChanged(const QString dirName, int index);
 	void focusEvent(bool);
 	void setInfo();
-	void setFileAction(QFileInfoList, QString, ACTION);
+	void setFileAction(QFileInfoList, QString,
+					   Qt::DropAction);
 	void contextMenuRequested(QPoint);
 
 

@@ -166,8 +166,8 @@ void FileTableView::init(){
 					update(prev.sibling(prev.row(),i));
 			});
 
-	connect(model, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
-			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
+	connect(model, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)),
+			this, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)));
 	setDragEnabled(true);
 	setDragDropMode(QAbstractItemView::DragDrop);
 	setDropIndicatorShown(true);
@@ -252,10 +252,8 @@ void FileTableView::mousePressEvent(QMouseEvent *event){
 
 	auto index = indexAt(event->pos());
 
-	if(currentIndex() == index){
-		editorIsOpen = edit(index, QAbstractItemView::AllEditTriggers, event);
-		return;
-	}
+	if(currentIndex() == index)
+		return openEditor(index);
 
 	setSelectionMode(QAbstractItemView::ExtendedSelection);
 	QTableView::mousePressEvent(event);
@@ -263,6 +261,10 @@ void FileTableView::mousePressEvent(QMouseEvent *event){
 
 }
 
+void FileTableView::openEditor(QModelIndex& index){
+	if(index.row()>0)
+		editorIsOpen = edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+}
 
 void FileTableView::mouseReleaseEvent(QMouseEvent *event){
 	auto modifiers =
@@ -411,4 +413,39 @@ void FileTableView::commitNewName(QWidget* editor){
 	bool status = file.rename(newName);
 	qDebug()<<status;
 
+}
+
+
+void FileTableView::deleteSelectedFiles(){
+	QFileInfoList fileList = getSelectedFiles();
+
+	QString message = "Delete " + QString::number(fileList.size()) + " files?\n";
+
+	QMessageBox::StandardButton reply;
+	reply = QMessageBox::question(this, "Deleting ", message,
+									QMessageBox::Yes|QMessageBox::No);
+
+	if(reply == QMessageBox::No)
+		return;
+
+	bool status;
+	foreach (auto fileInfo, fileList) {
+		if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive) )
+			continue;
+
+		if(!fileInfo.fileName().compare(".", Qt::CaseInsensitive) )
+			continue;
+
+		if(fileInfo.isDir()){
+			QDir dir( fileInfo.absoluteFilePath() );
+			status = dir.removeRecursively();
+		}else
+			status = QFile::remove( fileInfo.absoluteFilePath());
+
+		if(!status){
+			QString msg = "Unable to delede ";
+			msg.append(fileInfo.filePath());
+			QMessageBox::warning(this, "Error!",msg);
+		}
+	}
 }

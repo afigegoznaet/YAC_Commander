@@ -33,7 +33,9 @@ signals:
 	void gotMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
 	void focusAquired();
     void setFocusSig(FileTabSelector* tab);
-	void setFileAction(QFileInfoList fileList, QString destination, ACTION action);
+	void setFileAction(QFileInfoList fileList, QString destination,
+					   Qt::DropAction action);
+	void deleteSelectedFiles();
 
 protected:
 	QString defaultStyle;

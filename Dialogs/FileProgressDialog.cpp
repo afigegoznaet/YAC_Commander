@@ -34,7 +34,8 @@ ProgressDialog::~ProgressDialog(){
 	delete progress;
 }
 
-void ProgressDialog::processFileAction(QFileInfoList fileList, QString destination, ACTION action){
+void ProgressDialog::processFileAction(QFileInfoList fileList,
+						QString destination, Qt::DropAction action){
 	if(isHidden())
 		show();
 	if(!progress->tableWidget->rowCount())
@@ -57,16 +58,15 @@ void ProgressDialog::processFileAction(QFileInfoList fileList, QString destinati
 		progress->tableWidget->insertRow( newRow );
 
 		switch(action){
-		case MOVE:
+		case Qt::MoveAction:
 			progress->tableWidget->setItem(newRow,0,new QTableWidgetItem("Move"));
 			break;
-		case COPY:
+		case Qt::CopyAction:
 			progress->tableWidget->setItem(newRow,0,new QTableWidgetItem("Copy"));
 			break;
-		case LN:
-		case LN_S:
+		case Qt::LinkAction:
 			break;
-		case ENUM_TERMINATOR:
+		default:
 			QMessageBox::warning(this, "Error!", "Unsupported action!");
 			break;
 		}

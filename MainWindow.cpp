@@ -47,12 +47,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->leftTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
     connect(ui->rightTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
 
-	connect(this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
-			movementProgress, SLOT(processFileAction(QFileInfoList,QString,ACTION)));
-	connect(ui->leftTabWidget, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
-			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
-	connect(ui->rightTabWidget, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)),
-			this, SIGNAL(setFileAction(QFileInfoList,QString,ACTION)));
+	connect(this, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)),
+			movementProgress, SLOT(processFileAction(QFileInfoList,QString,Qt::DropAction)));
+	connect(ui->leftTabWidget, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)),
+			this, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)));
+	connect(ui->rightTabWidget, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)),
+			this, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)));
 
     qDebug()<<QStandardPaths::AppConfigLocation;
 }
@@ -151,7 +151,7 @@ void MainWindow::copyFiles(){
 		return;
 	QString destination = getDirInFocus(true);
 
-	if(!getDir(destination, fileList.size(),COPY))
+	if(!getDir(destination, fileList.size(),Qt::CopyAction))
 		return;
 
 	QDir dir;
@@ -164,7 +164,7 @@ void MainWindow::copyFiles(){
 		dir.mkdir(destination);
 	}
 
-	emit setFileAction(fileList, destination, COPY);
+	emit setFileAction(fileList, destination, Qt::CopyAction);
 }
 
 void MainWindow::moveFiles(){
@@ -173,7 +173,7 @@ void MainWindow::moveFiles(){
 		return;
 	QString destination = getDirInFocus(true);
 
-	if(!getDir(destination, fileList.size(),MOVE))
+	if(!getDir(destination, fileList.size(),Qt::MoveAction))
 		return;
 
 	QDir dir;
@@ -186,41 +186,11 @@ void MainWindow::moveFiles(){
 		dir.mkdir(destination);
 	}
 
-	emit setFileAction(fileList, destination, MOVE);
+	emit setFileAction(fileList, destination, Qt::MoveAction);
 }
 
 void MainWindow::deleteFiles(){
-	QFileInfoList fileList = getSelectedFiles();
-
-	QString message = "Delete " + QString::number(fileList.size()) + " files?\n";
-
-	QMessageBox::StandardButton reply;
-	reply = QMessageBox::question(this, "Deleting ", message,
-									QMessageBox::Yes|QMessageBox::No);
-
-	if(reply == QMessageBox::No)
-		return;
-
-	bool status;
-	foreach (auto fileInfo, fileList) {
-		if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive) )
-			continue;
-
-		if(!fileInfo.fileName().compare(".", Qt::CaseInsensitive) )
-			continue;
-
-		if(fileInfo.isDir()){
-			QDir dir( fileInfo.absoluteFilePath() );
-			status = dir.removeRecursively();
-		}else
-			status = QFile::remove( fileInfo.absoluteFilePath());
-
-		if(!status){
-			QString msg = "Unable to delede ";
-			msg.append(fileInfo.filePath());
-			QMessageBox::warning(this, "Error!",msg);
-		}
-	}
+	getFocusedTab()->deleteSelectedFiles();
 }
 
 QString MainWindow::getDirInFocus(bool opposite){
@@ -260,15 +230,15 @@ void MainWindow::cdTo(const QString &dir){
 	getFocusedTab()->cdTo(dir);
 }
 
-bool MainWindow::getDir(QString& dirName, int numFiles, ACTION action){
+bool MainWindow::getDir(QString& dirName, int numFiles, Qt::DropAction action){
 
 	QString message;
 
 	switch (action) {
-	case COPY:
+	case Qt::CopyAction:
 		message = "<h3><font color=\"#0000ff\">Copy " + QString::number(numFiles) + " files to:</font><h3>";
 		break;
-	case MOVE:
+	case Qt::MoveAction:
 		message = "<h3><font color=\"#ff0000\">Move " + QString::number(numFiles) + " files to:</font><h3>";
 		break;
 	default:
@@ -300,7 +270,7 @@ void MainWindow::makeDir(){
 	QDir currDir(getDirInFocus());
 	qDebug()<<currDir;
 	QString dirName;
-	if(!getDir(dirName))
+	if(!getDir(dirName,0,Qt::IgnoreAction))
 		return;
 	qDebug()<<dirName;
 

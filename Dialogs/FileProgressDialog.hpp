@@ -12,8 +12,6 @@
 #include <set>
 #include "Delegates/FileMoverDelegate.hpp"
 
-enum ACTION {COPY, MOVE, LN, LN_S, ENUM_TERMINATOR} ;
-
 namespace Ui {
 	class ProgressDialog;
 }
@@ -53,7 +51,8 @@ public slots:
 	void dirMovementResult(int);
 	void errorMsg(QString errorText);
 	void hideDialogSlot();
-	void processFileAction(QFileInfoList fileList, QString destination, ACTION action);
+	void processFileAction(QFileInfoList fileList, QString destination,
+						   Qt::DropAction action);
 private slots:
 	void on_pauseButton_clicked();
 	void on_removeButton_clicked();
