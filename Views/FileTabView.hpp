@@ -68,7 +68,7 @@ public slots:
 	void rowsInserted(const QModelIndex &parent, int first, int);
 	void updateInfo();
 	void openContextMenu(QPoint loc);
-	void commitingData(QWidget* editor);
+	void commitNewName(QWidget* editor);
 
 protected:
 	virtual void keyPressEvent(QKeyEvent * event);

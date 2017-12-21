@@ -176,7 +176,7 @@ void FileTableView::init(){
 			this, SLOT(openContextMenu(QPoint)));
 
 	connect(delegate, SIGNAL(commitData(QWidget*)),
-							 this, SLOT(commitingData(QWidget*)));
+							 this, SLOT(commitNewName(QWidget*)));
 }
 
 void FileTableView::setCurrentSelection(QString){
@@ -396,17 +396,12 @@ void FileTableView::goToFile(QString& fullFilePath){
 
 void FileTableView::openContextMenu(QPoint loc){
 	auto menu = new ItemContextMenu(this);
-	auto index = indexAt(loc);
-	auto info = model->fileInfo(index);
-	if(!index.isValid()){
-		info = model->fileInfo(rootIndex());
-		info.setFile(info.absoluteFilePath(), ".");
-	}
-	menu->init(info);
-	menu->exec(QCursor::pos());
+
+	menu->init(loc);
+	menu->popup(QCursor::pos());
 }
 
-void FileTableView::commitingData(QWidget* editor){
+void FileTableView::commitNewName(QWidget* editor){
 	QString newName = editor->property("text").toString();
 
 	QFileInfo renamedFile = model->fileInfo(currentIndex());

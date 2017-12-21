@@ -50,13 +50,17 @@ QFileSystemModel* OrderedFileSystemModel::sourceModel() const{
 }
 
 bool OrderedFileSystemModel::dropMimeData(const QMimeData *data,
-        Qt::DropAction, int, int, const QModelIndex&){
+		Qt::DropAction action, int row, int, const QModelIndex&){
 	auto uriList = data->urls();
 	QFileInfoList itemsToMove;
+
+	auto dir = rootPath();
+
 	foreach (auto& uri, uriList)
 		itemsToMove<<uri.toLocalFile();
-
-	emit setFileAction(itemsToMove,rootPath(), COPY);
+	if(0 == row)// selection is ".."
+		dir.truncate(dir.lastIndexOf('/'));
+	emit setFileAction(itemsToMove,dir, COPY);
 	return true;
 }
 

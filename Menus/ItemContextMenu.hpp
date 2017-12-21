@@ -4,12 +4,16 @@
 #include <QMenu>
 #include <QFileInfo>
 #include <QDebug>
+#include <QClipboard>
+#include <QModelIndexList>
+
+class FileTableView;
 class ItemContextMenu : public QMenu
 {
 	Q_OBJECT
 public:
 	explicit ItemContextMenu(QWidget *parent = nullptr);
-	void init(QFileInfo& info);
+	void init(QPoint& loc);
 
 signals:
 
@@ -19,11 +23,15 @@ private:
 	QList<QAction*> commonActions;
 	QList<QAction*> folderActions;
 	QList<QAction*> fileActions;
-	QFileInfo info;
 	QAction* pasteAction;
 	QAction* copyAction;
 	QAction* cutAction;
+	QAction* deleteAction;
 	QAction* renameAction;
+	FileTableView* parent;
+	QClipboard* clipboard;
+	QFileInfoList sel;
+	QModelIndexList selIndexes;
 
 	void initCommon();
 	void initFile();

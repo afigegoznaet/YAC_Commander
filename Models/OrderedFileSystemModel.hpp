@@ -19,6 +19,9 @@ public:
 	QString rootPath(){
 		return sourceModel()->rootDirectory().absolutePath();
 	}
+	/*QString parentPath(){
+		return sourceModel()->rootDirectory(). .absolutePath();
+	}*/
 	QModelIndex setRootPath(const QString& rootPath) const {
 		return mapFromSource(sourceModel()->setRootPath(rootPath));
 	}
@@ -37,7 +40,7 @@ public:
 	virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
 	QFileSystemModel *sourceModel() const;
 	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row,
-					  int column, const QModelIndex &) override;
+					  int , const QModelIndex &) override;
 
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
