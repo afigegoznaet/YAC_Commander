@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->leftLabel->setText("Left");
 	ui->rightLabel->setText("Right");
 
-	ui->leftLabel->setStyleSheet("border: 1px solid green; background: white");
-	ui->rightLabel->setStyleSheet("border: 1px solid green; background: white");
+	ui->leftLabel->setStyleSheet("border: 1px solid green; background: gray");
+	ui->rightLabel->setStyleSheet("border: 1px solid green; background: gray");
 
 	movementProgress = new ProgressDialog(this);
 	searchDlg = new SearchDialog(this);

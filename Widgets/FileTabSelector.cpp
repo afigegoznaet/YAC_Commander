@@ -5,6 +5,19 @@ FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
     connect(this->tabBar(), &QTabBar::tabBarClicked,[&](){emit setFocusSig(this);});
 }
 
+QString showableName(const QString dirName){
+	QString newName = dirName;
+	if(dirName.length()>50){
+		QStringList dirs = dirName.split('/', QString::SkipEmptyParts);
+		if(dirs.size() < 3)
+			return newName;
+		if(!dirs.first().compare("/"))
+			dirs.pop_front();
+		newName = "/"+dirs.first()+"/../"+ dirs.last();
+	}
+	return newName;
+}
+
 void FileTabSelector::init(){
 	setTabsClosable(false);
 	tabBar()->setFocusPolicy(Qt::NoFocus);
@@ -29,7 +42,9 @@ void FileTabSelector::indexChanged(int index){
 }
 
 void FileTabSelector::onDirChanged(const QString dirName, int tabIndex){
-	setTabText(tabIndex, dirName);
+
+	setTabText(tabIndex, showableName(dirName));
+	setTabToolTip(tabIndex, dirName);
 	tabBar()->setDrawBase(true);
 	tabBar()->setExpanding(true);
 	tabBar()->setMovable(true);
@@ -40,7 +55,7 @@ void FileTabSelector::onDirChanged(const QString dirName, int tabIndex){
 void FileTabSelector::onFocusEvent(bool focused){
 	if(focused){
 		setStyleSheet("border: 1px solid green");
-		//setStyleSheet("");
+		infoLabel->setStyleSheet("QLabel { background-color : navy; color : white; }");
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
 		currentHeaderResizedConnection =
@@ -54,6 +69,7 @@ void FileTabSelector::onFocusEvent(bool focused){
 		emit focusAquired();
 	}
 	else{
+		infoLabel->setStyleSheet("QLabel { background-color : gray; color : white; }");
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
 		setStyleSheet(defaultStyle);
@@ -74,6 +90,8 @@ FileTableView *FileTabSelector::addNewTab(bool dup, QString dir){
 	newTab->init();
 
 	index = addTab(newTab, newTab->GetDirectory());
+	setTabText(index, showableName(newTab->GetDirectory()));
+	setTabToolTip(index, newTab->GetDirectory());
 	newTab->setTabOrderIndex(index);
 	connect(newTab, SIGNAL(dirChanged(QString,int)),
 			this,  SLOT(onDirChanged(QString,int)));

@@ -168,6 +168,12 @@
      <layout class="QHBoxLayout" name="labelLayout">
       <item>
        <widget class="QLabel" name="leftLabel">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>TextLabel</string>
         </property>
@@ -175,6 +181,12 @@
       </item>
       <item>
        <widget class="QLabel" name="rightLabel">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
          <string>TextLabel</string>
         </property>
@@ -190,51 +202,71 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
     <property name="title">
      <string>Files</string>
     </property>
+    <addaction name="actionO_pen"/>
+    <addaction name="actionOpen_with"/>
+    <addaction name="actionView_in_hex_mode"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuCommand">
     <property name="title">
-     <string>Mark</string>
+     <string>Actions</string>
     </property>
+    <addaction name="actionSet_selection_Mask"/>
+    <addaction name="actionSet_deselection_mask"/>
+    <addaction name="actionInvert_selection"/>
+    <addaction name="separator"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="separator"/>
+    <addaction name="actionRename"/>
+    <addaction name="actionDelete_selected"/>
+    <addaction name="separator"/>
+    <addaction name="actionCopy_2"/>
+    <addaction name="actionMove_selected"/>
    </widget>
    <widget class="QMenu" name="menuCommands">
     <property name="title">
      <string>Commands</string>
     </property>
+    <addaction name="actionSearch"/>
+    <addaction name="separator"/>
+    <addaction name="actionChown"/>
+    <addaction name="actionChmod"/>
+    <addaction name="separator"/>
+    <addaction name="actionCompress"/>
+    <addaction name="actionExtract"/>
    </widget>
    <widget class="QMenu" name="menuNet">
     <property name="title">
      <string>Net</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menuShow">
-    <property name="title">
-     <string>Show</string>
-    </property>
+    <addaction name="actionSsh_connect"/>
+    <addaction name="actionFtp_connect"/>
    </widget>
    <widget class="QMenu" name="menuConfiguration">
     <property name="title">
      <string>Configuration</string>
     </property>
-   </widget>
-   <widget class="QMenu" name="menuStart">
-    <property name="title">
-     <string>Start</string>
-    </property>
+    <addaction name="actionProgram_appearance"/>
+    <addaction name="actionEdit_quick_access_buttons"/>
+    <addaction name="actionHide_quick_access_bar"/>
+    <addaction name="separator"/>
+    <addaction name="actionDon_t_show_hidden_files"/>
    </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuCommand"/>
    <addaction name="menuCommands"/>
    <addaction name="menuNet"/>
-   <addaction name="menuShow"/>
    <addaction name="menuConfiguration"/>
-   <addaction name="menuStart"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QuickAccessBar" name="quickBar">
@@ -272,6 +304,146 @@
    </property>
    <property name="toolTip">
     <string>Refresh</string>
+   </property>
+  </action>
+  <action name="actionO_pen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionOpen_with">
+   <property name="text">
+    <string>Open with</string>
+   </property>
+  </action>
+  <action name="actionRename">
+   <property name="text">
+    <string>Rename</string>
+   </property>
+  </action>
+  <action name="actionDelete_selected">
+   <property name="text">
+    <string>Delete selected</string>
+   </property>
+  </action>
+  <action name="actionPermissions">
+   <property name="text">
+    <string>Permissions</string>
+   </property>
+  </action>
+  <action name="actionSet_selection_Mask">
+   <property name="text">
+    <string>Set selection Mask +&amp;</string>
+   </property>
+  </action>
+  <action name="actionSet_deselection_mask">
+   <property name="text">
+    <string>Set deselection mask -&amp;</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="text">
+    <string>Cut </string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="text">
+    <string>Copy </string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionInvert_selection">
+   <property name="text">
+    <string>Invert selection</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="text">
+    <string>Search</string>
+   </property>
+  </action>
+  <action name="actionChown">
+   <property name="text">
+    <string>chown</string>
+   </property>
+  </action>
+  <action name="actionChmod">
+   <property name="text">
+    <string>chmod</string>
+   </property>
+  </action>
+  <action name="actionCopy_2">
+   <property name="text">
+    <string>Copy selected</string>
+   </property>
+  </action>
+  <action name="actionMove_selected">
+   <property name="text">
+    <string>Move selected</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionProgram_appearance">
+   <property name="text">
+    <string>Program appearance</string>
+   </property>
+  </action>
+  <action name="actionEdit_quick_access_buttons">
+   <property name="text">
+    <string>Edit quick access buttons</string>
+   </property>
+  </action>
+  <action name="actionHide_quick_access_bar">
+   <property name="text">
+    <string>Hide quick access bar</string>
+   </property>
+  </action>
+  <action name="actionClear_command_history">
+   <property name="text">
+    <string>Clear command history</string>
+   </property>
+  </action>
+  <action name="actionClear_command_history_2">
+   <property name="text">
+    <string>Clear command history</string>
+   </property>
+  </action>
+  <action name="actionSsh_connect">
+   <property name="text">
+    <string>ssh connect</string>
+   </property>
+  </action>
+  <action name="actionFtp_connect">
+   <property name="text">
+    <string>ftp connect</string>
+   </property>
+  </action>
+  <action name="actionCompress">
+   <property name="text">
+    <string>Compress</string>
+   </property>
+  </action>
+  <action name="actionExtract">
+   <property name="text">
+    <string>Extract</string>
+   </property>
+  </action>
+  <action name="actionView_in_hex_mode">
+   <property name="text">
+    <string>View in hex mode</string>
+   </property>
+  </action>
+  <action name="actionDon_t_show_hidden_files">
+   <property name="text">
+    <string>Don't show hidden files</string>
    </property>
   </action>
  </widget>

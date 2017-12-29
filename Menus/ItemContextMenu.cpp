@@ -63,7 +63,8 @@ void ItemContextMenu::initCommon(){
 								QKeySequence(tr("Ins")));
 }
 void ItemContextMenu::initFile(){
-
+	addAction("Open with", this, &ItemContextMenu::rename,
+									QKeySequence(tr("Ins")));
 }
 void ItemContextMenu::initFolder(){
 
