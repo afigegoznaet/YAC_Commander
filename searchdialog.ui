@@ -159,6 +159,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="clearButton">
+       <property name="tabletTracking">
+        <bool>false</bool>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::ClickFocus</enum>
+       </property>
        <property name="text">
         <string>Clear Results</string>
        </property>
@@ -199,9 +205,25 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
   <tabstop>fileMaskcombo</tabstop>
   <tabstop>startDirCombo</tabstop>
+  <tabstop>textSearchCombo</tabstop>
   <tabstop>listView</tabstop>
+  <tabstop>dateTimeTo</tabstop>
+  <tabstop>attributesCheck</tabstop>
+  <tabstop>readableBox</tabstop>
+  <tabstop>unitCombo</tabstop>
+  <tabstop>dateCheck</tabstop>
+  <tabstop>executableBox</tabstop>
+  <tabstop>sizeCheck</tabstop>
+  <tabstop>cmpCombo</tabstop>
+  <tabstop>dirBox</tabstop>
+  <tabstop>sizeSpin</tabstop>
+  <tabstop>dateTimeFrom</tabstop>
+  <tabstop>writableBox</tabstop>
+  <tabstop>clearButton</tabstop>
+  <tabstop>searchButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>

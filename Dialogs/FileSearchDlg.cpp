@@ -30,6 +30,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	ui->listView->setSelectionMode(QAbstractItemView::SingleSelection);
 	ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->searchButton->setFocus();;
 	setFocusPolicy(Qt::NoFocus);
 
 	model = new QStringListModel(this);
@@ -44,6 +45,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	searching = false;
 
 	parentWindow = qobject_cast<MainWindow*>(parent);
+    searchTime = QTime::currentTime();
 }
 
 SearchDialog::~SearchDialog()
@@ -99,40 +101,51 @@ QString SearchDialog::updateCombo(EditableDropDown *combo){
 }
 
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
+    locker.lock();
+    model->blockSignals(true);
 
-	model->blockSignals(true);
-	QRegularExpression re(pattern);
+    char str[] = {'*','.','*'};
+    QRegularExpression re(str);
 	QDir dir(startDir);
+/*
 	if(re.globalMatch(dir.dirName()).hasNext())
-		addFile(dir.absolutePath());
+        addDir(dir.absolutePath());
 
+    qDebug()<<"Error: "<<re.errorString();
+    if(re.errorString().length()){
+        qDebug()<<"Strange?!..";
+    }
+*/
 	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern),
 				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
 
 	foreach (auto file, dirEntries){
-		if(file.isFile() || ui->dirBox)
+        qDebug()<<"Test: "<<file.isFile()<<" || "<<ui->dirBox->isChecked();
+        if(file.isFile() || ui->dirBox->isChecked())
 			validateFile(file);
 		if(file.isDir())
 			dirQ.push_back(file.absoluteFilePath());
 	}
 	int lastRow = model->rowCount()-1;
-	if(lastRow-firstRow > 50){
+
+    if(lastRow - firstRow >10 || searchTime.secsTo(QTime::currentTime()) > 10){
+        searchTime = QTime::currentTime();
 		model->blockSignals(false);
 		emit rowsInserted(model->index(0).parent(), firstRow, lastRow);
 		firstRow = model->rowCount();
 	}
 
 	if(dirQ.size() && searching){
-		auto nextDir = dirQ.first();
-		dirQ.pop_front();
-		emit startSearchRecursion(pattern,nextDir);
+        auto& nextDir = dirQ.first();
+        emit startSearchRecursion(pattern,nextDir);
+        dirQ.pop_front();
 	}else{
 		model->blockSignals(false);
 		emit rowsInserted(model->index(0).parent(), firstRow, lastRow);
 		ui->searchButton->setText("Search");
 		searching = false;
 	}
-
+    locker.unlock();
 }
 
 void SearchDialog::on_searchButton_clicked(){
@@ -180,7 +193,6 @@ void SearchDialog::addFile(const QString& newFile){
 	//qDebug()<<row;
 	if(model->insertRow(row))
 		model->setData(model->index(row),newFile);
-
 }
 
 void SearchDialog::on_doubleClicked(const QModelIndex &index){
@@ -197,7 +209,7 @@ void SearchDialog::validateFile(QFileInfo &theFile){
 		QString line;
 		QTextStream in(file);
 		QRegExp rx(attrs.pattern);
-		bool found = false;
+        bool found = false;
 		while (!in.atEnd()) {
 			if (!searching)
 				break;

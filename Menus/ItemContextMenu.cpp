@@ -99,9 +99,11 @@ void ItemContextMenu::pasteFromClipboard(){
 	auto data = clipboard->mimeData();
 	qDebug()<<data->data("application/x-kde-cutselection").length();
 	qDebug()<<data->data("application/x-kde-cutselection");
-	if( data->data("application/x-kde-cutselection").length() )
+    if( data->data("application/x-kde-cutselection").length() ){
 		parent->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0, QModelIndex());
-	else
+        selIndexes.clear();
+        clipboard->setMimeData(parent->getModel()->mimeData(selIndexes));
+    }else
 		parent->getModel()->dropMimeData(data, Qt::CopyAction, 1, 0, QModelIndex());
 }
 

@@ -11,7 +11,8 @@
 #include "Widgets/EditableDropdown.hpp"
 #include "ui_searchdialog.h"
 #include "Models/FileFindingsModel.hpp"
-
+#include <QTime>
+#include <QMutex>
 
 namespace Ui {
 class SearchDialog;
@@ -81,6 +82,8 @@ private:
 	MainWindow* parentWindow;
 	int firstRow;
 	SearchAttrib attrs;
+    QTime searchTime;
+    QMutex locker;
 
     QString updateCombo(EditableDropDown* combo);
 	void addFile(const QString &newFile);
