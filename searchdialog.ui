@@ -36,10 +36,10 @@
        <string>Basic search</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QLabel" name="fileLabel">
+       <item row="2" column="0">
+        <widget class="QLabel" name="searchTextLabel">
          <property name="text">
-          <string>File mask: </string>
+          <string>Search text:</string>
          </property>
         </widget>
        </item>
@@ -60,6 +60,16 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="1">
+        <widget class="EditableDropDown" name="textSearchCombo"/>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="fileLabel">
+         <property name="text">
+          <string>File mask: </string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="1">
         <widget class="EditableDropDown" name="startDirCombo">
          <property name="sizePolicy">
@@ -70,15 +80,23 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="searchTextLabel">
-         <property name="text">
-          <string>Search text:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="EditableDropDown" name="textSearchCombo"/>
+       <item row="3" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QCheckBox" name="caseCheckBox">
+           <property name="text">
+            <string>Case sensitive</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="regExpCheckBox">
+           <property name="text">
+            <string>Regexp</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

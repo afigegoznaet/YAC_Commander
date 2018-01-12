@@ -63,8 +63,23 @@ void ItemContextMenu::initCommon(){
 								QKeySequence(tr("Ins")));
 }
 void ItemContextMenu::initFile(){
-	addAction("Open with", this, &ItemContextMenu::rename,
-									QKeySequence(tr("Ins")));
+/*
+	KFileItemActions fileItemActions;
+	auto fileInfo = sel.first();
+	struct stat buf;
+	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
+	stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
+	fileItemActions.setItemListProperties	(KFileItemListProperties (
+												QList<KFileItem>(	{KFileItem(KUrl(fileInfo.absoluteFilePath()),
+																	QMimeDatabase().mimeTypeForFile(fileInfo).name(),
+																	buf.st_mode)}
+																)
+														)
+												);
+
+
+	fileItemActions.addOpenWithActionsTo(this, "Open with");
+	*/
 }
 void ItemContextMenu::initFolder(){
 
@@ -99,11 +114,10 @@ void ItemContextMenu::pasteFromClipboard(){
 	auto data = clipboard->mimeData();
 	qDebug()<<data->data("application/x-kde-cutselection").length();
 	qDebug()<<data->data("application/x-kde-cutselection");
-    if( data->data("application/x-kde-cutselection").length() ){
+	if( data->data("application/x-kde-cutselection").length() ){
 		parent->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0, QModelIndex());
-        selIndexes.clear();
-        clipboard->setMimeData(parent->getModel()->mimeData(selIndexes));
-    }else
+		selIndexes.clear();
+	}else
 		parent->getModel()->dropMimeData(data, Qt::CopyAction, 1, 0, QModelIndex());
 }
 

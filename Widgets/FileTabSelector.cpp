@@ -2,7 +2,7 @@
 
 FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 	defaultStyle = styleSheet();
-    connect(this->tabBar(), &QTabBar::tabBarClicked,[&](){emit setFocusSig(this);});
+	connect(this->tabBar(), &QTabBar::tabBarClicked,[&](){emit setFocusSig(this);});
 }
 
 QString showableName(const QString dirName){
@@ -48,8 +48,8 @@ void FileTabSelector::onDirChanged(const QString dirName, int tabIndex){
 	tabBar()->setDrawBase(true);
 	tabBar()->setExpanding(true);
 	tabBar()->setMovable(true);
-	qDebug()<<this->isActiveWindow();
-	qDebug()<<this->isEnabled();
+	//qDebug()<<"Is active window?: "<<this->isActiveWindow();
+	//qDebug()<<this->isEnabled();
 }
 
 void FileTabSelector::onFocusEvent(bool focused){

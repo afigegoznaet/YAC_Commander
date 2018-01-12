@@ -30,7 +30,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	ui->listView->setSelectionMode(QAbstractItemView::SingleSelection);
 	ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->searchButton->setFocus();;
+	ui->searchButton->setFocus();;
 	setFocusPolicy(Qt::NoFocus);
 
 	model = new QStringListModel(this);
@@ -45,7 +45,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	searching = false;
 
 	parentWindow = qobject_cast<MainWindow*>(parent);
-    searchTime = QTime::currentTime();
+	searchTime = QTime::currentTime();
 }
 
 SearchDialog::~SearchDialog()
@@ -101,66 +101,64 @@ QString SearchDialog::updateCombo(EditableDropDown *combo){
 }
 
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
-    locker.lock();
-    model->blockSignals(true);
-
-    char str[] = {'*','.','*'};
-    QRegularExpression re(str);
+	locker.lock();
+	model->blockSignals(true);
 	QDir dir(startDir);
 /*
 	if(re.globalMatch(dir.dirName()).hasNext())
-        addDir(dir.absolutePath());
+		addDir(dir.absolutePath());
 
-    qDebug()<<"Error: "<<re.errorString();
-    if(re.errorString().length()){
-        qDebug()<<"Strange?!..";
-    }
+	qDebug()<<"Error: "<<re.errorString();
+	if(re.errorString().length()){
+		qDebug()<<"Strange?!..";
+	}
 */
 	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern),
 				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
 
 	foreach (auto file, dirEntries){
-        qDebug()<<"Test: "<<file.isFile()<<" || "<<ui->dirBox->isChecked();
-        if(file.isFile() || ui->dirBox->isChecked())
+		//qDebug()<<"Test: "<<file.isFile()<<" || "<<ui->dirBox->isChecked();
+		if(file.isFile() || ui->dirBox->isChecked())
 			validateFile(file);
 		if(file.isDir())
 			dirQ.push_back(file.absoluteFilePath());
 	}
 	int lastRow = model->rowCount()-1;
 
-    if(lastRow - firstRow >10 || searchTime.secsTo(QTime::currentTime()) > 10){
-        searchTime = QTime::currentTime();
+	if(lastRow - firstRow >10 || searchTime.secsTo(QTime::currentTime()) > 10){
+		searchTime = QTime::currentTime();
 		model->blockSignals(false);
 		emit rowsInserted(model->index(0).parent(), firstRow, lastRow);
 		firstRow = model->rowCount();
 	}
 
 	if(dirQ.size() && searching){
-        auto& nextDir = dirQ.first();
-        emit startSearchRecursion(pattern,nextDir);
-        dirQ.pop_front();
+		auto& nextDir = dirQ.first();
+		emit startSearchRecursion(pattern,nextDir);
+		dirQ.pop_front();
 	}else{
 		model->blockSignals(false);
 		emit rowsInserted(model->index(0).parent(), firstRow, lastRow);
 		ui->searchButton->setText("Search");
 		searching = false;
 	}
-    locker.unlock();
+	locker.unlock();
 }
 
 void SearchDialog::on_searchButton_clicked(){
-	qDebug()<<"GUI tread ID: "<<QThread::currentThreadId();
+	//qDebug()<<"GUI tread ID: "<<QThread::currentThreadId();
 	if(searching){
 		ui->searchButton->setText("Search");
 		searching = false;
 		return;
 	}
+	attrs.togglesFlags = 0;
 	firstRow = 0;
 	searching = true;
 	QString fileMask = updateCombo(ui->fileMaskcombo);
 	QString startDir = updateCombo(ui->startDirCombo);
 	QString textPattern = updateCombo(ui->textSearchCombo);
-	if(textPattern.compare("*")){
+	if(textPattern.isEmpty() || textPattern.compare("*")){
 		attrs.togglesFlags = TextPattern;
 		attrs.pattern = textPattern;
 	}
@@ -208,16 +206,25 @@ void SearchDialog::validateFile(QFileInfo &theFile){
 			return;
 		QString line;
 		QTextStream in(file);
-		QRegExp rx(attrs.pattern);
-        bool found = false;
+		bool caseSens = ui->caseCheckBox->isChecked();
+		bool regEx = ui->regExpCheckBox->isChecked();
+		auto searchCond = regEx ? [](const QString &line, const QString &pattern, bool){
+			QRegularExpression rx(pattern);
+			return rx.globalMatch(line).hasNext();
+		} : [](const QString &line, const QString &pattern, bool caseSens){
+			return line.contains(pattern, Qt::CaseSensitivity(caseSens));};
+
+		bool found = false;
 		while (!in.atEnd()) {
 			if (!searching)
 				break;
 			line = in.readLine();
-			if (line.contains(rx)){
+			if (searchCond(line, attrs.pattern, caseSens)){
 				found = true;
+				break;
 			}
 		}
+		file->close();
 		if(!found)
 			return;
 	}
@@ -263,8 +270,14 @@ void SearchDialog::validateFile(QFileInfo &theFile){
 		qDebug()<<theFile.isExecutable();
 		qDebug()<<theFile.isReadable();
 		qDebug()<<theFile.isWritable();*/
-		if( (attrs.attrFlags & 8) && (!theFile.isDir()))
-			return;
+		if( attrs.attrFlags & 8){
+			if (!theFile.isDir())
+				return;
+			QRegularExpression re(ui->fileMaskcombo->lineEdit()->text());
+			if(!re.globalMatch(theFile.fileName()).hasNext())
+				return;
+		}
+
 		if(!(attrs.attrFlags & 8) && !theFile.permission(QFileDevice::Permission(attrs.attrFlags &7)))
 			return;
 	}
@@ -323,4 +336,23 @@ void SearchDialog::on_attributesCheck_toggled(bool checked){
 	ui->executableBox->setDisabled(true);
 	ui->writableBox->setDisabled(true);
 	ui->readableBox->setDisabled(true);
+}
+
+
+void SearchDialog::on_caseCheckBox_stateChanged(int checkState){
+	if(searching){
+		ui->caseCheckBox->setChecked(!checkState);
+		return;
+	}
+	if(Qt::Checked == checkState)
+		ui->regExpCheckBox->setChecked(false);
+}
+
+void SearchDialog::on_regExpCheckBox_stateChanged(int checkState){
+	if(searching){
+		ui->regExpCheckBox->setChecked(!checkState);
+		return;
+	}
+	if(Qt::Checked == checkState)
+		ui->caseCheckBox->setChecked(false);
 }

@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+
 #include <QMainWindow>
 #include "Widgets/FileTabSelector.hpp"
 #include "Views/FileTabView.hpp"
@@ -47,14 +49,14 @@ public:
 	ProgressDialog* getFileMover(){return movementProgress;}
 
 signals:
-    void setFocus(FileTabSelector* tab);
+	void setFocus(FileTabSelector* tab);
 	void setFileAction(QFileInfoList fileList, QString destination,
 					   Qt::DropAction action);
 
 public slots:
 	void cdTo(const QString&);
 	void focusPreviouslyFocused();
-    void setFocusSlot(FileTabSelector* tab);
+	void setFocusSlot(FileTabSelector* tab);
 private slots:
 	void on_F3_clicked();
 	void on_F4_clicked();
@@ -70,15 +72,16 @@ private:
 	QString editor;
 	bool leftTabHasFocus;
 
-	virtual void keyPressEvent(QKeyEvent *event);
 	void copyFiles();
 	void moveFiles();
 	void makeDir();
 	void deleteFiles();
 	void writeSettings();
 	void readSettings();
+	void setupActions();
 
 	QFileInfoList getSelectedFiles();
+	void keyPressEvent(QKeyEvent *event) override;
 	bool getDir(QString &dirName, int numFiles, Qt::DropAction action);
 
 };

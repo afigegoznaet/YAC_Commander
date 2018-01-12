@@ -26,10 +26,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 			SLOT(focusPreviouslyFocused()), Qt::QueuedConnection);
 	connect(ui->quickBar,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
 
-    connect(ui->leftTabWidget,&FileTabSelector::focusAquired,[=](){
+	connect(ui->leftTabWidget,&FileTabSelector::focusAquired,[=](){
 		leftTabHasFocus = true;
 	});
-    connect(ui->rightTabWidget,&FileTabSelector::focusAquired,[=](){
+	connect(ui->rightTabWidget,&FileTabSelector::focusAquired,[=](){
 		leftTabHasFocus = false;
 	});
 
@@ -42,10 +42,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	ui->commandsBox->setEditable(true);
 
-    QTimer::singleShot(200, [&](){emit setFocus(ui->leftTabWidget);});
+	//QTimer::singleShot(200, [&](){emit setFocus(ui->leftTabWidget);});
 
-    connect(ui->leftTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
-    connect(ui->rightTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
+	connect(ui->leftTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
+	connect(ui->rightTabWidget, SIGNAL(setFocusSig(FileTabSelector*)),this, SLOT(setFocusSlot(FileTabSelector*)));
 
 	connect(this, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)),
 			movementProgress, SLOT(processFileAction(QFileInfoList,QString,Qt::DropAction)));
@@ -54,7 +54,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	connect(ui->rightTabWidget, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)),
 			this, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)));
 
-    qDebug()<<QStandardPaths::AppConfigLocation;
+	setupActions();
+	//qDebug()<<QStandardPaths::AppConfigLocation;
 }
 
 MainWindow::~MainWindow(){
@@ -70,11 +71,11 @@ void MainWindow::setFocusSlot(FileTabSelector *tab){
 		if(tab == ui->rightTabWidget)
 			return;
 
-    QEvent* event1 = new QKeyEvent (QEvent::KeyPress,Qt::Key_Tab,Qt::NoModifier);
-    QEvent* event2 = new QKeyEvent (QEvent::KeyRelease,Qt::Key_Tab,Qt::NoModifier);
-    qApp->postEvent(tab,event1);
-    qApp->postEvent(tab,event2);
-    //tab->setFocus();
+	QEvent* event1 = new QKeyEvent (QEvent::KeyPress,Qt::Key_Tab,Qt::NoModifier);
+	QEvent* event2 = new QKeyEvent (QEvent::KeyRelease,Qt::Key_Tab,Qt::NoModifier);
+	qApp->postEvent(tab,event1);
+	qApp->postEvent(tab,event2);
+	//tab->setFocus();
 }
 
 void MainWindow::writeSettings(){
@@ -86,10 +87,10 @@ void MainWindow::writeSettings(){
 	settings.endGroup();
 
 	FileTableView* current = (FileTableView*)ui->leftTabWidget->currentWidget();
-    settings.setValue("LeftColumns", current->horizontalHeader()->saveState());
+	settings.setValue("LeftColumns", current->horizontalHeader()->saveState());
 
 	current = (FileTableView*)ui->rightTabWidget->currentWidget();
-    settings.setValue("RightColumns", current->horizontalHeader()->saveState());
+	settings.setValue("RightColumns", current->horizontalHeader()->saveState());
 }
 
 void MainWindow::readSettings(){
@@ -326,4 +327,19 @@ void MainWindow::focusPreviouslyFocused(){
 		ui->leftTabWidget->currentWidget()->setFocus();
 	else
 		ui->rightTabWidget->currentWidget()->setFocus();
+}
+
+void MainWindow::setupActions(){
+/***
+ * File menu
+ * */
+
+	ui->actionO_pen->setShortcut(QKeySequence::Open);
+	connect(ui->actionO_pen, &QAction::triggered, [&](){
+		getFocusedTab()->on_doubleClicked(getFocusedTab()->currentIndex());
+	});
+	//ui->actionOpen_with
+
+	connect(ui->actionView_in_hex_mode, &QAction::triggered, this, &MainWindow::on_F3_clicked);
+
 }

@@ -65,12 +65,13 @@ public slots:
 
 private slots:
 	void on_clearButton_clicked();
-
 	void on_dateCheck_toggled(bool checked);
-
 	void on_sizeCheck_toggled(bool checked);
-
 	void on_attributesCheck_toggled(bool checked);
+
+	void on_caseCheckBox_stateChanged(int checkState);
+
+	void on_regExpCheckBox_stateChanged(int checkState);
 
 private:
 	Ui::SearchDialog *ui;
@@ -82,10 +83,10 @@ private:
 	MainWindow* parentWindow;
 	int firstRow;
 	SearchAttrib attrs;
-    QTime searchTime;
-    QMutex locker;
+	QTime searchTime;
+	QMutex locker;
 
-    QString updateCombo(EditableDropDown* combo);
+	QString updateCombo(EditableDropDown* combo);
 	void addFile(const QString &newFile);
 	void validateFile(QFileInfo& theFile);
 	void resetGuiState();

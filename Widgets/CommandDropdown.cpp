@@ -2,26 +2,26 @@
 #include "mainwindow.hpp"
 
 CommandDropDown::CommandDropDown(QWidget *parent) : QComboBox(parent) {
-	qDebug()<<"helo";
+	qDebug()<<"hello";
 
 }
 
 void CommandDropDown::setMain(MainWindow *mainWindow){
 	this->mainWindow=mainWindow;
 	//readSettings();
-    QTimer::singleShot(200, this, &CommandDropDown::clearEditText);	//An ugly hack - never use it
+	QTimer::singleShot(200, this, &CommandDropDown::clearEditText);	//An ugly hack - never use it
 }
 
 void CommandDropDown::processCommand(){
 	QString cmd(lineEdit()->text());
 
-    QStandardItemModel* stModel = (QStandardItemModel*)model();
-    auto index = findText(cmd);
-    if(index<0)
+	QStandardItemModel* stModel = (QStandardItemModel*)model();
+	auto index = findText(cmd);
+	if(index<0)
 		insertItem(0,cmd);
-    else{
-        stModel->insertRow(0, stModel->takeRow(index));
-    }
+	else{
+		stModel->insertRow(0, stModel->takeRow(index));
+	}
 	if(cmd.startsWith("cd")){
 		cmd.remove(0,3);
 		emit cdTo(cmd.trimmed());

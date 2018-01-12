@@ -7,6 +7,13 @@
 #include <QClipboard>
 #include <QModelIndexList>
 
+#ifdef __linux__
+#define Q_DECL_CONSTRUCTOR_DEPRECATED
+#include <KFileItemActions>
+#include <KFileItemListProperties>
+#include <sys/stat.h>
+#endif
+
 class FileTableView;
 class ItemContextMenu : public QMenu
 {
