@@ -66,17 +66,16 @@ public slots:
 	void setCurrentSelection(QString);
 	void headerClicked(int section);
 	void rowsRemoved(const QModelIndex &, int first, int);
-	void rowsInserted(const QModelIndex &parent, int first, int);
+	void rowsInserted(const QModelIndex &parent, int first, int) override;
 	void updateInfo();
 	void openContextMenu(QPoint loc);
 	void commitNewName(QWidget* editor);
 
 protected:
-	virtual void keyPressEvent(QKeyEvent * event);
+	void keyPressEvent(QKeyEvent *event) override;
 	void chDir(const QModelIndex &index, bool in_out);
-	virtual void focusInEvent(QFocusEvent* event);
-	virtual void focusOutEvent(QFocusEvent* event);
-
+	void focusInEvent(QFocusEvent* event) override;
+	void focusOutEvent(QFocusEvent* event) override;
 
 private:
 	QString directory;
@@ -91,7 +90,7 @@ private:
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
 	void queryDialog(QString& filter, Action act);
-	void setSelection(Action act);
+	void setSelectionAction(Action act);
 };
 
 #endif // TAB_H

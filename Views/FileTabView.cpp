@@ -72,13 +72,13 @@ void FileTableView::keyPressEvent(QKeyEvent *event){
 		chDir(index, OUT);
 		break;
 	case Qt::Key_Plus:
-		setSelection(PLUS);
+		setSelectionAction(PLUS);
 		break;
 	case Qt::Key_Minus:
-		setSelection(MINUS);
+		setSelectionAction(MINUS);
 		break;
 	case Qt::Key_Asterisk:
-		setSelection(ASTERISK);
+		setSelectionAction(ASTERISK);
 		break;
 	case Qt::Key_Right:
 	case Qt::Key_Left:
@@ -293,7 +293,7 @@ void FileTableView::queryDialog(QString& filter, Action act){
 
 }
 
-void FileTableView::setSelection(Action act){
+void FileTableView::setSelectionAction(Action act){
 	QString filter("");
 	int rowCount = model->rowCount(rootIndex());
 	int columnCount = model->columnCount(rootIndex());

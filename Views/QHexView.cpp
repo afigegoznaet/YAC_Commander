@@ -499,7 +499,7 @@ QHexView::DataStorageArray::DataStorageArray(const QByteArray &arr)
 	m_data = arr;
 }
 
-QByteArray QHexView::DataStorageArray::getData(unsigned long long position, unsigned long long length)
+QByteArray QHexView::DataStorageArray::getData(std::size_t position, std::size_t length)
 {
 	return m_data.mid(position, length);
 }

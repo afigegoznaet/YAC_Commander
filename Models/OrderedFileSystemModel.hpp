@@ -15,7 +15,7 @@ class OrderedFileSystemModel : public QSortFilterProxyModel
 public:
 	explicit OrderedFileSystemModel(QObject *parent = Q_NULLPTR);
 	bool lessThan(const QModelIndex &left,
-										  const QModelIndex &right) const;
+						const QModelIndex &right) const override;
 	QString rootPath(){
 		return sourceModel()->rootDirectory().absolutePath();
 	}
@@ -37,7 +37,8 @@ public:
 
 	void setFilter(QDir::Filters filt) const {sourceModel()->setFilter(filt);}
 	void sort(){sort(column, order);}
-	virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
+	virtual void sort(int column,
+					  Qt::SortOrder order = Qt::AscendingOrder) override;
 	QFileSystemModel *sourceModel() const;
 	bool dropMimeData(const QMimeData *data, Qt::DropAction action,
 					  int row, int column, const QModelIndex &parent) override;

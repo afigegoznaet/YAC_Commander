@@ -13,7 +13,7 @@ class QHexView: public QAbstractScrollArea
 		{
 			public:
 				virtual ~DataStorage() {}
-				virtual QByteArray getData(unsigned long long position, unsigned long long length) = 0;
+				virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
 				virtual unsigned long long size() = 0;
 		};
 
@@ -22,7 +22,7 @@ class QHexView: public QAbstractScrollArea
 		{
 			public:
 				DataStorageArray(const QByteArray &arr);
-				virtual QByteArray getData(unsigned long long position, unsigned long long length);
+				virtual QByteArray getData(std::size_t position, std::size_t length);
 				virtual unsigned long long  size();
 			private:
 				QByteArray    m_data;
