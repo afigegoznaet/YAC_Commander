@@ -44,6 +44,8 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	connect(ui->listView,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(on_doubleClicked(QModelIndex)));
 	searching = false;
 
+	ui->label->setText("");
+
 	parentWindow = qobject_cast<MainWindow*>(parent);
 	searchTime = QTime::currentTime();
 }
@@ -65,6 +67,8 @@ void SearchDialog::show(const QString &startDir){
 void SearchDialog::resetGuiState(){
 	ui->fileMaskcombo->lineEdit()->setText("*.*");
 	ui->textSearchCombo->lineEdit()->setText("*");
+
+	ui->label->setText("");
 
 	ui->dateCheck->setChecked(false);
 	ui->dateTimeFrom->setDate(QDate());
@@ -103,6 +107,10 @@ QString SearchDialog::updateCombo(EditableDropDown *combo){
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
 	locker.lock();
 	model->blockSignals(true);
+	ui->label->setMaximumWidth(ui->label->width()+
+							   ui->horizontalSpacer->geometry().width()+
+							   ui->horizontalSpacer_2->geometry().width());
+	ui->label->setText(startDir);
 	QDir dir(startDir);
 /*
 	if(re.globalMatch(dir.dirName()).hasNext())
@@ -140,6 +148,7 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 		model->blockSignals(false);
 		emit rowsInserted(model->index(0).parent(), firstRow, lastRow);
 		ui->searchButton->setText("Search");
+		ui->label->setText(" ");
 		searching = false;
 	}
 	locker.unlock();

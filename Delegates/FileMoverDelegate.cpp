@@ -15,6 +15,7 @@ bool isMovable(QString &from, QString &to){
 	in.setPath(from);
 	out.setPath(to.mid(0,to.lastIndexOf('/')));
 
+
 	qDebug()<<in.rootPath();
 	qDebug()<<out.rootPath();
 	qDebug()<<(in == out);
@@ -59,7 +60,10 @@ int FileMoverDelegate::copy(){
 
 	blocker.unlock();
 	sourceFile.close();
+
+	destinationFile.setPermissions(sourceFile.permissions());
 	destinationFile.close();
+
 	if(bytesRead < 0){
 		qDebug()<<sourceFile.errorString();
 		return false;
