@@ -20,6 +20,7 @@ public:
 	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
 	QLabel* getLabel(){return infoLabel;}
 	void init();
+	void showHidden(bool show);
 
 public slots:
 	void onDirChanged(const QString dirName, int tabIndex);

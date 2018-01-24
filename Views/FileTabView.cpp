@@ -1,5 +1,6 @@
 #include "Views/FileTabView.hpp"
 #include "Widgets/FileTabSelector.hpp"
+#include "mainwindow.hpp"
 
 #define IN 1
 #define OUT 0
@@ -128,8 +129,20 @@ void FileTableView::init(){
 
 	model->setSourceModel(fModel);
 	model->setRootPath(this->directory);
-	model->setFilter(QDir::AllEntries | QDir::NoDot | QDir::System | QDir::Hidden);
+	auto topWidgets = QApplication::topLevelWidgets();
 
+	auto filters = QDir::AllEntries | QDir::NoDot | QDir::System;
+
+	for(auto widget : topWidgets){
+		MainWindow* topWidget = dynamic_cast<MainWindow*>(widget);
+		if(topWidget){
+			if(topWidget->showHidden())
+				filters |= QDir::Hidden;
+			break;
+		}
+	}
+
+	model->setFilter( filters );
 	setSelectionMode(QAbstractItemView::NoSelection);
 	setModel(model);
 	model->setFilterRegExp("");
@@ -448,4 +461,13 @@ void FileTableView::deleteSelectedFiles(){
 			QMessageBox::warning(this, "Error!",msg);
 		}
 	}
+}
+
+void FileTableView::showHidden(bool show){
+	auto filters = QDir::AllEntries | QDir::NoDot | QDir::System;
+
+	if(show)
+		filters |= QDir::Hidden;
+
+	model->setFilter( filters );
 }

@@ -1,8 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
-
-
+#include <QtGlobal>
 #include <QMainWindow>
 #include "Widgets/FileTabSelector.hpp"
 #include "Views/FileTabView.hpp"
@@ -47,6 +45,7 @@ public:
 	~MainWindow();
 	FileTableView* getFocusedTab(void);
 	ProgressDialog* getFileMover(){return movementProgress;}
+	bool showHidden(){return ui->action_show_hidden_files->isChecked();}
 
 signals:
 	void setFocus(FileTabSelector* tab);
@@ -64,6 +63,7 @@ private slots:
 	void on_F6_clicked();
 	void on_F7_clicked();
 	void on_F8_clicked();
+	void on_action_show_hidden_files_changed();
 
 private:
 	Ui::MainWindow *ui;

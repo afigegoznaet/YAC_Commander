@@ -260,7 +260,7 @@
     <addaction name="actionEdit_quick_access_buttons"/>
     <addaction name="actionHide_quick_access_bar"/>
     <addaction name="separator"/>
-    <addaction name="actionDon_t_show_hidden_files"/>
+    <addaction name="action_show_hidden_files"/>
    </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuCommand"/>
@@ -441,9 +441,15 @@
     <string>View in hex mode</string>
    </property>
   </action>
-  <action name="actionDon_t_show_hidden_files">
+  <action name="action_show_hidden_files">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Don't show hidden files</string>
+    <string>Show hidden files</string>
    </property>
   </action>
  </widget>

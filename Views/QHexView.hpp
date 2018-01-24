@@ -71,7 +71,7 @@ class QHexView: public QAbstractScrollArea
 		QSize fullSize() const;
 		void resetSelection();
 		void resetSelection(int pos);
-		void setSelection(int pos);
+		void setSelection(unsigned long long pos);
 		void ensureVisible();
 		void setCursorPos(int pos);
 		unsigned long long cursorPos(const QPoint &position);

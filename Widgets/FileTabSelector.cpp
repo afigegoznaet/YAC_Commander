@@ -201,3 +201,9 @@ void FileTabSelector::readSettings(){
 	}while (--count > 0) ;
 	settings.endArray();
 }
+
+void FileTabSelector::showHidden(bool show){
+	int count=this->count();
+	for(int i=0;i<count;i++)
+		((FileTableView*)widget(i))->showHidden(show);
+}

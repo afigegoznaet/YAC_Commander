@@ -50,6 +50,7 @@ public:
 	void goToFile(QString& fullFilePath);
 	void openEditor(QModelIndex& index);
 	void deleteSelectedFiles();
+	void showHidden(bool show);
 
 signals:
 	//void activated(const QModelIndex &index);

@@ -408,7 +408,8 @@ unsigned long long QHexView::cursorPos(const QPoint &position)
 {
 	int pos = -1;
 
-	if ((position.x() >= m_posHex) && (position.x() < (m_posHex + HEXCHARS_IN_LINE * m_charWidth)))
+	if (((unsigned long long)position.x() >= m_posHex)
+			&& ((unsigned long long)position.x() < (m_posHex + HEXCHARS_IN_LINE * m_charWidth)))
 	{
 		int x = (position.x() - m_posHex) / m_charWidth;
 		if ((x % 3) == 0)
@@ -440,10 +441,8 @@ void QHexView::resetSelection(int pos)
     m_selectEnd = pos;
 }
 
-void QHexView::setSelection(int pos)
+void QHexView::setSelection(unsigned long long pos)
 {
-    if (pos < 0)
-        pos = 0;
 
     if (pos >= m_selectInit)
     {

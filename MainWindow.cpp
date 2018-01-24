@@ -91,6 +91,7 @@ void MainWindow::writeSettings(){
 
 	current = (FileTableView*)ui->rightTabWidget->currentWidget();
 	settings.setValue("RightColumns", current->horizontalHeader()->saveState());
+	settings.setValue("showHidden", showHidden());
 }
 
 void MainWindow::readSettings(){
@@ -101,6 +102,9 @@ void MainWindow::readSettings(){
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	editor = settings.value("editor", DEF_EDITOR).toString();
 	settings.endGroup();
+
+	ui->action_show_hidden_files->setChecked(
+				settings.value("showHidden", true).toBool());
 
 	ui->rightTabWidget->readSettings();
 	ui->leftTabWidget->readSettings();
@@ -342,4 +346,9 @@ void MainWindow::setupActions(){
 
 	connect(ui->actionView_in_hex_mode, &QAction::triggered, this, &MainWindow::on_F3_clicked);
 
+}
+
+void MainWindow::on_action_show_hidden_files_changed(){
+	ui->rightTabWidget->showHidden(showHidden());
+	ui->leftTabWidget->showHidden(showHidden());
 }

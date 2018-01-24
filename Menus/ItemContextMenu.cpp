@@ -79,7 +79,7 @@ void ItemContextMenu::initFile(){
 
 
 	fileItemActions.addOpenWithActionsTo(this, "Open with");
-	*/
+*/
 }
 void ItemContextMenu::initFolder(){
 
