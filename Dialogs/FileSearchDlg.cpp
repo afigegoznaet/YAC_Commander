@@ -217,11 +217,12 @@ void SearchDialog::validateFile(QFileInfo &theFile){
 		QTextStream in(file);
 		bool caseSens = ui->caseCheckBox->isChecked();
 		bool regEx = ui->regExpCheckBox->isChecked();
-		auto searchCond = regEx ? [](const QString &line, const QString &pattern, bool){
+        auto searchCond = regEx
+                ? std::function<bool(const QString &, const QString &, bool)>([](const QString &line, const QString &pattern, bool){
 			QRegularExpression rx(pattern);
-			return rx.globalMatch(line).hasNext();
-		} : [](const QString &line, const QString &pattern, bool caseSens){
-			return line.contains(pattern, Qt::CaseSensitivity(caseSens));};
+            return rx.globalMatch(line).hasNext();})
+                : std::function<bool(const QString &, const QString &, bool)>([](const QString &line, const QString &pattern, bool caseSens){
+            return line.contains(pattern, Qt::CaseSensitivity(caseSens));});
 
 		bool found = false;
 		while (!in.atEnd()) {

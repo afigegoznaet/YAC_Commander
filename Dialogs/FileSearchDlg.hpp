@@ -13,6 +13,7 @@
 #include "Models/FileFindingsModel.hpp"
 #include <QTime>
 #include <QMutex>
+#include <functional>
 
 namespace Ui {
 class SearchDialog;
