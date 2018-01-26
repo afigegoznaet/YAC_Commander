@@ -85,7 +85,9 @@ private:
 	int firstRow;
 	SearchAttrib attrs;
 	QTime searchTime;
-	QMutex locker;
+	QMutex locker[4];
+
+	std::atomic_int counter;
 
 	QString updateCombo(EditableDropDown* combo);
 	void addFile(const QString &newFile);

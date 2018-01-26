@@ -48,6 +48,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 
 	parentWindow = qobject_cast<MainWindow*>(parent);
 	searchTime = QTime::currentTime();
+	counter =0;
 }
 
 SearchDialog::~SearchDialog()
@@ -105,7 +106,11 @@ QString SearchDialog::updateCombo(EditableDropDown *combo){
 }
 
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
-	locker.lock();
+	int cVal = counter.load();
+	locker[cVal].lock();
+	counter++;
+	int val=4;
+	qDebug()<<counter.compare_exchange_strong(val,0);
 	model->blockSignals(true);
 	ui->label->setMaximumWidth(ui->label->width()+
 							   ui->horizontalSpacer->geometry().width()+
@@ -151,7 +156,8 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 		ui->label->setText(" ");
 		searching = false;
 	}
-	locker.unlock();
+	locker[cVal].unlock();
+
 }
 
 void SearchDialog::on_searchButton_clicked(){
@@ -217,12 +223,12 @@ void SearchDialog::validateFile(QFileInfo &theFile){
 		QTextStream in(file);
 		bool caseSens = ui->caseCheckBox->isChecked();
 		bool regEx = ui->regExpCheckBox->isChecked();
-        auto searchCond = regEx
-                ? std::function<bool(const QString &, const QString &, bool)>([](const QString &line, const QString &pattern, bool){
+		auto searchCond = regEx
+				? std::function<bool(const QString &, const QString &, bool)>([](const QString &line, const QString &pattern, bool){
 			QRegularExpression rx(pattern);
-            return rx.globalMatch(line).hasNext();})
-                : std::function<bool(const QString &, const QString &, bool)>([](const QString &line, const QString &pattern, bool caseSens){
-            return line.contains(pattern, Qt::CaseSensitivity(caseSens));});
+			return rx.globalMatch(line).hasNext();})
+				: std::function<bool(const QString &, const QString &, bool)>([](const QString &line, const QString &pattern, bool caseSens){
+			return line.contains(pattern, Qt::CaseSensitivity(caseSens));});
 
 		bool found = false;
 		while (!in.atEnd()) {
