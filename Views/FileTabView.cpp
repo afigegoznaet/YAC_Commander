@@ -9,7 +9,7 @@ FileTableView::FileTableView(QDir directory, QWidget *parent) :
 	QTableView(parent),
 	directory(directory.absolutePath()){
 
-    infoLabel = ((FileTabSelector*)parent)->getLabel();
+	infoLabel = ((FileTabSelector*)parent)->getLabel();
 
 }
 
@@ -22,6 +22,23 @@ void FileTableView::on_doubleClicked(const QModelIndex &index){
 		else
 			chDir(index, OUT);
 	}else{
+#ifndef _WIN32
+
+		if(info.isExecutable()){
+			QProcess proc;
+			QString program;
+			QStringList args;
+			args << "-exec";
+			args.append(info.absoluteFilePath());
+			program = "sh";
+
+			proc.startDetached(program, args, directory);
+
+		}else
+
+#endif
+
+
 		QDesktopServices::openUrl(QUrl::fromLocalFile(info.absoluteFilePath()));
 	}
 }
