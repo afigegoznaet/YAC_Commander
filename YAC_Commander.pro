@@ -58,7 +58,7 @@ win32-msvc* {
 
 linux {
 	INCLUDEPATH += /usr/include/KDE
-	#LIBS += -lkio -lkdecore
+
 }
 
 DISTFILES += \

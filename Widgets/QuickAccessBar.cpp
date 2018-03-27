@@ -8,7 +8,7 @@ DriveButton::DriveButton(QString root, QWidget *parent) :
 }
 
 void DriveButton::click(){
-	qDebug()<<rootPath;
+	//qDebug()<<rootPath;
 	((QuickAccessBar*)parent())->sendSignal(rootPath);
 }
 /*

@@ -47,7 +47,7 @@ void CommandDropDown::processCommand(){
 		program = "sh";
 		//args.removeFirst();
 #endif
-		qDebug()<<proc.startDetached(program, args, dir);
+		proc.startDetached(program, args, dir);
 		//qDebug()<<proc.execute(program, args);
 	}
 

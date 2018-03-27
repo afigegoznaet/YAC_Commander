@@ -36,12 +36,14 @@ void ItemContextMenu::init(QPoint &loc){
 	}
 
 	auto data = clipboard->mimeData();
+	/*
 	foreach (auto &format, data->formats()) {
 		qDebug()<<format;
 		qDebug()<<data->data(format);
 	}
 
 	qDebug()<<"****************************";
+	*/
 	if(!clipboard->mimeData()->urls().length())
 		pasteAction->setDisabled(true);
 
@@ -95,25 +97,26 @@ void ItemContextMenu::cutToClipboard(){
 void ItemContextMenu::copyToClipboard(){
 	auto data = parent->getModel()->mimeData(selIndexes);
 
-
+/*
 	foreach (auto &format, data->formats()) {
 		qDebug()<<data->data(format);
 	}
-
+*/
 
 	clipboard->setMimeData(data);
 	auto data1 = clipboard->mimeData();
+	/*
 	qDebug()<<data1->formats();
 
 	foreach (auto &format, data1->formats()) {
 		qDebug()<<data1->data(format);
-	}
+	}*/
 }
 
 void ItemContextMenu::pasteFromClipboard(){
 	auto data = clipboard->mimeData();
-	qDebug()<<data->data("application/x-kde-cutselection").length();
-	qDebug()<<data->data("application/x-kde-cutselection");
+	//qDebug()<<data->data("application/x-kde-cutselection").length();
+	//qDebug()<<data->data("application/x-kde-cutselection");
 	if( data->data("application/x-kde-cutselection").length() ){
 		parent->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0, QModelIndex());
 		selIndexes.clear();
