@@ -106,26 +106,14 @@ QString SearchDialog::updateCombo(EditableDropDown *combo){
 }
 
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
-	int cVal = counter.load();
-	//locker[cVal].lock();
-	counter++;
-	int val=4;
-	counter.compare_exchange_strong(val,0);
+
 	model->blockSignals(true);
 	ui->label->setMaximumWidth(ui->label->width()+
 							   ui->horizontalSpacer->geometry().width()+
 							   ui->horizontalSpacer_2->geometry().width());
 	ui->label->setText(startDir);
 	QDir dir(startDir);
-/*
-	if(re.globalMatch(dir.dirName()).hasNext())
-		addDir(dir.absolutePath());
 
-	qDebug()<<"Error: "<<re.errorString();
-	if(re.errorString().length()){
-		qDebug()<<"Strange?!..";
-	}
-*/
 	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern),
 				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden | QDir::NoSymLinks);
 
@@ -159,7 +147,7 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 		ui->label->setText(" ");
 		searching = false;
 	}
-	//locker[cVal].unlock();
+
 
 }
 

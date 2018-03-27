@@ -35,15 +35,7 @@ void ItemContextMenu::init(QPoint &loc){
 		deleteAction->setDisabled(true);
 	}
 
-	auto data = clipboard->mimeData();
-	/*
-	foreach (auto &format, data->formats()) {
-		qDebug()<<format;
-		qDebug()<<data->data(format);
-	}
 
-	qDebug()<<"****************************";
-	*/
 	if(!clipboard->mimeData()->urls().length())
 		pasteAction->setDisabled(true);
 
@@ -104,13 +96,7 @@ void ItemContextMenu::copyToClipboard(){
 */
 
 	clipboard->setMimeData(data);
-	auto data1 = clipboard->mimeData();
-	/*
-	qDebug()<<data1->formats();
 
-	foreach (auto &format, data1->formats()) {
-		qDebug()<<data1->data(format);
-	}*/
 }
 
 void ItemContextMenu::pasteFromClipboard(){
