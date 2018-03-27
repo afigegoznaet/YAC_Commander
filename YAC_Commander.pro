@@ -6,7 +6,7 @@
 
 QT       += core gui network
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets KIOCore KIOFileWidgets KIOWidgets KNTLM
 
 TARGET = yc
 TEMPLATE = app
@@ -57,8 +57,8 @@ win32-msvc* {
 }
 
 linux {
-	INCLUDEPATH += /usr/include/KDE
-	#LIBS += -lkio -lkdecore
+	INCLUDEPATH += /usr/include/KF5/KIOWidgets
+	#LIBS += -lkf5kio -lkdecore
 }
 
 DISTFILES += \

@@ -17,14 +17,3 @@ QVariant FileFindingsModel::data(const QModelIndex &index, int role) const{
 		return QVariant();
 	return files.at(index.row());
 }
-/*
-bool FileFindingsModel::insertRows(int row, int count, const QModelIndex &parent){
-	beginInsertRows(parent, row, row+count);
-	endInsertRows();
-	return true;
-}
-
-bool FileFindingsModel::insertRow(int row, const QModelIndex &parent){
-	return true;
-}
-*/

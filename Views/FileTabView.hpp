@@ -51,6 +51,7 @@ public:
 	void openEditor(QModelIndex& index);
 	void deleteSelectedFiles();
 	void showHidden(bool show);
+	OrderedFileSystemModel *getModel() const{return model;}
 
 signals:
 	//void activated(const QModelIndex &index);

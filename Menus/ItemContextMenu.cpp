@@ -2,16 +2,21 @@
 #include "Views/FileTabView.hpp"
 
 ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
+
 	initFolder();
-	initFile();
+
 	initCommon();
 	this->parent = (FileTableView*)parent;
+	qDebug()<<"parent name: "<<parent->objectName();
 	clipboard = QGuiApplication::clipboard();
 }
 
-void ItemContextMenu::init(QPoint &loc){
+void ItemContextMenu::init(QPoint loc){
 
-	sel = parent->getSelectedFiles();
+
+	selectedFiles = parent->getSelectedFiles();
+	if(selectedFiles.count()<1)
+		selectedFiles.append(parent->getModel()->fileInfo(parent->indexAt(loc)));
 
 	selIndexes = parent->selectionModel()->selectedRows();
 
@@ -23,12 +28,12 @@ void ItemContextMenu::init(QPoint &loc){
 			info.setFile(info.absoluteFilePath(), ".");
 		}else{
 			parent->setCurrentIndex(index);
-			sel.append(info);
+			selectedFiles.append(info);
 			selIndexes.append(index);
 		}
 
 	}
-	if(sel.length() < 2 && !sel.first().fileName().compare("..")){
+	if(selectedFiles.length() < 2 && !selectedFiles.first().fileName().compare("..")){
 		cutAction->setDisabled(true);
 		copyAction->setDisabled(true);
 		renameAction->setDisabled(true);
@@ -44,6 +49,9 @@ void ItemContextMenu::init(QPoint &loc){
 	qDebug()<<"****************************";
 	if(!clipboard->mimeData()->urls().length())
 		pasteAction->setDisabled(true);
+
+
+		initFile();
 
 }
 
@@ -63,14 +71,19 @@ void ItemContextMenu::initCommon(){
 								QKeySequence(tr("Ins")));
 }
 void ItemContextMenu::initFile(){
-/*
+
+	//init(QCursor::pos());
+
+
 	KFileItemActions fileItemActions;
-	auto fileInfo = sel.first();
+	auto fileInfo = selectedFiles.first();
+	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo);
+	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
 	struct stat buf;
 	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
 	stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
 	fileItemActions.setItemListProperties	(KFileItemListProperties (
-												QList<KFileItem>(	{KFileItem(KUrl(fileInfo.absoluteFilePath()),
+												QList<KFileItem>(	{KFileItem(QUrl(fileInfo.absoluteFilePath()),
 																	QMimeDatabase().mimeTypeForFile(fileInfo).name(),
 																	buf.st_mode)}
 																)
@@ -79,7 +92,7 @@ void ItemContextMenu::initFile(){
 
 
 	fileItemActions.addOpenWithActionsTo(this, "Open with");
-*/
+
 }
 void ItemContextMenu::initFolder(){
 

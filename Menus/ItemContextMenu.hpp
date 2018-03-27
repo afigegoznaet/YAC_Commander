@@ -9,8 +9,9 @@
 
 #ifdef __linux__
 #define Q_DECL_CONSTRUCTOR_DEPRECATED
-//#include <KFileItemActions>
-//#include <KFileItemListProperties>
+#include <KFileItemActions>
+#include <KFileItemListProperties>
+#include <QUrl>
 #include <sys/stat.h>
 #endif
 
@@ -20,7 +21,7 @@ class ItemContextMenu : public QMenu
 	Q_OBJECT
 public:
 	explicit ItemContextMenu(QWidget *parent = nullptr);
-	void init(QPoint& loc);
+	void init(QPoint loc);
 
 signals:
 
@@ -37,7 +38,7 @@ private:
 	QAction* renameAction;
 	FileTableView* parent;
 	QClipboard* clipboard;
-	QFileInfoList sel;
+	QFileInfoList selectedFiles;
 	QModelIndexList selIndexes;
 
 	void initCommon();

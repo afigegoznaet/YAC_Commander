@@ -257,9 +257,9 @@ void FileTableView::focusOutEvent(QFocusEvent *event){
 QFileInfoList FileTableView::getSelectedFiles(){
 	QFileInfoList selectedFiles;
 	QModelIndexList items = selectionModel()->selectedRows();
-	if(!items.size())
-		selectedFiles.append(
-					model->fileInfo(selectionModel()->currentIndex()));
+	auto currIdx = model->fileInfo(selectionModel()->currentIndex());
+	if(!items.size() && currIdx.fileName().compare(".."))
+		selectedFiles.append(currIdx);
 	else
 		foreach (auto fileIndex, items)
 			selectedFiles.append(model->fileInfo(fileIndex));
