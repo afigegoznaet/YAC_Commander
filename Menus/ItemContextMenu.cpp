@@ -84,14 +84,18 @@ void ItemContextMenu::initFile(){
 	stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
 	KFileItem kItem(QUrl(fileInfo.absoluteFilePath()),
 					QMimeDatabase().mimeTypeForFile(fileInfo).name(), buf.st_mode);
+	qDebug()<<kItem;
 	QList<KFileItem> kList;
 	kList.append(kItem);
 
 	KFileItemListProperties kprops( kList );
+	qDebug()<<kprops.items().count();
+
 	fileItemActions.setItemListProperties(kprops);
 
-
-	fileItemActions.addOpenWithActionsTo(this, "Open with");
+	QString name("Open with");
+	fileItemActions.addOpenWithActionsTo(this,
+		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
 
 }
 void ItemContextMenu::initFolder(){
