@@ -82,13 +82,13 @@ void ItemContextMenu::initFile(){
 	struct stat buf;
 	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
 	stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
-	fileItemActions.setItemListProperties	(KFileItemListProperties (
-												QList<KFileItem>(	{KFileItem(QUrl(fileInfo.absoluteFilePath()),
-																	QMimeDatabase().mimeTypeForFile(fileInfo).name(),
-																	buf.st_mode)}
-																)
-														)
-												);
+	KFileItem kItem(QUrl(fileInfo.absoluteFilePath()),
+					QMimeDatabase().mimeTypeForFile(fileInfo).name(), buf.st_mode);
+	QList<KFileItem> kList;
+	kList.append(kItem);
+
+	KFileItemListProperties kprops( kList );
+	fileItemActions.setItemListProperties(kprops);
 
 
 	fileItemActions.addOpenWithActionsTo(this, "Open with");
