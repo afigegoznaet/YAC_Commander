@@ -70,7 +70,7 @@ void ItemContextMenu::initFile(){
 	//init(QCursor::pos());
 
 
-	KFileItemActions fileItemActions;
+
 	auto fileInfo = selectedFiles.first();
 	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo);
 	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();

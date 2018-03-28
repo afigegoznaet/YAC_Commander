@@ -43,6 +43,7 @@ private:
 	QFileInfoList selectedFiles;
 	QModelIndexList selIndexes;
 
+	KFileItemActions fileItemActions;
 	void initCommon();
 	void initFile();
 	void initFolder();

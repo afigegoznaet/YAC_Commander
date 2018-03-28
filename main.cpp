@@ -11,5 +11,6 @@ int main(int argc, char *argv[])
 	w.setWindowTitle("YAC Commander");
 	w.show();
 
+	qApp->setDesktopFileName("YAC Commander");
 	return a.exec();
 }

@@ -57,6 +57,10 @@ win32-msvc* {
 }
 
 linux {
+	target.path = /usr/local/bin
+	desktop.path = /usr/share/applications
+	desktop.files += yc.desktop
+	INSTALLS += target desktop
 	INCLUDEPATH += /usr/include/KDE
 
 }
