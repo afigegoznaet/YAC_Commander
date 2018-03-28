@@ -109,8 +109,7 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 
 	model->blockSignals(true);
 	ui->label->setMaximumWidth(ui->label->width()+
-							   ui->horizontalSpacer->geometry().width()+
-							   ui->horizontalSpacer_2->geometry().width());
+							   ui->horizontalSpacer->geometry().width() );
 	ui->label->setText(startDir);
 	QDir dir(startDir);
 

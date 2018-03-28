@@ -4,8 +4,6 @@
 
 ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 
-	initFolder();
-
 	initCommon();
 	this->parent = (FileTableView*)parent;
 	qDebug()<<"parent name: "<<parent->objectName();
@@ -45,8 +43,8 @@ void ItemContextMenu::init(QPoint loc){
 	if(!clipboard->mimeData()->urls().length())
 		pasteAction->setDisabled(true);
 
-
-		initFile();
+	initFolder();
+	initFile();
 
 }
 

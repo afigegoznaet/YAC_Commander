@@ -93,6 +93,8 @@ private:
 	void mouseReleaseEvent(QMouseEvent *event) override;
 	void queryDialog(QString& filter, Action act);
 	void setSelectionAction(Action act);
+	ItemContextMenu* menu;
+
 };
 
 #endif // TAB_H
