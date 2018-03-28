@@ -57,8 +57,8 @@ win32-msvc* {
 }
 
 linux {
-	INCLUDEPATH += /usr/include/KF5/KIOWidgets
-	#LIBS += -lkf5kio -lkdecore
+	INCLUDEPATH += /usr/include/KDE
+
 }
 
 DISTFILES += \

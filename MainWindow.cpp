@@ -231,7 +231,7 @@ FileTableView *MainWindow::getFocusedTab(void){
 
 void MainWindow::cdTo(const QString &dir){
 
-	qDebug()<<"Got it!!!!";
+	//qDebug()<<"Got it!!!!";
 	getFocusedTab()->cdTo(dir);
 }
 
@@ -273,11 +273,11 @@ bool MainWindow::getDir(QString& dirName, int numFiles, Qt::DropAction action){
 void MainWindow::makeDir(){
 
 	QDir currDir(getDirInFocus());
-	qDebug()<<currDir;
+	//qDebug()<<currDir;
 	QString dirName;
 	if(!getDir(dirName,0,Qt::IgnoreAction))
 		return;
-	qDebug()<<dirName;
+	//qDebug()<<dirName;
 
 	bool status = currDir.mkdir(dirName);
 	if(!status)

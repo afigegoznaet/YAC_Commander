@@ -363,12 +363,12 @@ void FileTableView::rowsRemoved(const QModelIndex&, int first, int){
 	delete prevSelection;
 	prevSelection = new QModelIndex(currentIndex().sibling(first, 0));
 
-	qDebug()<<"First: "<<first;
+	//qDebug()<<"First: "<<first;
 	setCurrentIndex(*prevSelection);
-	qDebug()<<"Via new: "<<currentIndex();
+	//qDebug()<<"Via new: "<<currentIndex();
 	//setCurrentIndex(parent.child(first, 0));
 	delegate->currentChanged(*prevSelection, *prevSelection);
-	qDebug()<<"Via sibling: "<<currentIndex();
+	//qDebug()<<"Via sibling: "<<currentIndex();
 	updateInfo();
 }
 
@@ -439,9 +439,9 @@ void FileTableView::commitNewName(QWidget* editor){
 	QFileInfo renamedFile = model->fileInfo(currentIndex());
 	QFile file(renamedFile.absoluteFilePath());
 	newName = renamedFile.absolutePath() + "/"+newName;
-	qDebug()<<newName;
-	bool status = file.rename(newName);
-	qDebug()<<status;
+	//qDebug()<<newName;
+	file.rename(newName);
+	//qDebug()<<status;
 
 }
 

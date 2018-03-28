@@ -9,6 +9,8 @@
 
 #ifdef __linux__
 #define Q_DECL_CONSTRUCTOR_DEPRECATED
+#include <KAuthorized>
+
 #include <KFileItemActions>
 #include <KFileItemListProperties>
 #include <QUrl>

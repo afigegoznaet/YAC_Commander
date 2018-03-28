@@ -85,7 +85,8 @@ private:
 	int firstRow;
 	SearchAttrib attrs;
 	QTime searchTime;
-	QMutex locker[4];
+	//QMutex locker[4];
+	QMutex dirListLocker;
 
 	std::atomic_int counter;
 

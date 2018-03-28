@@ -163,8 +163,8 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest, QList
 			return;
 		}
 		QString destination(dest);
-		qDebug()<<file.fileName();
-		qDebug()<<file.filePath();
+		//qDebug()<<file.fileName();
+		//qDebug()<<file.filePath();
 
 		QString source(file.filePath());
 
@@ -269,8 +269,8 @@ void ProgressDialog::on_pauseButton_clicked(){
 	status=!status;
 	switchText();
 	emit setStatus(status);
-	qDebug()<<"*************************************";
-	qDebug()<<"status "<<status<<" sent";
+	//qDebug()<<"*************************************";
+	//qDebug()<<"status "<<status<<" sent";
 }
 
 void ProgressDialog::on_removeButton_clicked(){
@@ -296,5 +296,5 @@ void ProgressDialog::on_abortButton_clicked(){
 	emit setStatus(-1);
 	if(progress->tableWidget->rowCount())
 		progress->tableWidget->clear();
-	qDebug()<<"table widget cleared";
+	//qDebug()<<"table widget cleared";
 }

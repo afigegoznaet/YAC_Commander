@@ -1,6 +1,7 @@
 #include "ItemContextMenu.hpp"
 #include "Views/FileTabView.hpp"
 
+
 ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 
 	initFolder();
@@ -40,13 +41,7 @@ void ItemContextMenu::init(QPoint loc){
 		deleteAction->setDisabled(true);
 	}
 
-	auto data = clipboard->mimeData();
-	foreach (auto &format, data->formats()) {
-		qDebug()<<format;
-		qDebug()<<data->data(format);
-	}
 
-	qDebug()<<"****************************";
 	if(!clipboard->mimeData()->urls().length())
 		pasteAction->setDisabled(true);
 
@@ -93,10 +88,16 @@ void ItemContextMenu::initFile(){
 
 	fileItemActions.setItemListProperties(kprops);
 
+	qDebug()<<KAuthorized::authorize("shell_access");
+	qDebug()<<KAuthorized::authorize("open_with");
+	qDebug()<<QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName());
+	qDebug()<<qApp->desktopFileName();
+
 	QString name("Open with");
 	fileItemActions.addOpenWithActionsTo(this,
 		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
 
+	fileItemActions.addServiceActionsTo(this);
 }
 void ItemContextMenu::initFolder(){
 
@@ -112,25 +113,20 @@ void ItemContextMenu::cutToClipboard(){
 void ItemContextMenu::copyToClipboard(){
 	auto data = parent->getModel()->mimeData(selIndexes);
 
-
+/*
 	foreach (auto &format, data->formats()) {
 		qDebug()<<data->data(format);
 	}
-
+*/
 
 	clipboard->setMimeData(data);
-	auto data1 = clipboard->mimeData();
-	qDebug()<<data1->formats();
 
-	foreach (auto &format, data1->formats()) {
-		qDebug()<<data1->data(format);
-	}
 }
 
 void ItemContextMenu::pasteFromClipboard(){
 	auto data = clipboard->mimeData();
-	qDebug()<<data->data("application/x-kde-cutselection").length();
-	qDebug()<<data->data("application/x-kde-cutselection");
+	//qDebug()<<data->data("application/x-kde-cutselection").length();
+	//qDebug()<<data->data("application/x-kde-cutselection");
 	if( data->data("application/x-kde-cutselection").length() ){
 		parent->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0, QModelIndex());
 		selIndexes.clear();

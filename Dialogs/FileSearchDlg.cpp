@@ -106,28 +106,16 @@ QString SearchDialog::updateCombo(EditableDropDown *combo){
 }
 
 void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlags){
-	int cVal = counter.load();
-	locker[cVal].lock();
-	counter++;
-	int val=4;
-	qDebug()<<counter.compare_exchange_strong(val,0);
+
 	model->blockSignals(true);
 	ui->label->setMaximumWidth(ui->label->width()+
 							   ui->horizontalSpacer->geometry().width()+
 							   ui->horizontalSpacer_2->geometry().width());
 	ui->label->setText(startDir);
 	QDir dir(startDir);
-/*
-	if(re.globalMatch(dir.dirName()).hasNext())
-		addDir(dir.absolutePath());
 
-	qDebug()<<"Error: "<<re.errorString();
-	if(re.errorString().length()){
-		qDebug()<<"Strange?!..";
-	}
-*/
 	QFileInfoList dirEntries = dir.entryInfoList(QStringList(pattern),
-				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden);
+				QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs | QDir::System | QDir::Hidden | QDir::NoSymLinks);
 
 	foreach (auto file, dirEntries){
 		//qDebug()<<"Test: "<<file.isFile()<<" || "<<ui->dirBox->isChecked();
@@ -144,19 +132,22 @@ void SearchDialog::searchRecursion(QString pattern, QString startDir, searchFlag
 		emit rowsInserted(model->index(0).parent(), firstRow, lastRow);
 		firstRow = model->rowCount();
 	}
-
+	dirListLocker.lock();
 	if(dirQ.size() && searching){
-		auto& nextDir = dirQ.first();
-		emit startSearchRecursion(pattern,nextDir);
+		auto nextDir = std::move(dirQ.first());
 		dirQ.pop_front();
+		dirListLocker.unlock();
+		emit startSearchRecursion(pattern,nextDir);
+
 	}else{
+		dirListLocker.unlock();
 		model->blockSignals(false);
 		emit rowsInserted(model->index(0).parent(), firstRow, lastRow);
 		ui->searchButton->setText("Search");
 		ui->label->setText(" ");
 		searching = false;
 	}
-	locker[cVal].unlock();
+
 
 }
 

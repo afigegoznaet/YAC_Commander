@@ -16,9 +16,9 @@ bool isMovable(QString &from, QString &to){
 	out.setPath(to.mid(0,to.lastIndexOf('/')));
 
 
-	qDebug()<<in.rootPath();
-	qDebug()<<out.rootPath();
-	qDebug()<<(in == out);
+	//qDebug()<<in.rootPath();
+	//qDebug()<<out.rootPath();
+	//qDebug()<<(in == out);
 	return in == out;
 }
 
@@ -65,7 +65,7 @@ int FileMoverDelegate::copy(){
 	destinationFile.close();
 
 	if(bytesRead < 0){
-		qDebug()<<sourceFile.errorString();
+		//qDebug()<<sourceFile.errorString();
 		return false;
 	}
 	return true;
@@ -93,19 +93,19 @@ FileMoverDelegate::~FileMoverDelegate(){
 	}
 
 	emit completed(res);
-	qDebug()<<"FileMover completed?!";
+	//qDebug()<<"FileMover completed?!";
 
 }
 
 FileMoverDelegate::FileMoverDelegate(QString source, QString destination, QString action, QObject *parent) :
 	QObject(parent), destination(destination), source(source), action(action), status(true){
-	qDebug()<<"Mover constructor"<<thread();
+	//qDebug()<<"Mover constructor"<<thread();
 }
 
 void FileMoverDelegate::setStatus(int status){
 	this->status = status;
-	qDebug()<<"*************************************";
-	qDebug()<<"status "<<status<<" emmitted";
+	//qDebug()<<"*************************************";
+	//qDebug()<<"status "<<status<<" emmitted";
 	cond.wakeOne();
 }
 
