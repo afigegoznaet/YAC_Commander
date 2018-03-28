@@ -51,8 +51,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	counter =0;
 }
 
-SearchDialog::~SearchDialog()
-{
+SearchDialog::~SearchDialog(){
 	delete ui;
 }
 

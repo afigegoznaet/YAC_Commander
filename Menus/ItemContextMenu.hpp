@@ -10,7 +10,7 @@
 #ifdef __linux__
 #define Q_DECL_CONSTRUCTOR_DEPRECATED
 #include <KAuthorized>
-
+#include <KServiceAction>
 #include <KFileItemActions>
 #include <KFileItemListProperties>
 #include <QUrl>
@@ -43,7 +43,7 @@ private:
 	QFileInfoList selectedFiles;
 	QModelIndexList selIndexes;
 
-	KFileItemActions fileItemActions;
+	KFileItemActions* fileItemActions;
 	void initCommon();
 	void initFile();
 	void initFolder();

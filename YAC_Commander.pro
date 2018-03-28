@@ -6,7 +6,7 @@
 
 QT       += core gui network
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets KIOCore KIOFileWidgets KIOWidgets KNTLM
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = yc
 TEMPLATE = app
@@ -61,7 +61,7 @@ linux {
 	desktop.path = /usr/share/applications
 	desktop.files += yc.desktop
 	INSTALLS += target desktop
-	INCLUDEPATH += /usr/include/KDE
+        QT += KIOCore KIOFileWidgets KIOWidgets KNTLM
 
 }
 

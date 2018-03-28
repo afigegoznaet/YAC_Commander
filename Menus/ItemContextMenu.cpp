@@ -8,6 +8,14 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 	this->parent = (FileTableView*)parent;
 	qDebug()<<"parent name: "<<parent->objectName();
 	clipboard = QGuiApplication::clipboard();
+	connect(this, &QMenu::aboutToHide, [&](){
+		qDebug()<<fileItemActions->children();
+		fileItemActions->deleteLater();
+		//this->removeAction(this->actions().last());
+			for(auto action: this->actions())
+				qDebug()<<action;
+
+		;});
 }
 
 void ItemContextMenu::init(QPoint loc){
@@ -67,8 +75,12 @@ void ItemContextMenu::initFile(){
 
 	//init(QCursor::pos());
 
+	KServiceAction action;
 
 
+	fileItemActions = new KFileItemActions(this);
+
+	fileItemActions->setParentWidget(this);
 	auto fileInfo = selectedFiles.first();
 	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo);
 	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
@@ -84,18 +96,19 @@ void ItemContextMenu::initFile(){
 	KFileItemListProperties kprops( kList );
 	qDebug()<<kprops.items().count();
 
-	fileItemActions.setItemListProperties(kprops);
+	fileItemActions->setItemListProperties(kprops);
 
-	qDebug()<<KAuthorized::authorize("shell_access");
-	qDebug()<<KAuthorized::authorize("open_with");
+	qDebug()<<KAuthorized::authorize("Compress7z");
+	qDebug()<<KAuthorized::authorize("CompressDialog");
 	qDebug()<<QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName());
 	qDebug()<<qApp->desktopFileName();
-
+	fileItemActions->addServiceActionsTo(this);
 	QString name("Open with");
-	fileItemActions.addOpenWithActionsTo(this,
+	fileItemActions->addOpenWithActionsTo(this,
 		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
+	fileItemActions->addPluginActionsTo(this);
 
-	fileItemActions.addServiceActionsTo(this);
+
 }
 void ItemContextMenu::initFolder(){
 
