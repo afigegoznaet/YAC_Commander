@@ -346,6 +346,13 @@ void MainWindow::setupActions(){
 
 	connect(ui->actionView_in_hex_mode, &QAction::triggered, this, &MainWindow::on_F3_clicked);
 
+	connect(ui->actionExit, &QAction::triggered, [&](){
+		QApplication::quit();
+	});
+
+	ui->actionExit->setShortcut(QKeySequence::Quit);
+	ui->actionExit->setShortcut(QKeySequence(Qt::ALT + Qt::Key_X));
+
 }
 
 void MainWindow::on_action_show_hidden_files_changed(){

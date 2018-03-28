@@ -2,8 +2,7 @@
 #include "Views/FileTabView.hpp"
 
 ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
-	initFolder();
-	initFile();
+
 	initCommon();
 	this->parent = (FileTableView*)parent;
 	clipboard = QGuiApplication::clipboard();
@@ -12,7 +11,6 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 void ItemContextMenu::init(QPoint &loc){
 
 	sel = parent->getSelectedFiles();
-
 	selIndexes = parent->selectionModel()->selectedRows();
 
 	if(!selIndexes.length()){
@@ -38,6 +36,9 @@ void ItemContextMenu::init(QPoint &loc){
 
 	if(!clipboard->mimeData()->urls().length())
 		pasteAction->setDisabled(true);
+
+	initFolder();
+	initFile();
 
 }
 

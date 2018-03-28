@@ -10,7 +10,7 @@ FileTableView::FileTableView(QDir directory, QWidget *parent) :
 	directory(directory.absolutePath()){
 
 	infoLabel = ((FileTabSelector*)parent)->getLabel();
-
+	menu = new ItemContextMenu(this);
 }
 
 
@@ -427,7 +427,6 @@ void FileTableView::goToFile(QString& fullFilePath){
 }
 
 void FileTableView::openContextMenu(QPoint loc){
-	auto menu = new ItemContextMenu(this);
 
 	menu->init(loc);
 	menu->popup(QCursor::pos());
