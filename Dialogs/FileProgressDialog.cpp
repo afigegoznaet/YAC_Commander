@@ -36,6 +36,12 @@ ProgressDialog::~ProgressDialog(){
 
 void ProgressDialog::processFileAction(QFileInfoList fileList,
 						QString destination, Qt::DropAction action){
+
+	QFileInfo destDir(destination);
+	if(!destDir.isWritable()){
+		QMessageBox::warning(this, "Error!", "You don't have permissions to write to the destination directory!");
+		return;
+	}
 	if(isHidden())
 		show();
 	if(!progress->tableWidget->rowCount())

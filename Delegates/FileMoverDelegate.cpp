@@ -15,10 +15,6 @@ bool isMovable(QString &from, QString &to){
 	in.setPath(from);
 	out.setPath(to.mid(0,to.lastIndexOf('/')));
 
-
-	//qDebug()<<in.rootPath();
-	//qDebug()<<out.rootPath();
-	//qDebug()<<(in == out);
 	return in == out;
 }
 

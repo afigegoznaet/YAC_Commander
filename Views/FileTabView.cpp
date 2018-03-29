@@ -22,7 +22,7 @@ void FileTableView::on_doubleClicked(const QModelIndex &index){
 		else
 			chDir(index, OUT);
 	}else{
-#ifndef _WIN32
+#ifdef TEST_EXEC
 
 		if(info.isExecutable()){
 			QProcess proc;
@@ -465,6 +465,10 @@ void FileTableView::deleteSelectedFiles(){
 		if(!fileInfo.fileName().compare(".", Qt::CaseInsensitive) )
 			continue;
 
+		if(!fileInfo.isWritable()){
+			QMessageBox::warning(this, "Error!", "You don't have permissions to delete\n" + fileInfo.fileName());
+			return;
+		}
 		if(fileInfo.isDir()){
 			QDir dir( fileInfo.absoluteFilePath() );
 			status = dir.removeRecursively();
