@@ -11,9 +11,12 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 	connect(this, &QMenu::aboutToHide, [&](){
 		qDebug()<<fileItemActions->children();
 		fileItemActions->deleteLater();
-		//this->removeAction(this->actions().last());
+
 			for(auto action: this->actions())
-				qDebug()<<action;
+				if(commonActions.contains(action))
+					continue;
+				else
+					removeAction(action);
 
 		;});
 }
@@ -70,6 +73,8 @@ void ItemContextMenu::initCommon(){
 								QKeySequence(tr("Del")));
 	renameAction = addAction("Rename", this, &ItemContextMenu::rename,
 								QKeySequence(tr("Ins")));
+
+	commonActions << pasteAction << copyAction << cutAction << deleteAction << renameAction;
 }
 void ItemContextMenu::initFile(){
 
