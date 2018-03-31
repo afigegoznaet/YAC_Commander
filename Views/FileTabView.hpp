@@ -31,7 +31,7 @@ class FileTableView : public QTableView
 public:
 	explicit FileTableView(QDir directory, QWidget *parent = 0);
 	FileTableView(QWidget *parent) : FileTableView(QDir::homePath(),parent){}
-	~FileTableView(){delete prevSelection;}
+	//~FileTableView(){delete prevSelection;}
 
 	void init();
 
@@ -67,7 +67,7 @@ public slots:
 	void on_doubleClicked(const QModelIndex &index);
 	void setCurrentSelection(QString);
 	void headerClicked(int section);
-	void rowsRemoved(const QModelIndex &, int first, int);
+	void rowsRemoved(const QModelIndex &, int, int);
 	void rowsInserted(const QModelIndex &parent, int first, int) override;
 	void updateInfo();
 	void openContextMenu(QPoint loc);
@@ -85,7 +85,7 @@ private:
 	int index;
 	QLabel* infoLabel = nullptr;
 	QTabWidget* metaTab = nullptr;
-	QModelIndex* prevSelection = nullptr;
+	int prevRow = -1;
 	TableItemDelegate* delegate = nullptr;
 	bool editorIsOpen = false;
 

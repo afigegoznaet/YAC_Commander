@@ -11,6 +11,7 @@ FileTableView::FileTableView(QDir directory, QWidget *parent) :
 
 	infoLabel = ((FileTabSelector*)parent)->getLabel();
 	menu = new ItemContextMenu(this);
+	prevRow = -1;
 }
 
 
@@ -44,8 +45,7 @@ void FileTableView::on_doubleClicked(const QModelIndex &index){
 }
 
 void FileTableView::chDir(const QModelIndex &index, bool in_out){
-	delete prevSelection;
-	prevSelection = nullptr;
+	prevRow = -1;
 	if(in_out == IN){
 		directory="..";//clever selection
 		QDir parentDir(model->fileInfo(index).absoluteFilePath());
@@ -210,10 +210,8 @@ void FileTableView::init(){
 }
 
 void FileTableView::setCurrentSelection(QString){
-	if(prevSelection && prevSelection->isValid()){
-		//qDebug()<<"Prev selection set: "<<prevSelection->row();
-		setCurrentIndex(*prevSelection);
-		//qDebug()<<currentIndex();
+	if(prevRow >0){
+		setCurrentIndex(rootIndex().child(prevRow, 0));
 		scrollTo(currentIndex());
 		return;
 	}
@@ -223,7 +221,6 @@ void FileTableView::setCurrentSelection(QString){
 	int i;
 	for(i=0;i<rows;i++){
 		auto ind = rootIndex.child(i,0);
-		//qDebug()<<"Dir: "<<directory<<" _ "<<model->fileInfo(ind).fileName();
 		if(!directory.compare(model->fileInfo(ind).fileName())){
 			index = ind;
 			break;
@@ -231,6 +228,7 @@ void FileTableView::setCurrentSelection(QString){
 	}
 
 	selectionModel()->setCurrentIndex(index,QItemSelectionModel::NoUpdate );
+	prevRow = currentIndex().row();
 	scrollTo(currentIndex());
 }
 
@@ -359,16 +357,10 @@ void FileTableView::setSelectionAction(Action act){
 	}
 }
 
-void FileTableView::rowsRemoved(const QModelIndex&, int first, int){
-	delete prevSelection;
-	prevSelection = new QModelIndex(currentIndex().sibling(first, 0));
+void FileTableView::rowsRemoved(const QModelIndex&, int, int){
 
-	//qDebug()<<"First: "<<first;
-	setCurrentIndex(*prevSelection);
-	//qDebug()<<"Via new: "<<currentIndex();
-	//setCurrentIndex(parent.child(first, 0));
-	delegate->currentChanged(*prevSelection, *prevSelection);
-	//qDebug()<<"Via sibling: "<<currentIndex();
+	setCurrentIndex(rootIndex().child(prevRow, 0));
+	delegate->currentChanged(currentIndex(), currentIndex());
 	updateInfo();
 }
 
@@ -376,15 +368,12 @@ void FileTableView::rowsInserted(const QModelIndex &parent, int first, int last)
 	Q_UNUSED(parent);
 	Q_UNUSED(first);
 	Q_UNUSED(last);
-	//delete prevSelection;
-	//prevSelection = new QModelIndex(parent.child(last, 0));
-	//setCurrentIndex(parent.child(last, 0));
+
 	updateInfo();
 }
 
 void FileTableView::updateInfo(){
-	//qDebug()<<"***************************************************";
-	//qDebug()<<"Root path:"<< model->rootPath();
+
 	QStorageInfo storage(model->rootPath());
 	//qDebug()<<"Root path:"<< storage.rootPath();
 	QString fmt;
@@ -408,9 +397,6 @@ void FileTableView::updateInfo(){
 	fmt +=QString::number(sizeRemaining)+" "+typeRemaining  +" available of "+QString::number(sizeTotal)+  " "+typeTotal;
 	fmt += "\t" + QString::number(selectionModel()->selectedRows().size()) +
 		   " selected of "+QString::number(model->rowCount(rootIndex())-1) +" directory items";
-	//qDebug() << "size:" << sizeTotal << "MB";
-	//qDebug() << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB";
-	//qDebug() << "Selected: "<<selectionModel()->selectedRows().size()<<" of "<<model->rowCount();
 
 	infoLabel->setText(fmt);
 }
@@ -421,8 +407,7 @@ void FileTableView::goToFile(QString& fullFilePath){
 	//qDebug()<<info.absolutePath();
 	cdTo(info.absolutePath());
 	directory = info.fileName();
-	delete prevSelection;
-	prevSelection = nullptr;
+	prevRow = -1;
 	setCurrentSelection("");
 }
 
@@ -457,7 +442,14 @@ void FileTableView::deleteSelectedFiles(){
 	if(reply == QMessageBox::No)
 		return;
 
+	if(selectionModel()->selectedRows().count())
+		prevRow = selectionModel()->selectedRows().first().row();
+	else
+		prevRow = selectionModel()->currentIndex().row();
+
+
 	bool status;
+	int counter =0;
 	foreach (auto fileInfo, fileList) {
 		if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive) )
 			continue;
@@ -480,7 +472,11 @@ void FileTableView::deleteSelectedFiles(){
 			msg.append(fileInfo.filePath());
 			QMessageBox::warning(this, "Error!",msg);
 		}
+		counter++;
 	}
+
+	if(prevRow >= model->rowCount(rootIndex())-counter)
+		prevRow = model->rowCount(rootIndex()) -counter-1;
 }
 
 void FileTableView::showHidden(bool show){
