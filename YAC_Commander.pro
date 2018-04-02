@@ -61,7 +61,7 @@ linux {
 	desktop.path = /usr/share/applications
 	desktop.files += yc.desktop
 	INSTALLS += target desktop
-        QT += KIOCore KIOFileWidgets KIOWidgets KNTLM
+	#QT += KIOCore KIOFileWidgets KIOWidgets KNTLM
 
 }
 
