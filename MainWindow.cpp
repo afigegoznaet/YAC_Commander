@@ -3,8 +3,8 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
 	ui->setupUi(this);
 	setStatusBar(nullptr);
-	ui->leftTabWidget->init();
-	ui->rightTabWidget->init();
+	ui->leftTabWidget->init(ui);
+	ui->rightTabWidget->init(ui);
 
 	ui->leftTabWidget->setLabel(ui->leftLabel);
 	ui->rightTabWidget->setLabel(ui->rightLabel);
@@ -28,9 +28,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	connect(ui->leftTabWidget,&FileTabSelector::focusAquired,[=](){
 		leftTabHasFocus = true;
+		ui->rightTabWidget->unfocus();
 	});
 	connect(ui->rightTabWidget,&FileTabSelector::focusAquired,[=](){
 		leftTabHasFocus = false;
+		ui->leftTabWidget->unfocus();
 	});
 
 	connect(ui->leftTabWidget,SIGNAL(gotResized(int,int,int)),ui->rightTabWidget,SLOT(sectionResized(int,int,int)));
@@ -55,6 +57,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 			this, SIGNAL(setFileAction(QFileInfoList,QString,Qt::DropAction)));
 
 	setupActions();
+
+	connect(ui->menuWindow, &QMenu::aboutToShow, [&](){
+		if(focusedSelector()->count()<=1)
+			ui->actionClose_tab->setDisabled(true);
+		else
+			ui->actionClose_tab->setEnabled(true);
+		});
+
 	//qDebug()<<QStandardPaths::AppConfigLocation;
 }
 
@@ -134,9 +144,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 		deleteFiles();
 		break;
 	case Qt::Key_F10:
-		searchDlg->show(getFocusedTab()->GetDirectory());
+		searchDlg->show(focusedTab()->GetDirectory());
 		break;
 	default:
+		//qDebug()<<event;
+		//qDebug()<<key;
 		QMainWindow::keyPressEvent(event);
 		break;
 	case Qt::Key_Tab:
@@ -195,7 +207,7 @@ void MainWindow::moveFiles(){
 }
 
 void MainWindow::deleteFiles(){
-	getFocusedTab()->deleteSelectedFiles();
+	focusedTab()->deleteSelectedFiles();
 }
 
 QString MainWindow::getDirInFocus(bool opposite){
@@ -211,28 +223,29 @@ QString MainWindow::getDirInFocus(bool opposite){
 }
 
 QFileInfoList MainWindow::getSelectedFiles(){
-	QFileInfoList list = getFocusedTab()->getSelectedFiles();
+	QFileInfoList list = focusedTab()->getSelectedFiles();
 	if(1 == list.size() && 0==list.begin()->fileName().compare(".."))
 		list.clear();
 	return list;
 }
 
 
-
-FileTableView *MainWindow::getFocusedTab(void){
-	auto left = (FileTableView*) ui->leftTabWidget->currentWidget();
-	auto right = (FileTableView*) ui->rightTabWidget->currentWidget();
-
+FileTabSelector *MainWindow::focusedSelector(){
 
 	if(leftTabHasFocus)
-		return left;
-	return right;
+		return ui->leftTabWidget;
+	return ui->rightTabWidget;
+}
+
+
+FileTableView *MainWindow::focusedTab(){
+	return (FileTableView*)focusedSelector()->currentWidget();
 }
 
 void MainWindow::cdTo(const QString &dir){
 
 	//qDebug()<<"Got it!!!!";
-	getFocusedTab()->cdTo(dir);
+	focusedTab()->cdTo(dir);
 }
 
 bool MainWindow::getDir(QString& dirName, int numFiles, Qt::DropAction action){
@@ -334,13 +347,13 @@ void MainWindow::focusPreviouslyFocused(){
 }
 
 void MainWindow::setupActions(){
-/***
+/**
  * File menu
  * */
 
 	ui->actionO_pen->setShortcut(QKeySequence::Open);
 	connect(ui->actionO_pen, &QAction::triggered, [&](){
-		getFocusedTab()->on_doubleClicked(getFocusedTab()->currentIndex());
+		focusedTab()->on_doubleClicked(focusedTab()->currentIndex());
 	});
 	//ui->actionOpen_with
 
@@ -352,6 +365,45 @@ void MainWindow::setupActions(){
 
 	ui->actionExit->setShortcut(QKeySequence::Quit);
 	ui->actionExit->setShortcut(QKeySequence(Qt::ALT + Qt::Key_X));
+
+/***
+ * End of file menu
+ * */
+
+/**
+ * Wndow Menu
+ * */
+	QAction* addTabAction = ui->actionAdd_tab;
+	QAction* duplicateTabAction = ui->actionCopy_tab;
+	QAction* closeTabAction = ui->actionClose_tab;
+
+	addTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+	duplicateTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_T));
+	closeTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_W));
+
+	addAction(addTabAction);
+	addAction(duplicateTabAction);
+	addAction(closeTabAction);
+
+	connect(addTabAction, &QAction::triggered, [&](){focusedSelector()->addNewTab();});
+	connect(duplicateTabAction, &QAction::triggered, [&](){focusedSelector()->addNewTab(true);});
+	connect(closeTabAction, &QAction::triggered, [&](){
+		auto selector = focusedSelector();
+		if(selector->count() <= 1)
+			return;
+		auto curWidget = selector->currentWidget();
+		int curIndex = selector->currentIndex();
+		selector->removeTab(curIndex);
+		delete curWidget;
+		if(curIndex == selector->count())
+			selector->setCurrentIndex(curIndex-1);
+		else
+			selector->setCurrentIndex(curIndex);
+		focusPreviouslyFocused();
+	});
+/**
+ * End of Window menu
+ * */
 
 }
 

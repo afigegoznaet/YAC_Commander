@@ -199,7 +199,7 @@ void SearchDialog::addFile(const QString& newFile){
 
 void SearchDialog::on_doubleClicked(const QModelIndex &index){
 	QString info=model->data(index, 0).toString();
-	parentWindow->getFocusedTab()->goToFile(info);
+	parentWindow->focusedTab()->goToFile(info);
 	hide();
 }
 

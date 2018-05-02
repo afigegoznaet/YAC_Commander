@@ -1,8 +1,13 @@
 #include "FileTabSelector.hpp"
+#include "mainwindow.hpp"
 
 FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 	defaultStyle = styleSheet();
 	connect(this->tabBar(), &QTabBar::tabBarClicked,[&](){emit setFocusSig(this);});
+
+	menu = new QMenu(this);
+
+
 }
 
 QString showableName(const QString dirName){
@@ -18,13 +23,18 @@ QString showableName(const QString dirName){
 	return newName;
 }
 
-void FileTabSelector::init(){
+void FileTabSelector::init(Ui::MainWindow *ui){
 	setTabsClosable(false);
 	tabBar()->setFocusPolicy(Qt::NoFocus);
 	foreach (auto& child, tabBar()->children()) {
 		if(child->isWidgetType())
 			((QWidget*)child)->setFocusPolicy(Qt::NoFocus);
 	}
+	closeTabAction = ui->actionClose_tab;
+	menu->addAction(ui->actionAdd_tab);
+	menu->addAction(ui->actionCopy_tab);
+	menu->addAction(ui->actionClose_tab);
+
 }
 
 void FileTabSelector::indexChanged(int index){
@@ -68,14 +78,14 @@ void FileTabSelector::onFocusEvent(bool focused){
 						SLOT(sectionMoved(int,int,int)));
 		emit focusAquired();
 	}
-	else{
-		infoLabel->setStyleSheet("QLabel { background-color : gray; color : white; }");
-		disconnect(currentHeaderResizedConnection);
-		disconnect(currentHeaderMovedConnection);
-		setStyleSheet(defaultStyle);
-		setStyleSheet("selection-background-color: lightblue");
+}
 
-	}
+void FileTabSelector::unfocus(){
+	infoLabel->setStyleSheet("QLabel { background-color : gray; color : white; }");
+	disconnect(currentHeaderResizedConnection);
+	disconnect(currentHeaderMovedConnection);
+	setStyleSheet(defaultStyle);
+	setStyleSheet("selection-background-color: lightblue");
 }
 
 FileTableView *FileTabSelector::addNewTab(bool dup, QString dir){
@@ -161,22 +171,21 @@ void FileTabSelector::sectionMoved(int logicalIndex, int oldVisualIndex,
 }
 
 void FileTabSelector::mousePressEvent(QMouseEvent *event){
+
 	if(event->button() != Qt::RightButton)
-		return;
+		return setFocusSig(this);
+
+	setCurrentIndex(tabBar()->tabAt(event->pos()));
 
 
-	QMenu *menu = new QMenu(this);
-	menu->addAction("Add new tab", [=](){  addNewTab();  });
-	menu->addAction("Duplicate tab",[=](){	addNewTab(true); });
-	if(count()>1)
-		menu->addAction("Close tab",
-			[=]() {
-			int index = currentIndex();
-			auto curWidget = widget(index);
-			removeTab(index);
-			delete curWidget;
-		});
+
+
+	if(count()<=1)
+		closeTabAction->setDisabled(true);
+	else
+		closeTabAction->setEnabled(true);
 	menu->exec(QCursor::pos());
+	setFocusSig(this);
 }
 
 FileTabSelector::~FileTabSelector(){
@@ -207,3 +216,4 @@ void FileTabSelector::showHidden(bool show){
 	for(int i=0;i<count;i++)
 		((FileTableView*)widget(i))->showHidden(show);
 }
+

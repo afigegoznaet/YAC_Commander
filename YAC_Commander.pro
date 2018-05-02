@@ -4,9 +4,16 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+#greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+#QMAKE_CXXFLAGS+="-fsanitize=address"
+#QMAKE_CXXFLAGS+="-fsanitize=thread"
+#QMAKE_CFLAGS+="-fsanitize=address -fno-omit-frame-pointer"
+#QMAKE_LFLAGS+="-fsanitize=thread -shared"
+#QMAKE_CXXFLAGS+="-fsanitize=address  -fomit-frame-pointer"
+#QMAKE_LFLAGS+=" -fsanitize=address"
 
 TARGET = yc
 TEMPLATE = app

@@ -43,7 +43,8 @@ public:
 	explicit MainWindow(QWidget *parent = 0);
 	QString getDirInFocus(bool opposite = false);
 	~MainWindow();
-	FileTableView* getFocusedTab(void);
+	FileTableView* focusedTab();
+	FileTabSelector* focusedSelector();
 	ProgressDialog* getFileMover(){return movementProgress;}
 	bool showHidden(){return ui->action_show_hidden_files->isChecked();}
 

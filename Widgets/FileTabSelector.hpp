@@ -9,6 +9,10 @@
 #include <QMouseEvent>
 #include "Views/FileTabView.hpp"
 
+namespace Ui {
+	class MainWindow;
+}
+
 class FileTabSelector : public QTabWidget
 {
 	Q_OBJECT
@@ -19,8 +23,9 @@ public:
 	void readSettings();
 	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
 	QLabel* getLabel(){return infoLabel;}
-	void init();
+	void init(Ui::MainWindow* ui);
 	void showHidden(bool show);
+	void unfocus();
 
 public slots:
 	void onDirChanged(const QString dirName, int tabIndex);
@@ -42,12 +47,17 @@ protected:
 	QString defaultStyle;
 
 private:
-	virtual void mousePressEvent(QMouseEvent *event);
+	virtual void mousePressEvent(QMouseEvent *event) override;
 
 private:
 	QMetaObject::Connection currentHeaderResizedConnection;
 	QMetaObject::Connection currentHeaderMovedConnection;
 	QLabel* infoLabel;
+
+	QAction* closeTabAction;
+	QMenu *menu;
+
+	friend class MainWindow;
 };
 
 #endif // CUSTOMTABWIDGET_H

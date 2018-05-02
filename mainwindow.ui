@@ -262,11 +262,20 @@
     <addaction name="separator"/>
     <addaction name="action_show_hidden_files"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionAdd_tab"/>
+    <addaction name="actionCopy_tab"/>
+    <addaction name="actionClose_tab"/>
+   </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuCommand"/>
    <addaction name="menuCommands"/>
    <addaction name="menuNet"/>
    <addaction name="menuConfiguration"/>
+   <addaction name="menuWindow"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QuickAccessBar" name="quickBar">
@@ -450,6 +459,21 @@
    </property>
    <property name="text">
     <string>Show hidden files</string>
+   </property>
+  </action>
+  <action name="actionAdd_tab">
+   <property name="text">
+    <string>Add tab</string>
+   </property>
+  </action>
+  <action name="actionCopy_tab">
+   <property name="text">
+    <string>Copy tab</string>
+   </property>
+  </action>
+  <action name="actionClose_tab">
+   <property name="text">
+    <string>Close tab</string>
    </property>
   </action>
  </widget>
