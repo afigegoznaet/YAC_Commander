@@ -9,9 +9,10 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 	qDebug()<<"parent name: "<<parent->objectName();
 	clipboard = QGuiApplication::clipboard();
 	connect(this, &QMenu::aboutToHide, [&](){
-		//qDebug()<<fileItemActions->children();
-		//fileItemActions->deleteLater();
-
+#ifdef __linux__
+		qDebug()<<fileItemActions->children();
+		fileItemActions->deleteLater();
+#endif
 			for(auto action: this->actions())
 				if(commonActions.contains(action))
 					continue;
@@ -79,7 +80,8 @@ void ItemContextMenu::initCommon(){
 void ItemContextMenu::initFile(){
 
 	//init(QCursor::pos());
-/*
+#ifdef __linux__
+
 	KServiceAction action;
 
 
@@ -112,8 +114,8 @@ void ItemContextMenu::initFile(){
 	fileItemActions->addOpenWithActionsTo(this,
 		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
 	fileItemActions->addPluginActionsTo(this);
-*/
 
+#endif
 }
 void ItemContextMenu::initFolder(){
 

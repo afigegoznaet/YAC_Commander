@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QClipboard>
 #include <QModelIndexList>
-/*
+
 #ifdef __linux__
 #define Q_DECL_CONSTRUCTOR_DEPRECATED
 #include <KAuthorized>
@@ -16,7 +16,7 @@
 #include <QUrl>
 #include <sys/stat.h>
 #endif
-*/
+
 class FileTableView;
 class ItemContextMenu : public QMenu
 {
@@ -43,7 +43,9 @@ private:
 	QFileInfoList selectedFiles;
 	QModelIndexList selIndexes;
 
-	//KFileItemActions* fileItemActions;
+#ifdef __linux__
+	KFileItemActions* fileItemActions;
+#endif
 	void initCommon();
 	void initFile();
 	void initFolder();

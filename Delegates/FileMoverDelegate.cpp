@@ -86,6 +86,7 @@ FileMoverDelegate::~FileMoverDelegate(){
 			res = this->move();
 		else
 			res = this->copy();
+		QFile::remove(source);
 	}
 
 	emit completed(res);

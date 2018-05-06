@@ -64,7 +64,7 @@ void FileTabSelector::onDirChanged(const QString dirName, int tabIndex){
 
 void FileTabSelector::onFocusEvent(bool focused){
 	if(focused){
-		setStyleSheet("border: 1px solid green");
+		setStyleSheet("QTabWidget::pane, QTabWidget::tab-bar {border: 2px solid green}");
 		infoLabel->setStyleSheet("QLabel { background-color : navy; color : white; }");
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
