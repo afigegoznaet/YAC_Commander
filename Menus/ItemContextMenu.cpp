@@ -131,25 +131,29 @@ void ItemContextMenu::cutToClipboard(){
 void ItemContextMenu::copyToClipboard(){
 	auto data = parent->getModel()->mimeData(selIndexes);
 
-/*
-	foreach (auto &format, data->formats()) {
-		qDebug()<<data->data(format);
-	}
-*/
-
 	clipboard->setMimeData(data);
+
+	if(!clipboard->mimeData()->urls().length())
+		pasteAction->setDisabled(true);
+	else
+		pasteAction->setEnabled(true);
 
 }
 
 void ItemContextMenu::pasteFromClipboard(){
 	auto data = clipboard->mimeData();
-	//qDebug()<<data->data("application/x-kde-cutselection").length();
-	//qDebug()<<data->data("application/x-kde-cutselection");
+
+	foreach (auto &url, data->urls()) {
+		qDebug()<<url;
+	}
+
 	if( data->data("application/x-kde-cutselection").length() ){
 		parent->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0, QModelIndex());
 		selIndexes.clear();
+		pasteAction->setDisabled(true);
 	}else
 		parent->getModel()->dropMimeData(data, Qt::CopyAction, 1, 0, QModelIndex());
+
 }
 
 void ItemContextMenu::deleteItems(){
