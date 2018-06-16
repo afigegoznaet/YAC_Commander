@@ -34,7 +34,7 @@ void FileTabSelector::init(Ui::MainWindow *ui){
 	menu->addAction(ui->actionAdd_tab);
 	menu->addAction(ui->actionCopy_tab);
 	menu->addAction(ui->actionClose_tab);
-
+	menu->addAction(ui->actionCopy_path);
 }
 
 void FileTabSelector::indexChanged(int index){

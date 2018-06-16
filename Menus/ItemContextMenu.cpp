@@ -74,7 +74,7 @@ void ItemContextMenu::initCommon(){
 								QKeySequence(tr("Del")));
 	renameAction = addAction("Rename", this, &ItemContextMenu::rename,
 								QKeySequence(tr("Ins")));
-
+	addSeparator();
 	commonActions << pasteAction << copyAction << cutAction << deleteAction << renameAction;
 }
 void ItemContextMenu::initFile(){

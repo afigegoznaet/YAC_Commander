@@ -269,6 +269,7 @@
     <addaction name="actionAdd_tab"/>
     <addaction name="actionCopy_tab"/>
     <addaction name="actionClose_tab"/>
+    <addaction name="actionCopy_path"/>
    </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuCommand"/>
@@ -474,6 +475,11 @@
   <action name="actionClose_tab">
    <property name="text">
     <string>Close tab</string>
+   </property>
+  </action>
+  <action name="actionCopy_path">
+   <property name="text">
+    <string>Copy tab path</string>
    </property>
   </action>
  </widget>

@@ -376,14 +376,17 @@ void MainWindow::setupActions(){
 	QAction* addTabAction = ui->actionAdd_tab;
 	QAction* duplicateTabAction = ui->actionCopy_tab;
 	QAction* closeTabAction = ui->actionClose_tab;
+	QAction* copyTabPath = ui->actionCopy_path;
 
 	addTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
 	duplicateTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_T));
 	closeTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_W));
+	copyTabPath->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_C));
 
 	addAction(addTabAction);
 	addAction(duplicateTabAction);
 	addAction(closeTabAction);
+	addAction(copyTabPath);
 
 	connect(addTabAction, &QAction::triggered, [&](){focusedSelector()->addNewTab();});
 	connect(duplicateTabAction, &QAction::triggered, [&](){focusedSelector()->addNewTab(true);});
@@ -400,6 +403,11 @@ void MainWindow::setupActions(){
 		else
 			selector->setCurrentIndex(curIndex);
 		focusPreviouslyFocused();
+	});
+
+	connect(copyTabPath, &QAction::triggered, [&](){
+		QGuiApplication::clipboard()->setText(
+					((FileTableView*)focusedSelector()->currentWidget())->GetDirectory());
 	});
 /**
  * End of Window menu
