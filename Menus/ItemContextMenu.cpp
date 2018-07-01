@@ -51,8 +51,8 @@ void ItemContextMenu::init(QPoint loc){
 		deleteAction->setDisabled(true);
 	}
 
-
-	if(!clipboard->mimeData()->urls().length())
+	bool hasUrls = clipboard->mimeData()->hasUrls();
+	if(!hasUrls)
 		pasteAction->setDisabled(true);
 
 	initFolder();
@@ -133,7 +133,9 @@ void ItemContextMenu::copyToClipboard(){
 
 	clipboard->setMimeData(data);
 
-	if(!clipboard->mimeData()->urls().length())
+	bool hasUrls = clipboard->mimeData()->hasUrls();
+
+	if( !hasUrls )
 		pasteAction->setDisabled(true);
 	else
 		pasteAction->setEnabled(true);
