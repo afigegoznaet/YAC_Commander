@@ -228,8 +228,8 @@ void FileTableView::setCurrentSelection(QString){
 	}
 
 	selectionModel()->setCurrentIndex(index,QItemSelectionModel::NoUpdate );
-	prevRow = currentIndex().row();
-	scrollTo(currentIndex());
+	prevRow = index.row();
+	scrollTo(index);
 }
 
 void FileTableView::headerClicked(int section){
@@ -394,6 +394,10 @@ void FileTableView::updateInfo(){
 		sizeRemaining = storage.bytesAvailable() /1024.0/1024;
 		typeRemaining = "MB";
 	}
+
+	fmt += model->rootPath();
+
+	fmt += "\n";
 	fmt +=QString::number(sizeRemaining)+" "+typeRemaining  +" available of "+QString::number(sizeTotal)+  " "+typeTotal;
 	fmt += "\t" + QString::number(selectionModel()->selectedRows().size()) +
 		   " selected of "+QString::number(model->rowCount(rootIndex())-1) +" directory items";
