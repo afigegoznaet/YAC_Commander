@@ -63,10 +63,12 @@ win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360
 }
 
+RC_ICONS = tc_qt.ico
+
 linux {
 	target.path = /usr/local/bin
 	desktop.path = /usr/share/applications
-	desktop.files += yc.desktop
+    desktop.files += yc.desktop
 	INSTALLS += target desktop
         QT += KIOCore KIOFileWidgets KIOWidgets KNTLM
 

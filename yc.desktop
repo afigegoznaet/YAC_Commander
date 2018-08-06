@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=YAC Commander
+Comment=A Tab based file manager similar to Total Commander and mc
+Type=Application
+Icon=tc_qt.ico
+Terminal=false
+Exec=yc
+Categories=System
