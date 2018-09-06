@@ -20,6 +20,17 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 					removeAction(action);
 
 		;});
+
+	cutActionIndicator.reserve(4);
+	cutActionIndicator[0] = 2;
+	cutActionIndicator[1] = '\0';
+	cutActionIndicator[2] = '\0';
+	cutActionIndicator[3] = '\0';
+	cutActionPadding.reserve(1044);
+	cutActionPadding[0] = 255;
+	cutActionPadding[1] = 255;
+	cutActionPadding[2] = 255;
+	cutActionPadding[3] = 255;
 }
 
 void ItemContextMenu::init(QPoint loc){
@@ -51,9 +62,19 @@ void ItemContextMenu::init(QPoint loc){
 		deleteAction->setDisabled(true);
 	}
 
-	bool hasUrls = clipboard->mimeData()->hasUrls();
+	auto data = clipboard->mimeData();
+	foreach (auto &url, data->formats()) {
+		qDebug()<<url;
+		auto text = data->data(url);
+		qDebug()<<text;
+		qDebug()<<"*********************************************************";
+	}
+
+	bool hasUrls = data->hasUrls();
 	if(!hasUrls)
 		pasteAction->setDisabled(true);
+	else
+		pasteAction->setEnabled(true);
 
 	initFolder();
 	initFile();
@@ -123,7 +144,12 @@ void ItemContextMenu::initFolder(){
 
 void ItemContextMenu::cutToClipboard(){
 	auto data = parent->getModel()->mimeData(selIndexes);
+#ifdef WIN32
+	data->setData("application/x-qt-windows-mime;value=\"Preferred DropEffect\"",cutActionIndicator);
+	data->setData("application/x-qt-windows-mime;value=\"DropDescription\"",cutActionPadding);
+#else
 	data->setData("application/x-kde-cutselection","1");
+#endif
 	qDebug()<<data->formats();
 	clipboard->setMimeData(data);
 }
@@ -149,7 +175,23 @@ void ItemContextMenu::pasteFromClipboard(){
 		qDebug()<<url;
 	}
 
-	if( data->data("application/x-kde-cutselection").length() ){
+	foreach (auto &url, data->formats()) {
+		qDebug()<<url;
+		auto text = data->data(url);
+		qDebug()<<text;
+		qDebug()<<"*********************************************************";
+	}
+
+	auto status = data->data("application/x-qt-windows-mime;value=\"Preferred DropEffect\"");
+	qDebug()<<status;
+
+	bool move = false;
+#ifdef WIN32
+	move = (data->data("application/x-qt-windows-mime;value=\"Preferred DropEffect\"").at(0) == 2);
+#else
+	move = data->data("application/x-kde-cutselection").length() >0;
+#endif
+	if( move ){
 		parent->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0, QModelIndex());
 		selIndexes.clear();
 		pasteAction->setDisabled(true);

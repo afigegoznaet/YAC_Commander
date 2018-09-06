@@ -42,6 +42,8 @@ private:
 	QClipboard* clipboard;
 	QFileInfoList selectedFiles;
 	QModelIndexList selIndexes;
+	QByteArray cutActionIndicator;
+	QByteArray cutActionPadding;
 
 #ifdef __linux__
 	KFileItemActions* fileItemActions;

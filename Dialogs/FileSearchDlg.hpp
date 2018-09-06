@@ -12,6 +12,7 @@
 #include "ui_searchdialog.h"
 #include "Models/FileFindingsModel.hpp"
 #include <QTime>
+#include <atomic>
 #include <QMutex>
 #include <functional>
 

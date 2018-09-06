@@ -64,8 +64,10 @@ void FileTabSelector::onDirChanged(const QString dirName, int tabIndex){
 
 void FileTabSelector::onFocusEvent(bool focused){
 	if(focused){
-		setStyleSheet("QTabWidget::pane, QTabWidget::tab-bar {border: 2px solid green}");
-		infoLabel->setStyleSheet("QLabel { background-color : navy; color : white; }");
+		static const QString style = "QTabWidget::pane, QTabWidget::tab-bar {border: 2px solid green}";
+		static const QString labelStyle = "QLabel { background-color : navy; color : white; }";
+		setStyleSheet(style);
+		infoLabel->setStyleSheet(labelStyle);
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
 		currentHeaderResizedConnection =
