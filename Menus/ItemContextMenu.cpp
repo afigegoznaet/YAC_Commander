@@ -120,7 +120,6 @@ void ItemContextMenu::initFile(){
 		kList.append(kItem);
 	}
 
-
 	KFileItemListProperties kprops( kList );
 	//qDebug()<<kprops.items().count();
 
@@ -134,7 +133,7 @@ void ItemContextMenu::initFile(){
 	//QString name("Open with");
 	fileItemActions->addOpenWithActionsTo(this,
 		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
-	fileItemActions->addServiceActionsTo(this);
+	//fileItemActions->addServiceActionsTo(this);
 	fileItemActions->addPluginActionsTo(this);
 
 #endif
