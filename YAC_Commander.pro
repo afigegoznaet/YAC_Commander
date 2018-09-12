@@ -75,5 +75,6 @@ linux {
 }
 
 DISTFILES += \
-	HexView/LICENSE
+	HexView/LICENSE \
+    tc_qt.ico
 

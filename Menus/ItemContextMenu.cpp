@@ -109,31 +109,32 @@ void ItemContextMenu::initFile(){
 	fileItemActions = new KFileItemActions(this);
 
 	fileItemActions->setParentWidget(this);
-	auto fileInfo = selectedFiles.first();
-	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo);
-	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
-	struct stat buf;
-	qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
-	stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
-	KFileItem kItem(QUrl(fileInfo.absoluteFilePath()),
-					QMimeDatabase().mimeTypeForFile(fileInfo).name(), buf.st_mode);
-	qDebug()<<kItem;
+
 	QList<KFileItem> kList;
-	kList.append(kItem);
+	for(const auto fileInfo : selectedFiles){
+		struct stat buf;
+		stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
+		KFileItem kItem(QUrl(fileInfo.absoluteFilePath()),
+						QMimeDatabase().mimeTypeForFile(fileInfo).name(), buf.st_mode);
+		//qDebug()<<kItem;
+		kList.append(kItem);
+	}
+
 
 	KFileItemListProperties kprops( kList );
-	qDebug()<<kprops.items().count();
+	//qDebug()<<kprops.items().count();
 
 	fileItemActions->setItemListProperties(kprops);
 
-	qDebug()<<KAuthorized::authorize("Compress7z");
-	qDebug()<<KAuthorized::authorize("CompressDialog");
+	//qDebug()<<KAuthorized::authorize("Compress7z");
+	//qDebug()<<KAuthorized::authorize("CompressDialog");
 	qDebug()<<QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName());
 	qDebug()<<qApp->desktopFileName();
 	fileItemActions->addServiceActionsTo(this);
-	QString name("Open with");
+	//QString name("Open with");
 	fileItemActions->addOpenWithActionsTo(this,
 		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
+	fileItemActions->addServiceActionsTo(this);
 	fileItemActions->addPluginActionsTo(this);
 
 #endif
