@@ -1,4 +1,4 @@
-#include "mainwindow.hpp"
+#include "MainWndow.hpp"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
 	ui->setupUi(this);
@@ -418,4 +418,13 @@ void MainWindow::setupActions(){
 void MainWindow::on_action_show_hidden_files_changed(){
 	ui->rightTabWidget->showHidden(showHidden());
 	ui->leftTabWidget->showHidden(showHidden());
+}
+
+void MainWindow::parseParams(int argc, char *argv[]){
+	QString params;
+	if(argc >1){
+		params = argv[1];
+		if(QDir(params).exists())
+			focusedSelector()->addNewTab(false, params);
+	}
 }

@@ -1,4 +1,4 @@
-#include "mainwindow.hpp"
+#include "MainWndow.hpp"
 
 
 int main(int argc, char *argv[])
@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 	MainWindow w;
 	w.setWindowTitle("YAC Commander");
 	w.show();
+	w.parseParams(argc, argv);
 
 	qApp->setDesktopFileName("YAC Commander");
 	return a.exec();

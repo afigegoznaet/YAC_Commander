@@ -54,10 +54,10 @@ HEADERS  += \
 	Widgets/EditableDropdown.hpp \
 	Widgets/FileTabSelector.hpp \
 	Widgets/QuickAccessBar.hpp \
-	mainwindow.hpp \
 	Views/QHexView.hpp \
 	Views/FileTabView.hpp \
-	Menus/ItemContextMenu.hpp
+	Menus/ItemContextMenu.hpp \
+    MainWndow.hpp
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

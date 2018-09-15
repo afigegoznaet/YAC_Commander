@@ -1,5 +1,5 @@
 #include "FileTabSelector.hpp"
-#include "mainwindow.hpp"
+#include "MainWndow.hpp"
 
 FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 	defaultStyle = styleSheet();

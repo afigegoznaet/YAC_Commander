@@ -1,6 +1,6 @@
 #include "Views/FileTabView.hpp"
 #include "Widgets/FileTabSelector.hpp"
-#include "mainwindow.hpp"
+#include "MainWndow.hpp"
 
 #define IN 1
 #define OUT 0

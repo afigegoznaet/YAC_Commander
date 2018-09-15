@@ -48,6 +48,8 @@ public:
 	ProgressDialog* getFileMover(){return movementProgress;}
 	bool showHidden(){return ui->action_show_hidden_files->isChecked();}
 
+	void parseParams(int argc, char *argv[]);
+
 signals:
 	void setFocus(FileTabSelector* tab);
 	void setFileAction(QFileInfoList fileList, QString destination,

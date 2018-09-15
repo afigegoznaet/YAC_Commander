@@ -1,5 +1,5 @@
 #include "FileSearchDlg.hpp"
-#include "mainwindow.hpp"
+#include "MainWndow.hpp"
 
 SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f) :
 	QDialog(parent, f),

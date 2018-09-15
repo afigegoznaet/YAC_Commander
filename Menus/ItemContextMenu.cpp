@@ -177,11 +177,11 @@ void ItemContextMenu::initFile(){
 	//qDebug()<<KAuthorized::authorize("CompressDialog");
 	//qDebug()<<QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName());
 	//qDebug()<<qApp->desktopFileName();
-	fileItemActions->addServiceActionsTo(this);
+
 	//QString name("Open with");
 	fileItemActions->addOpenWithActionsTo(this,
 		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
-	//fileItemActions->addServiceActionsTo(this);
+	fileItemActions->addServiceActionsTo(this);
 	fileItemActions->addPluginActionsTo(this);
 
 #endif
