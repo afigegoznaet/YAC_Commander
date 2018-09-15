@@ -46,7 +46,7 @@ private:
 	QByteArray cutActionPadding;
 
 #ifdef __linux__
-	KFileItemActions* fileItemActions;
+	//KFileItemActions* fileItemActions;
 #endif
 	void initCommon();
 	void initFile();

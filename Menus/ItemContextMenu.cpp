@@ -1,17 +1,18 @@
 #include "ItemContextMenu.hpp"
 #include "Views/FileTabView.hpp"
-
+#include <KConfigGroup>
+#include <KSharedConfig>
 
 ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 
 	initCommon();
 	this->parent = (FileTableView*)parent;
-	qDebug()<<"parent name: "<<parent->objectName();
+	//qDebug()<<"parent name: "<<parent->objectName();
 	clipboard = QGuiApplication::clipboard();
 	connect(this, &QMenu::aboutToHide, [&](){
 #ifdef __linux__
-		qDebug()<<fileItemActions->children();
-		fileItemActions->deleteLater();
+		//qDebug()<<fileItemActions->children();
+		//fileItemActions->deleteLater();
 #endif
 			for(auto action: this->actions())
 				if(commonActions.contains(action))
@@ -37,9 +38,10 @@ void ItemContextMenu::init(QPoint loc){
 
 
 	selectedFiles = parent->getSelectedFiles();
+	/*
 	if(selectedFiles.count()<1)
 		selectedFiles.append(parent->getModel()->fileInfo(parent->indexAt(loc)));
-
+*/
 	selIndexes = parent->selectionModel()->selectedRows();
 
 	if(!selIndexes.length()){
@@ -106,29 +108,75 @@ void ItemContextMenu::initFile(){
 	KServiceAction action;
 
 
-	fileItemActions = new KFileItemActions(this);
+	KFileItemActions* fileItemActions = new KFileItemActions(this);
 
 	fileItemActions->setParentWidget(this);
 
-	QList<KFileItem> kList;
+	//qDebug()<<"Adding files to list";
+	KFileItemList kList;
 	for(const auto fileInfo : selectedFiles){
 		struct stat buf;
 		stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
-		KFileItem kItem(QUrl(fileInfo.absoluteFilePath()),
-						QMimeDatabase().mimeTypeForFile(fileInfo).name(), buf.st_mode);
-		//qDebug()<<kItem;
+		KFileItem kItem(QUrl::fromLocalFile(fileInfo.absoluteFilePath()),
+						QMimeDatabase().mimeTypeForFile(fileInfo).name(),
+						buf.st_mode);
+		//qDebug()<<"KFileItem path: "<<kItem.localPath();
+		//qDebug()<<fileInfo.fileName();
+		//qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
+		//qDebug()<<kItem.currentMimeType();
+		//qDebug()<<kItem.determineMimeType();
+		//qDebug()<<kItem.isReadable();
+		//qDebug()<<kItem.isWritable();
 		kList.append(kItem);
 	}
+/*
+	for(const auto& item : kList){
+		qDebug()<<item.isReadable();
+		qDebug()<<item.isRegularFile();
+		qDebug()<<item.isWritable();
+		qDebug()<<item.localPath();
+		qDebug()<<item.mode();
+		qDebug()<<item.permissionsString();
+		qDebug()<<item.size();
+	}
 
+	qDebug()<<kList.count();
+
+	KFileItemList testList(kList);
+	for(const auto& item : testList){
+		qDebug()<<item.name();
+		qDebug()<<item.isReadable();
+		qDebug()<<item.isWritable();
+	}
+*/
 	KFileItemListProperties kprops( kList );
+
+	//qDebug()<<kprops.mimeGroup();
+	//qDebug()<<kprops.mimeType();
+	//qDebug()<<kprops.supportsDeleting();
+	//qDebug()<<kprops.supportsMoving();
+	//qDebug()<<kprops.supportsReading();
+	//qDebug()<<kprops.supportsWriting();
+	//qDebug()<<kprops.urlList();
+
 	//qDebug()<<kprops.items().count();
 
 	fileItemActions->setItemListProperties(kprops);
 
-	//qDebug()<<KAuthorized::authorize("Compress7z");
+	//KConfigGroup cg(KSharedConfig::openConfig(), "KDE Action Restrictions");
+
+	//qDebug()<<cg.keyList();
+
+	//qDebug()<<KAuthorized::authorize(QStringLiteral("shell_access"));
+	//qDebug()<<KAuthorized::authorize(QStringLiteral("Compress"));
+	//qDebug()<<KAuthorized::authorize(QStringLiteral("Extract"));
+	//qDebug()<<KAuthorized::authorize(QStringLiteral("Write"));
+	//qDebug()<<KAuthorized::authorizeAction("Extract");
+	//qDebug()<<KAuthorized::authorizeControlModule(QStringLiteral("org.kde.ark.desktop"));
+	//qDebug()<<KAuthorized::authorizeControlModule(QStringLiteral("kcmtrash.desktop"));
 	//qDebug()<<KAuthorized::authorize("CompressDialog");
-	qDebug()<<QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName());
-	qDebug()<<qApp->desktopFileName();
+	//qDebug()<<QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName());
+	//qDebug()<<qApp->desktopFileName();
 	fileItemActions->addServiceActionsTo(this);
 	//QString name("Open with");
 	fileItemActions->addOpenWithActionsTo(this,
@@ -150,7 +198,7 @@ void ItemContextMenu::cutToClipboard(){
 #else
 	data->setData("application/x-kde-cutselection","1");
 #endif
-	qDebug()<<data->formats();
+	//qDebug()<<data->formats();
 	clipboard->setMimeData(data);
 }
 
@@ -176,14 +224,14 @@ void ItemContextMenu::pasteFromClipboard(){
 	}
 
 	foreach (auto &url, data->formats()) {
-		qDebug()<<url;
+		//qDebug()<<url;
 		auto text = data->data(url);
-		qDebug()<<text;
-		qDebug()<<"*********************************************************";
+		//qDebug()<<text;
+		//qDebug()<<"*********************************************************";
 	}
 
 	auto status = data->data("application/x-qt-windows-mime;value=\"Preferred DropEffect\"");
-	qDebug()<<status;
+	//qDebug()<<status;
 
 	bool move = false;
 #ifdef WIN32
