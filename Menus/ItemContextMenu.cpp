@@ -57,7 +57,9 @@ void ItemContextMenu::init(QPoint loc){
 		}
 
 	}
-	if(selectedFiles.length() < 2 && !selectedFiles.first().fileName().compare("..")){
+	if(selectedFiles.length() == 0 ||
+			(selectedFiles.length() == 1 &&
+			 !selectedFiles.first().fileName().compare(".."))){
 		cutAction->setDisabled(true);
 		copyAction->setDisabled(true);
 		renameAction->setDisabled(true);

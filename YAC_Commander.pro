@@ -69,8 +69,10 @@ linux {
 	target.path = /usr/local/bin
 	desktop.path = /usr/share/applications
     desktop.files += yc.desktop
-	INSTALLS += target desktop
-		QT += KIOCore KIOFileWidgets KIOWidgets KNTLM KArchive KCoreAddons
+	icon.path = /usr/share/icons/hicolor/32x32/apps/
+	icon.files = TC_QT.png
+	INSTALLS += target desktop icon
+	QT += KIOCore KIOFileWidgets KIOWidgets KNTLM KArchive KCoreAddons
 
 }
 
