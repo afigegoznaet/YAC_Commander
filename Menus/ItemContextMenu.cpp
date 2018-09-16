@@ -38,28 +38,21 @@ void ItemContextMenu::init(QPoint loc){
 
 
 	selectedFiles = parent->getSelectedFiles();
-	/*
+
 	if(selectedFiles.count()<1)
 		selectedFiles.append(parent->getModel()->fileInfo(parent->indexAt(loc)));
-*/
-	selIndexes = parent->selectionModel()->selectedRows();
+
 
 	if(!selIndexes.length()){
 		auto index = parent->indexAt(loc);
-		auto info = parent->getModel()->fileInfo(index);
-		if(!index.isValid()){
-			info = parent->getModel()->fileInfo(parent->rootIndex());
-			info.setFile(info.absoluteFilePath(), ".");
-		}else{
-			parent->setCurrentIndex(index);
-			selectedFiles.append(info);
+		//auto info = parent->getModel()->fileInfo(index);
+		if(index.isValid())
 			selIndexes.append(index);
-		}
-
 	}
-	if(selectedFiles.length() == 0 ||
-			(selectedFiles.length() == 1 &&
-			 !selectedFiles.first().fileName().compare(".."))){
+
+	if(selectedFiles.length() == 1 &&
+			 (!selectedFiles.first().fileName().compare("..") ||
+				selectedFiles.first().fileName().isEmpty())){
 		cutAction->setDisabled(true);
 		copyAction->setDisabled(true);
 		renameAction->setDisabled(true);
