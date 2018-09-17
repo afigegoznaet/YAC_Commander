@@ -202,13 +202,6 @@ void ItemContextMenu::copyToClipboard(){
 
 	clipboard->setMimeData(data);
 
-	bool hasUrls = clipboard->mimeData()->hasUrls();
-
-	if( !hasUrls )
-		pasteAction->setDisabled(true);
-	else
-		pasteAction->setEnabled(true);
-
 }
 
 void ItemContextMenu::pasteFromClipboard(){
