@@ -8,7 +8,7 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 	initCommon();
 	this->parent = (FileTableView*)parent;
 	//qDebug()<<"parent name: "<<parent->objectName();
-	clipboard = QGuiApplication::clipboard();
+	//clipboard = QGuiApplication::clipboard();
 	connect(this, &QMenu::aboutToHide, [&](){
 #ifdef __linux__
 		//qDebug()<<fileItemActions->children();
@@ -35,10 +35,8 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 }
 
 void ItemContextMenu::init(QPoint loc){
-
-
 	selectedFiles = parent->getSelectedFiles();
-
+/*
 	if(selectedFiles.count()<1)
 		selectedFiles.append(parent->getModel()->fileInfo(parent->indexAt(loc)));
 
@@ -49,7 +47,7 @@ void ItemContextMenu::init(QPoint loc){
 		if(index.isValid())
 			selIndexes.append(index);
 	}
-
+*/
 	if(selectedFiles.length() == 1 &&
 			 (!selectedFiles.first().fileName().compare("..") ||
 				selectedFiles.first().fileName().isEmpty())){
@@ -59,7 +57,7 @@ void ItemContextMenu::init(QPoint loc){
 		deleteAction->setDisabled(true);
 	}
 
-	auto data = clipboard->mimeData();
+	auto data = QGuiApplication::clipboard()->mimeData();
 	foreach (auto &url, data->formats()) {
 		qDebug()<<url;
 		auto text = data->data(url);
@@ -186,7 +184,7 @@ void ItemContextMenu::initFolder(){
 }
 
 void ItemContextMenu::cutToClipboard(){
-	auto data = parent->getModel()->mimeData(selIndexes);
+	auto data = parent->getModel()->mimeData(parent->getSelectedIndexes());
 #ifdef WIN32
 	data->setData("application/x-qt-windows-mime;value=\"Preferred DropEffect\"",cutActionIndicator);
 	data->setData("application/x-qt-windows-mime;value=\"DropDescription\"",cutActionPadding);
@@ -194,17 +192,17 @@ void ItemContextMenu::cutToClipboard(){
 	data->setData("application/x-kde-cutselection","1");
 #endif
 	//qDebug()<<data->formats();
-	clipboard->setMimeData(data);
+	QGuiApplication::clipboard()->setMimeData(data);
 }
 
 void ItemContextMenu::copyToClipboard(){
-	auto data = parent->getModel()->mimeData(selIndexes);
-
-	clipboard->setMimeData(data);
+	auto data = parent->getModel()->mimeData(parent->getSelectedIndexes());
+	QGuiApplication::clipboard()->setMimeData(data);
 
 }
 
 void ItemContextMenu::pasteFromClipboard(){
+	const auto& clipboard = QGuiApplication::clipboard();
 	auto data = clipboard->mimeData();
 
 	foreach (auto &url, data->urls()) {

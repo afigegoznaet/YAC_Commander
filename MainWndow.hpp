@@ -82,6 +82,9 @@ private:
 	void writeSettings();
 	void readSettings();
 	void setupActions();
+	void cutToClipboard();
+	void copyToClipboard();
+	void pasteFromClipboard();
 
 	QFileInfoList getSelectedFiles();
 	void keyPressEvent(QKeyEvent *event) override;

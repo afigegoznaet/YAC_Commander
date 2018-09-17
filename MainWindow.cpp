@@ -146,6 +146,18 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 	case Qt::Key_F10:
 		searchDlg->show(focusedTab()->GetDirectory());
 		break;
+	case Qt::Key_C:
+		if(event->modifiers() == Qt::ControlModifier){
+			break;
+		}
+	case Qt::Key_V:
+		if(event->modifiers() == Qt::ControlModifier){
+			break;
+		}
+	case Qt::Key_X:
+		if(event->modifiers() == Qt::ControlModifier){
+			break;
+		}
 	default:
 		//qDebug()<<event;
 		//qDebug()<<key;
@@ -156,7 +168,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 			ui->rightTabWidget->setFocus();
 		else
 			ui->leftTabWidget->setFocus();
-
 		break;
 	}
 }
@@ -204,6 +215,57 @@ void MainWindow::moveFiles(){
 	}
 
 	emit setFileAction(fileList, destination, Qt::MoveAction);
+}
+
+
+void MainWindow::cutToClipboard(){
+
+	const auto& data = focusedTab()->getModel()->mimeData(focusedTab()->getSelectedIndexes());
+#ifdef WIN32
+	data->setData("application/x-qt-windows-mime;value=\"Preferred DropEffect\"",cutActionIndicator);
+	data->setData("application/x-qt-windows-mime;value=\"DropDescription\"",cutActionPadding);
+#else
+	data->setData("application/x-kde-cutselection","1");
+#endif
+	//qDebug()<<data->formats();
+	QGuiApplication::clipboard()->setMimeData(data);
+}
+
+void MainWindow::copyToClipboard(){
+	const auto& data = focusedTab()->getModel()->mimeData(focusedTab()->getSelectedIndexes());
+	QGuiApplication::clipboard()->setMimeData(data);
+
+}
+
+void MainWindow::pasteFromClipboard(){
+	const auto& clipboard = QGuiApplication::clipboard();
+	auto data = clipboard->mimeData();
+
+	foreach (auto &url, data->urls()) {
+		qDebug()<<url;
+	}
+
+	foreach (auto &url, data->formats()) {
+		//qDebug()<<url;
+		auto text = data->data(url);
+		//qDebug()<<text;
+		//qDebug()<<"*********************************************************";
+	}
+
+	auto status = data->data("application/x-qt-windows-mime;value=\"Preferred DropEffect\"");
+	//qDebug()<<status;
+
+	bool move = false;
+#ifdef WIN32
+	move = (data->data("application/x-qt-windows-mime;value=\"Preferred DropEffect\"").at(0) == 2);
+#else
+	move = data->data("application/x-kde-cutselection").length() >0;
+#endif
+	if( move )
+		focusedTab()->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0, QModelIndex());
+	else
+		focusedTab()->getModel()->dropMimeData(data, Qt::CopyAction, 1, 0, QModelIndex());
+
 }
 
 void MainWindow::deleteFiles(){

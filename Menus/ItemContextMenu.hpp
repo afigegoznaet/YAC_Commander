@@ -39,7 +39,7 @@ private:
 	QAction* deleteAction;
 	QAction* renameAction;
 	FileTableView* parent;
-	QClipboard* clipboard;
+	//QClipboard* clipboard;
 	QFileInfoList selectedFiles;
 	QModelIndexList selIndexes;
 	QByteArray cutActionIndicator;

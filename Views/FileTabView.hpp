@@ -41,6 +41,7 @@ public:
 		return (TableItemDelegate*)QTableView::itemDelegate();
 	}
 	OrderedFileSystemModel*  getModel(){ return model; }
+	QModelIndexList getSelectedIndexes();
 	QString GetDirectory(){ return model->rootPath(); }
 	QLabel* getLabel(){return infoLabel;}
 	void setTabOrderIndex(int index){ this->index=index; }

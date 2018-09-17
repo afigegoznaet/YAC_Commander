@@ -254,14 +254,20 @@ void FileTableView::focusOutEvent(QFocusEvent *event){
 
 QFileInfoList FileTableView::getSelectedFiles(){
 	QFileInfoList selectedFiles;
+	QModelIndexList items = getSelectedIndexes();
+
+	for (const auto& fileIndex : items)
+		selectedFiles.append(model->fileInfo(fileIndex));
+
+	return selectedFiles;
+}
+
+QModelIndexList FileTableView::getSelectedIndexes(){
 	QModelIndexList items = selectionModel()->selectedRows();
 	auto currIdx = model->fileInfo(selectionModel()->currentIndex());
 	if(!items.size() && currIdx.fileName().compare(".."))
-		selectedFiles.append(currIdx);
-	else
-		foreach (auto fileIndex, items)
-			selectedFiles.append(model->fileInfo(fileIndex));
-	return selectedFiles;
+		items.append(selectionModel()->currentIndex());
+	return items;
 }
 
 void FileTableView::cdTo(const QString &dir){
