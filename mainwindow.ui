@@ -202,17 +202,13 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>19</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
     <property name="title">
-     <string>Files</string>
+     <string>Fi&amp;les</string>
     </property>
-    <addaction name="actionO_pen"/>
-    <addaction name="actionOpen_with"/>
-    <addaction name="actionView_in_hex_mode"/>
-    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuCommand">
@@ -235,26 +231,23 @@
    </widget>
    <widget class="QMenu" name="menuCommands">
     <property name="title">
-     <string>Commands</string>
+     <string>&amp;Commands</string>
     </property>
     <addaction name="actionSearch"/>
     <addaction name="separator"/>
     <addaction name="actionChown"/>
     <addaction name="actionChmod"/>
-    <addaction name="separator"/>
-    <addaction name="actionCompress"/>
-    <addaction name="actionExtract"/>
    </widget>
    <widget class="QMenu" name="menuNet">
     <property name="title">
-     <string>Net</string>
+     <string>&amp;Net</string>
     </property>
     <addaction name="actionSsh_connect"/>
     <addaction name="actionFtp_connect"/>
    </widget>
    <widget class="QMenu" name="menuConfiguration">
     <property name="title">
-     <string>Configuration</string>
+     <string>Confi&amp;guration</string>
     </property>
     <addaction name="actionProgram_appearance"/>
     <addaction name="actionEdit_quick_access_buttons"/>
@@ -318,22 +311,22 @@
   </action>
   <action name="actionO_pen">
    <property name="text">
-    <string>Open</string>
+    <string>&amp;Open</string>
    </property>
   </action>
   <action name="actionOpen_with">
    <property name="text">
-    <string>Open with</string>
+    <string>Open &amp;with</string>
    </property>
   </action>
   <action name="actionRename">
    <property name="text">
-    <string>Rename</string>
+    <string>&amp;Rename</string>
    </property>
   </action>
   <action name="actionDelete_selected">
    <property name="text">
-    <string>Delete selected</string>
+    <string>&amp;Delete selected</string>
    </property>
   </action>
   <action name="actionPermissions">
@@ -343,77 +336,77 @@
   </action>
   <action name="actionSet_selection_Mask">
    <property name="text">
-    <string>Set selection Mask +&amp;</string>
+    <string>&amp;Set selection Mask +&amp;</string>
    </property>
   </action>
   <action name="actionSet_deselection_mask">
    <property name="text">
-    <string>Set deselection mask -&amp;</string>
+    <string>S&amp;et deselection mask -&amp;</string>
    </property>
   </action>
   <action name="actionCut">
    <property name="text">
-    <string>Cut </string>
+    <string>&amp;Cut </string>
    </property>
   </action>
   <action name="actionCopy">
    <property name="text">
-    <string>Copy </string>
+    <string>C&amp;opy </string>
    </property>
   </action>
   <action name="actionPaste">
    <property name="text">
-    <string>Paste</string>
+    <string>&amp;Paste</string>
    </property>
   </action>
   <action name="actionInvert_selection">
    <property name="text">
-    <string>Invert selection</string>
+    <string>&amp;Invert selection</string>
    </property>
   </action>
   <action name="actionSearch">
    <property name="text">
-    <string>Search</string>
+    <string>&amp;Search</string>
    </property>
   </action>
   <action name="actionChown">
    <property name="text">
-    <string>chown</string>
+    <string>&amp;chown</string>
    </property>
   </action>
   <action name="actionChmod">
    <property name="text">
-    <string>chmod</string>
+    <string>c&amp;hmod</string>
    </property>
   </action>
   <action name="actionCopy_2">
    <property name="text">
-    <string>Copy selected</string>
+    <string>Cop&amp;y selected</string>
    </property>
   </action>
   <action name="actionMove_selected">
    <property name="text">
-    <string>Move selected</string>
+    <string>&amp;Move selected</string>
    </property>
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Exit</string>
    </property>
   </action>
   <action name="actionProgram_appearance">
    <property name="text">
-    <string>Program appearance</string>
+    <string>&amp;Program appearance</string>
    </property>
   </action>
   <action name="actionEdit_quick_access_buttons">
    <property name="text">
-    <string>Edit quick access buttons</string>
+    <string>&amp;Edit quick access buttons</string>
    </property>
   </action>
   <action name="actionHide_quick_access_bar">
    <property name="text">
-    <string>Hide quick access bar</string>
+    <string>&amp;Hide quick access bar</string>
    </property>
   </action>
   <action name="actionClear_command_history">
@@ -428,27 +421,27 @@
   </action>
   <action name="actionSsh_connect">
    <property name="text">
-    <string>ssh connect</string>
+    <string>&amp;ssh connect</string>
    </property>
   </action>
   <action name="actionFtp_connect">
    <property name="text">
-    <string>ftp connect</string>
+    <string>&amp;ftp connect</string>
    </property>
   </action>
   <action name="actionCompress">
    <property name="text">
-    <string>Compress</string>
+    <string>C&amp;ompress</string>
    </property>
   </action>
   <action name="actionExtract">
    <property name="text">
-    <string>Extract</string>
+    <string>&amp;Extract</string>
    </property>
   </action>
   <action name="actionView_in_hex_mode">
    <property name="text">
-    <string>View in hex mode</string>
+    <string>&amp;View in hex mode</string>
    </property>
   </action>
   <action name="action_show_hidden_files">
@@ -459,27 +452,27 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show hidden files</string>
+    <string>&amp;Show hidden files</string>
    </property>
   </action>
   <action name="actionAdd_tab">
    <property name="text">
-    <string>Add tab</string>
+    <string>&amp;Add tab</string>
    </property>
   </action>
   <action name="actionCopy_tab">
    <property name="text">
-    <string>Copy tab</string>
+    <string>&amp;Copy tab</string>
    </property>
   </action>
   <action name="actionClose_tab">
    <property name="text">
-    <string>Close tab</string>
+    <string>C&amp;lose tab</string>
    </property>
   </action>
   <action name="actionCopy_path">
    <property name="text">
-    <string>Copy tab path</string>
+    <string>Copy tab &amp;path</string>
    </property>
   </action>
  </widget>

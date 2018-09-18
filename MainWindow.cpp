@@ -1,17 +1,22 @@
 #include "MainWndow.hpp"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
+
+static char aboutText[] = "WUFDIENvbW1hbmRlcgpJbmNlcHRlZCBpbiAyMDE3IGluIENoaXNpbmF1LCBNb2xkb3ZhCmJ5IFJvbWFuIFBvc3RhbmNpdWMKCkZvciBxdWVzdGlvbnMgb3IgZGV2IHNlcnZpY2VzOgpyb21hbi5wb3N0YW5jaXVjQGdtYWlsLmNvbQ==";
+
+MainWindow::MainWindow(QWidget *parent) :
+	QMainWindow(parent), ui(new Ui::MainWindow){
+	/***
+	 * Setup Ui
+	 * */
+
 	ui->setupUi(this);
 	setStatusBar(nullptr);
 	ui->leftTabWidget->init(ui);
 	ui->rightTabWidget->init(ui);
-
 	ui->leftTabWidget->setLabel(ui->leftLabel);
 	ui->rightTabWidget->setLabel(ui->rightLabel);
-
 	ui->leftLabel->setText("Left");
 	ui->rightLabel->setText("Right");
-
 	ui->leftLabel->setStyleSheet("border: 1px solid green; background: gray");
 	ui->rightLabel->setStyleSheet("border: 1px solid green; background: gray");
 
@@ -25,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	connect(ui->commandsBox,SIGNAL(focusPreviouslyFocused()), this,
 			SLOT(focusPreviouslyFocused()), Qt::QueuedConnection);
 	connect(ui->quickBar,SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
-
 	connect(ui->leftTabWidget,&FileTabSelector::focusAquired,[=](){
 		leftTabHasFocus = true;
 		ui->rightTabWidget->unfocus();
@@ -65,6 +69,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 			ui->actionClose_tab->setEnabled(true);
 		});
 
+	connect(ui->actionSearch, &QAction::triggered, [&]{
+		searchDlg->show(focusedTab()->GetDirectory());
+	});
+
+	ui->menubar->addAction("About",this, SLOT(showAbout()));
 	//qDebug()<<QStandardPaths::AppConfigLocation;
 }
 
@@ -72,6 +81,17 @@ MainWindow::~MainWindow(){
 	writeSettings();
 	delete ui;
 }
+
+void MainWindow::showAbout(){
+	QMessageBox msgBox;
+	msgBox.setIcon(QMessageBox::Information);
+	msgBox.setWindowTitle("About");
+	msgBox.setText( QByteArray::fromBase64(aboutText));
+	msgBox.setStandardButtons(QMessageBox::Ok);
+	msgBox.setDefaultButton(QMessageBox::Ok);
+	msgBox.exec();
+}
+
 
 void MainWindow::setFocusSlot(FileTabSelector *tab){
 	if(leftTabHasFocus){
@@ -138,8 +158,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 		moveFiles();
 		break;
 	case Qt::Key_F7:
-		makeDir();
-		break;
+		if(event->modifiers() == Qt::AltModifier){
+			searchDlg->show(focusedTab()->GetDirectory());
+			break;
+		}else{
+			makeDir();
+			break;
+		}
 	case Qt::Key_F8:
 	case Qt::Key_Delete:
 		deleteFiles();

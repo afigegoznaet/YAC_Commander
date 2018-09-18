@@ -67,6 +67,7 @@ private slots:
 	void on_F7_clicked();
 	void on_F8_clicked();
 	void on_action_show_hidden_files_changed();
+	void showAbout();
 
 private:
 	Ui::MainWindow *ui;

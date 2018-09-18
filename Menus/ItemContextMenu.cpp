@@ -36,18 +36,6 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 
 void ItemContextMenu::init(QPoint loc){
 	selectedFiles = parent->getSelectedFiles();
-/*
-	if(selectedFiles.count()<1)
-		selectedFiles.append(parent->getModel()->fileInfo(parent->indexAt(loc)));
-
-
-	if(!selIndexes.length()){
-		auto index = parent->indexAt(loc);
-		//auto info = parent->getModel()->fileInfo(index);
-		if(index.isValid())
-			selIndexes.append(index);
-	}
-*/
 	if(selectedFiles.length() == 1 &&
 			 (!selectedFiles.first().fileName().compare("..") ||
 				selectedFiles.first().fileName().isEmpty())){
@@ -58,15 +46,7 @@ void ItemContextMenu::init(QPoint loc){
 	}
 
 	auto data = QGuiApplication::clipboard()->mimeData();
-	foreach (auto &url, data->formats()) {
-		qDebug()<<url;
-		auto text = data->data(url);
-		qDebug()<<text;
-		qDebug()<<"*********************************************************";
-	}
-
-	bool hasUrls = data->hasUrls();
-	if(!hasUrls)
+	if(!data->hasUrls())
 		pasteAction->setDisabled(true);
 	else
 		pasteAction->setEnabled(true);
@@ -95,11 +75,7 @@ void ItemContextMenu::initCommon(){
 }
 void ItemContextMenu::initFile(){
 
-	//init(QCursor::pos());
 #ifdef __linux__
-
-	KServiceAction action;
-
 
 	KFileItemActions* fileItemActions = new KFileItemActions(this);
 
@@ -113,65 +89,13 @@ void ItemContextMenu::initFile(){
 		KFileItem kItem(QUrl::fromLocalFile(fileInfo.absoluteFilePath()),
 						QMimeDatabase().mimeTypeForFile(fileInfo).name(),
 						buf.st_mode);
-		//qDebug()<<"KFileItem path: "<<kItem.localPath();
-		//qDebug()<<fileInfo.fileName();
-		//qDebug()<<QMimeDatabase().mimeTypeForFile(fileInfo).name();
-		//qDebug()<<kItem.currentMimeType();
-		//qDebug()<<kItem.determineMimeType();
-		//qDebug()<<kItem.isReadable();
-		//qDebug()<<kItem.isWritable();
 		kList.append(kItem);
 	}
-/*
-	for(const auto& item : kList){
-		qDebug()<<item.isReadable();
-		qDebug()<<item.isRegularFile();
-		qDebug()<<item.isWritable();
-		qDebug()<<item.localPath();
-		qDebug()<<item.mode();
-		qDebug()<<item.permissionsString();
-		qDebug()<<item.size();
-	}
 
-	qDebug()<<kList.count();
-
-	KFileItemList testList(kList);
-	for(const auto& item : testList){
-		qDebug()<<item.name();
-		qDebug()<<item.isReadable();
-		qDebug()<<item.isWritable();
-	}
-*/
 	KFileItemListProperties kprops( kList );
-
-	//qDebug()<<kprops.mimeGroup();
-	//qDebug()<<kprops.mimeType();
-	//qDebug()<<kprops.supportsDeleting();
-	//qDebug()<<kprops.supportsMoving();
-	//qDebug()<<kprops.supportsReading();
-	//qDebug()<<kprops.supportsWriting();
-	//qDebug()<<kprops.urlList();
-
-	//qDebug()<<kprops.items().count();
 
 	fileItemActions->setItemListProperties(kprops);
 
-	//KConfigGroup cg(KSharedConfig::openConfig(), "KDE Action Restrictions");
-
-	//qDebug()<<cg.keyList();
-
-	//qDebug()<<KAuthorized::authorize(QStringLiteral("shell_access"));
-	//qDebug()<<KAuthorized::authorize(QStringLiteral("Compress"));
-	//qDebug()<<KAuthorized::authorize(QStringLiteral("Extract"));
-	//qDebug()<<KAuthorized::authorize(QStringLiteral("Write"));
-	//qDebug()<<KAuthorized::authorizeAction("Extract");
-	//qDebug()<<KAuthorized::authorizeControlModule(QStringLiteral("org.kde.ark.desktop"));
-	//qDebug()<<KAuthorized::authorizeControlModule(QStringLiteral("kcmtrash.desktop"));
-	//qDebug()<<KAuthorized::authorize("CompressDialog");
-	//qDebug()<<QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName());
-	//qDebug()<<qApp->desktopFileName();
-
-	//QString name("Open with");
 	fileItemActions->addOpenWithActionsTo(this,
 		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
 	fileItemActions->addServiceActionsTo(this);

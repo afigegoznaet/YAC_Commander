@@ -188,7 +188,7 @@ void FileTableView::init(){
 			[&](){itemDelegate()->setRect(horizontalHeader()->geometry());});
 	connect(selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
 			delegate, SLOT(currentChanged(QModelIndex,QModelIndex)));
-	connect(selectionModel(), &QItemSelectionModel::currentChanged,
+	connect(selectionModel(), &QItemSelectionModel::currentChanged, this,
 			[&](QModelIndex current, QModelIndex prev){
 				for(int i=0;i<4;i++)
 					update(current.sibling(current.row(),i));
@@ -280,6 +280,10 @@ void FileTableView::cdTo(const QString &dir){
 void FileTableView::mousePressEvent(QMouseEvent *event){
 
 	if(event->button() == Qt::RightButton){
+
+		auto index = indexAt(event->pos());
+		if(index.isValid())
+			setCurrentIndex(index);
 		emit contextMenuRequested(event->pos());
 		return;
 	}

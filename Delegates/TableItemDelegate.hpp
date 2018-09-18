@@ -21,6 +21,7 @@ public slots:
 private:
 	QModelIndex current;
 	QRect rect;
+	QLinearGradient grad;
 };
 
 #endif // TABLEITEMDELEGATE_H
