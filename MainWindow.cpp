@@ -123,6 +123,7 @@ void MainWindow::readSettings(){
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
 	auto key = event->key();
+	auto modifier = event->modifiers();
 	switch (key) {
 	case Qt::Key_F3:
 		on_F3_clicked();
@@ -147,15 +148,18 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 		searchDlg->show(focusedTab()->GetDirectory());
 		break;
 	case Qt::Key_C:
-		if(event->modifiers() == Qt::ControlModifier){
+		if(modifier == Qt::ControlModifier){
+			copyToClipboard();
 			break;
 		}
 	case Qt::Key_V:
 		if(event->modifiers() == Qt::ControlModifier){
+			pasteFromClipboard();
 			break;
 		}
 	case Qt::Key_X:
 		if(event->modifiers() == Qt::ControlModifier){
+			cutToClipboard();
 			break;
 		}
 	default:
