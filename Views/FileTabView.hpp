@@ -71,7 +71,7 @@ public slots:
 	void rowsRemoved(const QModelIndex &, int, int);
 	void rowsInserted(const QModelIndex &parent, int first, int) override;
 	void updateInfo();
-	void openContextMenu(QPoint loc);
+	void openContextMenu(QPoint);
 	void commitNewName(QWidget* editor);
 
 protected:

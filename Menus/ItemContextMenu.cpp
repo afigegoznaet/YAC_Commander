@@ -34,7 +34,7 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 	cutActionPadding[3] = 255;
 }
 
-void ItemContextMenu::init(QPoint loc){
+void ItemContextMenu::init(){
 	selectedFiles = parent->getSelectedFiles();
 	if(selectedFiles.length() == 1 &&
 			 (!selectedFiles.first().fileName().compare("..") ||

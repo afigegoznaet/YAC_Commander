@@ -23,7 +23,7 @@ class ItemContextMenu : public QMenu
 	Q_OBJECT
 public:
 	explicit ItemContextMenu(QWidget *parent = nullptr);
-	void init(QPoint loc);
+	void init();
 
 signals:
 

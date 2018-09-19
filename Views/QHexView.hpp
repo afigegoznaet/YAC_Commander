@@ -50,6 +50,8 @@ class QHexView: public QAbstractScrollArea
 
 	protected:
 		void paintEvent(QPaintEvent *event);
+		void paintHex(QPaintEvent *event);
+		void paintNormal(QPaintEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mousePressEvent(QMouseEvent *event);

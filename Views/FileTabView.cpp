@@ -429,9 +429,9 @@ void FileTableView::goToFile(QString& fullFilePath){
 	setCurrentSelection("");
 }
 
-void FileTableView::openContextMenu(QPoint loc){
+void FileTableView::openContextMenu(QPoint){
 
-	menu->init(loc);
+	menu->init();
 	menu->popup(QCursor::pos());
 }
 

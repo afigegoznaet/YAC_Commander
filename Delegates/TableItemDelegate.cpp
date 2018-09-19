@@ -20,10 +20,10 @@ void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	tempRect.setRight(rect.right());
 	tempRect.setBottom(option.rect.bottom());
 #else
-	QRect &tempRect = option.rect;
+	const QRect &tempRect = option.rect;
 #endif
 #else
-	QRect &tempRect = option.rect;
+	const QRect &tempRect = option.rect;
 #endif
 	if(index.row()==current.row()){
 		//painter->setBackground(grad);
