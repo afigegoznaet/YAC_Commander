@@ -10,17 +10,30 @@ TableItemDelegate::TableItemDelegate(QObject *parent) :
 
 void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 							  const QModelIndex &index) const{
-
+#if QT_VERSION_MAJOR == 5
+#if QT_VERSION_MINOR < 9
+	grad.setStart(option.rect.topLeft());
+	grad.setFinalStop(option.rect.bottomLeft());
+	QRect tempRect;
+	tempRect.setLeft(rect.left());
+	tempRect.setTop(option.rect.top());
+	tempRect.setRight(rect.right());
+	tempRect.setBottom(option.rect.bottom());
+#else
+	QRect &tempRect = option.rect;
+#endif
+#else
+	QRect &tempRect = option.rect;
+#endif
 	if(index.row()==current.row()){
 		//painter->setBackground(grad);
 		//painter->setPen(QPen(Qt::blue));
 		QItemDelegate::paint(painter, option, index);
-		painter->fillRect(option.rect, grad);
+		painter->fillRect(tempRect, grad);
 	}else
 		QItemDelegate::paint(painter, option, index);
 
 }
-
 
 void TableItemDelegate::currentChanged(QModelIndex current, QModelIndex){
 	this->current = current;

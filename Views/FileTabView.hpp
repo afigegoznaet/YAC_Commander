@@ -89,13 +89,14 @@ private:
 	int prevRow = -1;
 	TableItemDelegate* delegate = nullptr;
 	bool editorIsOpen = false;
+	bool slowDoubleClick=false;
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
 	void queryDialog(QString& filter, Action act);
 	void setSelectionAction(Action act);
 	ItemContextMenu* menu;
-
+	QTimer slowDoubleClickTimer;
 };
 
 #endif // TAB_H

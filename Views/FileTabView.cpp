@@ -7,8 +7,9 @@
 
 FileTableView::FileTableView(QDir directory, QWidget *parent) :
 	QTableView(parent),
-	directory(directory.absolutePath()){
-
+	directory(directory.absolutePath()),
+	slowDoubleClickTimer(this){
+	connect(&slowDoubleClickTimer, &QTimer::timeout, this, [&]{slowDoubleClick = false;});//update toolbar every 1 sec
 	infoLabel = ((FileTabSelector*)parent)->getLabel();
 	menu = new ItemContextMenu(this);
 	prevRow = -1;
@@ -289,9 +290,12 @@ void FileTableView::mousePressEvent(QMouseEvent *event){
 	}
 
 	auto index = indexAt(event->pos());
-
-	if(currentIndex() == index)
+	if(slowDoubleClick && currentIndex() == index)
 		return openEditor(index);
+	else{
+		slowDoubleClickTimer.start(1000);
+		slowDoubleClick = true;
+	}
 
 	setSelectionMode(QAbstractItemView::ExtendedSelection);
 	QTableView::mousePressEvent(event);
