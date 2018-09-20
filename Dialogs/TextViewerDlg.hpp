@@ -11,6 +11,35 @@
 #include <QMimeData>
 #include <Views/QHexView.hpp>
 
+class DataStorage
+{
+	public:
+		virtual ~DataStorage() {}
+		virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
+		virtual unsigned long long size() = 0;
+};
+
+
+class DataStorageArray: public DataStorage
+{
+	public:
+		DataStorageArray(const QByteArray &arr);
+		virtual QByteArray getData(std::size_t position, std::size_t length);
+		virtual unsigned long long  size();
+	private:
+		QByteArray    m_data;
+};
+
+class DataStorageFile: public DataStorage
+{
+	public:
+		DataStorageFile(const QString &fileName);
+		virtual QByteArray getData(std::size_t position, std::size_t length);
+		virtual unsigned long long  size();
+	private:
+		QFile      m_file;
+};
+
 
 namespace Ui {
 class TextViewer;

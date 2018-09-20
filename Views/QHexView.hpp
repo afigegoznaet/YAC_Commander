@@ -2,44 +2,11 @@
 #define Q_HEX_VIEWER_H_
 
 #include <QAbstractScrollArea>
-#include <QByteArray>
-#include <QFile>
 
-class QHexView: public QAbstractScrollArea
+class DataStorage;
 
-{
+class QHexView: public QAbstractScrollArea {
 	public:
-		class DataStorage
-		{
-			public:
-				virtual ~DataStorage() {}
-				virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
-				virtual unsigned long long size() = 0;
-		};
-
-
-		class DataStorageArray: public DataStorage
-		{
-			public:
-				DataStorageArray(const QByteArray &arr);
-				virtual QByteArray getData(std::size_t position, std::size_t length);
-				virtual unsigned long long  size();
-			private:
-				QByteArray    m_data;
-		};
-
-		class DataStorageFile: public DataStorage
-		{
-			public:
-				DataStorageFile(const QString &fileName);
-				virtual QByteArray getData(std::size_t position, std::size_t length);
-				virtual unsigned long long  size();
-			private:
-				QFile      m_file;
-		};
-
-
-
 		QHexView(QWidget *parent = 0);
 		~QHexView();
 
@@ -50,8 +17,6 @@ class QHexView: public QAbstractScrollArea
 
 	protected:
 		void paintEvent(QPaintEvent *event);
-		void paintHex(QPaintEvent *event);
-		void paintNormal(QPaintEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mousePressEvent(QMouseEvent *event);
