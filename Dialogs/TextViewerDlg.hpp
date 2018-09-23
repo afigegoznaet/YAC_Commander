@@ -9,7 +9,6 @@
 #include <QPlainTextDocumentLayout>
 #include <QMimeDatabase>
 #include <QMimeData>
-#include <Views/QHexView.hpp>
 
 class DataStorage
 {

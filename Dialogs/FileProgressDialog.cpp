@@ -185,7 +185,7 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest, QList
 				dirParsing(dir,action, destination, createdDirs);
 			continue;
 		}
-
+		destination.append("/");
 		destination.append(file.fileName());
 		setWindowTitle(file.fileName());
 		FileMoverDelegate mover(source, destination, action, this);
@@ -221,7 +221,7 @@ void ProgressDialog::DoSomething(void){
 			QDir dir(source);
 			bool movable = isMovable(source,destination);
 			destination.append(fileName);
-			destination.append("/");
+			//destination.append("/");
 			QList<QString> createdDirs;
 			/**
 			  Too many "if"s, gotta do something about it

@@ -1,5 +1,7 @@
 #include "TextViewerDlg.hpp"
 #include "ui_textviewer.h"
+#include <Views/QHexView.hpp>
+#include <Views/QFastView.hpp>
 
 
 TextViewer::TextViewer(QWidget *parent) :
@@ -19,7 +21,7 @@ void TextViewer::insertFromMimeData( const QMimeData *source ){
 */
 void TextViewer::setDocument(QString &&docPath){
 
-	QHexView *pcntwgt = new QHexView;
+	QFastView *pcntwgt = new QFastView;
 	ui->tabWidget->addTab(pcntwgt, docPath);
 	auto file  = new QFile(this);
 
