@@ -19,7 +19,7 @@ const int BYTES_PER_LINE = 16;
 
 QHexView::QHexView(QWidget *parent):
 QAbstractScrollArea(parent),
-m_pdata(NULL)
+m_pdata(nullptr)
 {
 	setFont(QFont("DejaVu Sans Mono", 12));
 
