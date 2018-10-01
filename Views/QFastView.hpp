@@ -23,14 +23,20 @@ protected:
 	int getPrevLineStart();
 	int getNextPageStart();
 	int getPrevPageStart();
-	//void keyPressEvent(QKeyEvent *event);
+	void resizeEvent(QResizeEvent *event) override;
+	void keyPressEvent(QKeyEvent *event);
 	//void mouseMoveEvent(QMouseEvent *event);
 	//void mousePressEvent(QMouseEvent *event);
 private:
 	DataStorage          *m_pdata;
 	uint firstLineIdx = 0;
 	int charWidth;
+	int charHeight;
 	QByteArray data;
+
+	int charsPerLine;
+	int linesPerPage;
+	int maxChars;
 };
 
 #endif // QFASTVIEWER_HPP
