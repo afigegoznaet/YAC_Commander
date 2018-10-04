@@ -57,6 +57,9 @@ void ProgressDialog::processFileAction(QFileInfoList fileList,
 				|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive)  )
 			continue;
 
+		if(!fileInfo.absolutePath().compare(destination))
+			continue;
+
 
 		QString item = "Move "+ fileInfo.fileName() + " to "+destination;
 		QString newName = destination+"/"+fileInfo.fileName();
