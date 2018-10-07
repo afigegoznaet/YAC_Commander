@@ -1,8 +1,9 @@
 #include "ItemContextMenu.hpp"
 #include "Views/FileTabView.hpp"
+#ifdef __linux__
 #include <KConfigGroup>
 #include <KSharedConfig>
-
+#endif
 ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 
 	initCommon();

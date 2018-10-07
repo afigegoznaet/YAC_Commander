@@ -25,6 +25,9 @@ public:
 	explicit ItemContextMenu(QWidget *parent = nullptr);
 	void init();
 
+	QByteArray cutActionIndicator;
+	QByteArray cutActionPadding;
+
 signals:
 
 public slots:
@@ -42,8 +45,6 @@ private:
 	//QClipboard* clipboard;
 	QFileInfoList selectedFiles;
 	QModelIndexList selIndexes;
-	QByteArray cutActionIndicator;
-	QByteArray cutActionPadding;
 
 #ifdef __linux__
 	//KFileItemActions* fileItemActions;

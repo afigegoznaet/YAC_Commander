@@ -75,6 +75,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->menubar->addAction("About",this, SLOT(showAbout()));
 	//qDebug()<<QStandardPaths::AppConfigLocation;
+
+	cutActionIndicator.reserve(4);
+	cutActionIndicator[0] = 2;
+	cutActionIndicator[1] = '\0';
+	cutActionIndicator[2] = '\0';
+	cutActionIndicator[3] = '\0';
+	cutActionPadding.reserve(1044);
+	cutActionPadding[0] = 255;
+	cutActionPadding[1] = 255;
+	cutActionPadding[2] = 255;
+	cutActionPadding[3] = 255;
 }
 
 MainWindow::~MainWindow(){
@@ -251,7 +262,7 @@ void MainWindow::cutToClipboard(){
 
 	const auto& data = focusedTab()->getModel()->mimeData(focusedTab()->getSelectedIndexes());
 #ifdef WIN32
-	data->setData("application/x-qt-windows-mime;value=\"Preferred DropEffect\"",cutActionIndicator);
+	data->setData("application/x-qt-windows-mime;value=\"Preferred DropEffect\"",cutActionIndicator); //these cutAction variables are duplicated, need to do something about it
 	data->setData("application/x-qt-windows-mime;value=\"DropDescription\"",cutActionPadding);
 #else
 	data->setData("application/x-kde-cutselection","1");

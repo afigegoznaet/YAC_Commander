@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	explicit MainWindow(QWidget *parent = 0);
+	explicit MainWindow(QWidget *parent = nullptr);
 	QString getDirInFocus(bool opposite = false);
 	~MainWindow();
 	FileTableView* focusedTab();
@@ -90,6 +90,9 @@ private:
 	QFileInfoList getSelectedFiles();
 	void keyPressEvent(QKeyEvent *event) override;
 	bool getDir(QString &dirName, int numFiles, Qt::DropAction action);
+
+	QByteArray cutActionIndicator;
+	QByteArray cutActionPadding;
 
 };
 
