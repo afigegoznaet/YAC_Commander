@@ -7,7 +7,7 @@ class DataStorage;
 
 class QHexView: public QAbstractScrollArea {
 	public:
-		QHexView(QWidget *parent = 0);
+		QHexView(QWidget *parent = nullptr);
 		~QHexView();
 
 	public slots:

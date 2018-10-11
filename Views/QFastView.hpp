@@ -34,9 +34,9 @@ private:
 	int charHeight;
 	QByteArray data;
 
-	int charsPerLine;
 	int linesPerPage;
 	int maxChars;
+	int charsPerLine = 80;
 };
 
 #endif // QFASTVIEWER_HPP

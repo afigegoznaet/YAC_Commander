@@ -34,7 +34,7 @@ QFastView::~QFastView()
 }
 
 void QFastView::resizeEvent(QResizeEvent *event){
-	charsPerLine = size().width() / charWidth;
+	//charsPerLine = size().width() / charWidth;
 	linesPerPage = size().height() / charHeight;
 	maxChars = charsPerLine * linesPerPage;
 	QAbstractScrollArea::resizeEvent(event);
@@ -46,6 +46,7 @@ void QFastView::setData(DataStorage *pData)
 	if(m_pdata)
 		delete m_pdata;
 	m_pdata = pData;
+	//verticalScrollBar()->setMaximum()
 	//m_cursorPos = 0;
 	//resetSelection(0);
 }
@@ -78,7 +79,7 @@ int QFastView::getNextLineStart(){
 }
 
 int QFastView::getPrevLineStart(){
-	auto charsPerLine = size().width() / charWidth;
+
 	if(charsPerLine > firstLineIdx)
 		return firstLineIdx;
 
@@ -122,13 +123,15 @@ void QFastView::paintEvent(QPaintEvent *event){
 		return;
 
 	QPainter painter(viewport());
+	QRect rect (event->rect().left(), event->rect().top(), charsPerLine * charWidth, event->rect().height());
+
 
 	QBrush def = painter.brush();
 	QBrush selected = QBrush(QColor(0x6d, 0x9e, 0xff, 0xff));
 	data = m_pdata->getData(firstLineIdx, 8192);
 	data.replace('\0', '?');
 	QString text(data);
-	painter.drawText(event->rect(), text);
+	painter.drawText(rect, text);
 }
 
 
