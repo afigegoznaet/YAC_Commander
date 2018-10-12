@@ -342,7 +342,7 @@ void FileTableView::setSelectionAction(Action act){
 	QItemSelectionModel::SelectionFlag selectionType;
 	switch(act){
 	case PLUS:
-		this->clearSelection();
+		//this->clearSelection();
 		selectionType = QItemSelectionModel::Select;
 		queryDialog(filter, PLUS);
 		break;
@@ -358,11 +358,15 @@ void FileTableView::setSelectionAction(Action act){
 	QRegExp reg(filter, Qt::CaseSensitive, QRegExp::Wildcard);
 	for(int i = 0; i<rowCount;i++){
 		auto ind = rootIndex().child(i,0);
+		auto fName = model->fileInfo(ind).fileName();
 
-		if(!model->fileInfo(ind).fileName().compare(".."))
+		if(!fName.compare(".."))
 			continue;
 
-		if(filter.isEmpty() || model->fileInfo(ind).fileName().contains(reg)){
+		if(filter.isEmpty() || fName.contains(reg)){
+			if(!fName.endsWith(reg.cap()))
+			   continue;
+
 			//qDebug()<<model->fileInfo(ind).fileName();
 			selectionModel()->select(ind, selectionType );
 			for(int j=1;j<columnCount;j++)
