@@ -3,17 +3,24 @@
 
 #include <QAbstractScrollArea>
 #include <QFontMetrics>
+#include <QFuture>
 
 class DataStorage;
 class QFastView: public QAbstractScrollArea {
+	Q_OBJECT
 public:
 	QFastView(QWidget *parent = nullptr);
 	~QFastView();
+signals:
+	void updateScrollSize(quint32 size);
 
 public slots:
 	void setData(DataStorage *pData);
 	void clear();
 	void showFromOffset(unsigned long long offset);
+	void setScrollSize(quint32 size);
+private slots:
+	void moveToLine(int lineNum);
 
 protected:
 	void paintEvent(QPaintEvent *event);
@@ -28,15 +35,22 @@ protected:
 	//void mouseMoveEvent(QMouseEvent *event);
 	//void mousePressEvent(QMouseEvent *event);
 private:
-	DataStorage          *m_pdata;
+	void countLines();
+	int getNextLinesPage();
+	int getPrevLinesPerPage();
+
+	QByteArray data;
+	DataStorage *m_pdata;
+	QFuture<void> futureHolder;
+
 	uint firstLineIdx = 0;
 	int charWidth;
 	int charHeight;
-	QByteArray data;
-
 	int linesPerPage;
 	int maxChars;
 	int charsPerLine = 80;
+	quint32 linesCount = 0;
+	QAtomicInt atomicLineNum = 0;
 };
 
 #endif // QFASTVIEWER_HPP

@@ -246,7 +246,7 @@ void ProgressDialog::DoSomething(void){
 				}
 			}else
 				dirParsing(dir, action, destination,createdDirs);
-				dirMoved(1);
+			dirMoved(1);
 			return;
 		}
 
