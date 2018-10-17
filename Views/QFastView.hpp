@@ -46,10 +46,10 @@ private:
 	uint firstLineIdx = 0;
 	int charWidth;
 	int charHeight;
-	int linesPerPage;
+	int linesPerPage=0;
 	int maxChars;
 	int charsPerLine = 80;
-	quint32 linesCount = 0;
+	int linesCount = 0;
 	QAtomicInt atomicLineNum = 0;
 };
 

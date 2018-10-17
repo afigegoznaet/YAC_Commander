@@ -44,6 +44,9 @@ void QFastView::countLines(){
 	if(!m_pdata)
 		return;
 
+	if(!linesPerPage)
+		linesPerPage = size().height() / charHeight;
+
 	futureHolder = QtConcurrent::run([&]{
 		auto data = m_pdata->getData(0, m_pdata->size());
 		//QStringView view((QChar*)data.data(), m_pdata->size());
@@ -56,6 +59,9 @@ void QFastView::countLines(){
 			//qDebug()<<data.cend() - first;
 			//qDebug()<< first - data.cbegin();
 		}
+		qDebug()<<linesCount;
+		qDebug()<<linesPerPage;
+		qDebug()<<linesCount-linesPerPage;
 		emit this->updateScrollSize(std::max<int>(linesCount-linesPerPage, 0));
 	});
 }
@@ -70,7 +76,7 @@ void QFastView::resizeEvent(QResizeEvent *event){
 }
 
 void QFastView::setScrollSize(quint32 size){
-	if(size > verticalScrollBar()->maximum())
+	//if(size > verticalScrollBar()->maximum())
 		verticalScrollBar()->setMaximum(size);
 }
 
