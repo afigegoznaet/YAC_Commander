@@ -172,6 +172,7 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString& dest, QList
 			return;
 		}
 		QString destination(dest);
+		destination.append("/");
 		//qDebug()<<file.fileName();
 		//qDebug()<<file.filePath();
 

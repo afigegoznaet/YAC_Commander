@@ -472,6 +472,8 @@ void FileTableView::deleteSelectedFiles(){
 
 	bool status;
 	int counter =0;
+	bool noToAll = false;
+	bool yesToAll = false;
 	foreach (auto fileInfo, fileList) {
 		if(!fileInfo.fileName().compare("..", Qt::CaseInsensitive) )
 			continue;
@@ -485,6 +487,24 @@ void FileTableView::deleteSelectedFiles(){
 		}
 		if(fileInfo.isDir()){
 			QDir dir( fileInfo.absoluteFilePath() );
+			if(dir.count() && !yesToAll){
+				if(noToAll)
+					continue;
+				QMessageBox::StandardButton reply;
+				QString message = "Directory " + fileInfo.fileName() + " is not empty!\nAre you sure you want to delete it?\n";
+				reply = QMessageBox::question(this, "Deleting Directory", message,
+												QMessageBox::Yes|QMessageBox::No|QMessageBox::Yes|QMessageBox::YesToAll|QMessageBox::NoToAll);
+				if(reply == QMessageBox::No)
+					break;
+				if(reply == QMessageBox::NoToAll){
+					noToAll = true;
+					break;
+				}
+				if(reply == QMessageBox::YesToAll){
+					yesToAll=true;
+				}
+			}
+
 			status = dir.removeRecursively();
 		}else
 			status = QFile::remove( fileInfo.absoluteFilePath());
