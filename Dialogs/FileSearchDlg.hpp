@@ -2,40 +2,26 @@
 #define SEARCHDIALOG_H
 
 #include <QDialog>
-#include <QStringListModel>
-#include <QDir>
-#include <QFileInfoList>
-#include <QtConcurrent/QtConcurrent>
-#include <QQueue>
-#include <QRegularExpression>
-#include "Widgets/EditableDropdown.hpp"
-#include "ui_searchdialog.h"
-#include "Models/FileFindingsModel.hpp"
 #include <QTime>
+
 #include <atomic>
 #include <QMutex>
-#include <functional>
+#include <QtConcurrent/QtConcurrent>
+
+class EditableDropDown;
 
 namespace Ui {
-class SearchDialog;
+	class SearchDialog;
 }
 
-enum FileAttrib{
-	X = 1, W = 2, R = 4, D = 8
-};
-enum SearchToggles{
-	TextPattern = 1, Date = 2, Size = 4, Attributes = 8
-};
+enum FileAttrib { X = 1, W = 2, R = 4, D = 8 };
+enum SearchToggles { TextPattern = 1, Date = 2, Size = 4, Attributes = 8 };
 
-enum SizeOp{
-	EQ, G, L
-};
+enum SizeOp { EQ, G, L };
 
-enum SizeMod{
-	Byte, KByte, MByte, GByte
-};
+enum SizeMod { Byte, KByte, MByte, GByte };
 
-struct SearchAttrib{
+struct SearchAttrib {
 	QString pattern;
 	quint8 attrFlags;
 	quint8 togglesFlags;
@@ -47,12 +33,20 @@ struct SearchAttrib{
 
 class MainWindow;
 
-class SearchDialog : public QDialog
-{
+class SearchDialog : public QDialog {
 	Q_OBJECT
-enum searchFlags{NAME, TEXT, DATE_BEFORE=4, DATE_AFTER=8, SIZE_LESS=16, SIZE_MORE=32};
+	enum searchFlags {
+		NAME,
+		TEXT,
+		DATE_BEFORE = 4,
+		DATE_AFTER = 8,
+		SIZE_LESS = 16,
+		SIZE_MORE = 32
+	};
+
 public:
-	explicit SearchDialog(QWidget *parent = 0, Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
+	explicit SearchDialog(QWidget *parent = 0,
+						  Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
 	~SearchDialog();
 	void show(const QString &startDir);
 
@@ -77,26 +71,23 @@ private slots:
 
 private:
 	Ui::SearchDialog *ui;
-	QStringListModel* model;
+	QStringListModel *model;
+	MainWindow *parentWindow;
 	QMutex addBlocker;
 	QQueue<QString> dirQ;
 	QFuture<void> fut;
 	bool searching;
-	MainWindow* parentWindow;
 	int firstRow;
 	SearchAttrib attrs;
 	QTime searchTime;
-	//QMutex locker[4];
 	QMutex dirListLocker;
-
 	std::atomic_int counter;
 
-	QString updateCombo(EditableDropDown* combo);
+	QString updateCombo(EditableDropDown *combo);
 	void addFile(const QString &newFile);
-	void validateFile(QFileInfo& theFile);
+	void validateFile(QFileInfo &theFile);
 	void resetGuiState();
-	//void paintEvent(QPaintEvent *event) override;
-
+	// void paintEvent(QPaintEvent *event) override;
 };
 
 #endif // SEARCHDIALOG_H

@@ -1,15 +1,19 @@
 #include "TableItemDelegate.hpp"
+#include <QDebug>
+#include <QPainter>
 
-TableItemDelegate::TableItemDelegate(QObject *parent) :
-	QItemDelegate(parent), rect(0,0,1,1), grad(QPointF(0,0), QPointF(1,1)){
+TableItemDelegate::TableItemDelegate(QObject *parent)
+	: QItemDelegate(parent), rect(0, 0, 1, 1),
+	  grad(QPointF(0, 0), QPointF(1, 1)) {
 
-	grad.setColorAt(0.0, QColor(92,203,105,25));
-	grad.setColorAt(0.5, QColor(174,255,211,10));
-	grad.setColorAt(1.0, QColor(92,203,105,25));
+	grad.setColorAt(0.0, QColor(92, 203, 105, 25));
+	grad.setColorAt(0.5, QColor(174, 255, 211, 10));
+	grad.setColorAt(1.0, QColor(92, 203, 105, 25));
 }
 
-void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
-							  const QModelIndex &index) const{
+void TableItemDelegate::paint(QPainter *painter,
+							  const QStyleOptionViewItem &option,
+							  const QModelIndex &index) const {
 #if QT_VERSION_MAJOR == 5
 #if QT_VERSION_MINOR < 9
 	grad.setStart(option.rect.topLeft());
@@ -25,16 +29,15 @@ void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 #else
 	const QRect &tempRect = option.rect;
 #endif
-	if(index.row()==current.row()){
-		//painter->setBackground(grad);
-		//painter->setPen(QPen(Qt::blue));
+	if (index.row() == current.row()) {
+		// painter->setBackground(grad);
+		// painter->setPen(QPen(Qt::blue));
 		QItemDelegate::paint(painter, option, index);
 		painter->fillRect(tempRect, grad);
-	}else
+	} else
 		QItemDelegate::paint(painter, option, index);
-
 }
 
-void TableItemDelegate::currentChanged(QModelIndex current, QModelIndex){
+void TableItemDelegate::currentChanged(QModelIndex current, QModelIndex) {
 	this->current = current;
 }

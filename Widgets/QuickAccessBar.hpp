@@ -4,12 +4,10 @@
 #include <QToolBar>
 #include <QPushButton>
 #include <QStorageInfo>
-#include <QDebug>
-#include <QEvent>
-#include <QTimer>
+
 //#include <QAction>
 
-class DriveButton : public QPushButton{
+class DriveButton : public QPushButton {
 	Q_OBJECT
 public:
 	explicit DriveButton(QString root, QWidget *parent = Q_NULLPTR);
@@ -17,21 +15,22 @@ signals:
 
 public slots:
 	void click();
+
 protected:
-	//virtual bool event(QEvent *e);
+	// virtual bool event(QEvent *e);
 
 private:
 	const QString rootPath;
 };
 
-class QuickAccessBar : public QToolBar{
+class QuickAccessBar : public QToolBar {
 	Q_OBJECT
 public:
-    explicit QuickAccessBar(QWidget *parent = 0);
-	void sendSignal(const QString&) const;
+	explicit QuickAccessBar(QWidget *parent = 0);
+	void sendSignal(const QString &) const;
 
 signals:
-	void cdTo(const QString&) const;
+	void cdTo(const QString &) const;
 
 public slots:
 	void update();

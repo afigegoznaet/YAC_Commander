@@ -2,23 +2,19 @@
 #define CUSTOMDROPDOWN_H
 
 #include <QComboBox>
-#include <QLineEdit>
-#include <QDebug>
-#include <QKeyEvent>
 
 class SearchDialog;
 
-class EditableDropDown : public QComboBox{
+class EditableDropDown : public QComboBox {
 	Q_OBJECT
 public:
 	EditableDropDown(QWidget *parent);
-	void setParentDlg(QDialog* parentDlg){
-		this->parentDlg = parentDlg;
-	}
+	void setParentDlg(QDialog *parentDlg) { this->parentDlg = parentDlg; }
+
 private:
 	virtual void keyPressEvent(QKeyEvent *event);
 	virtual void processCommand();
-	QDialog* parentDlg = nullptr;
+	QDialog *parentDlg = nullptr;
 
 	friend class SearchDialog;
 };

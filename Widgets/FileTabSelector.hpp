@@ -1,29 +1,28 @@
 #ifndef CUSTOMTABWIDGET_H
 #define CUSTOMTABWIDGET_H
 
-#include <QObject>
 #include <QTabWidget>
-#include <QDebug>
-#include <QTabBar>
-#include <QMenu>
-#include <QMouseEvent>
-#include "Views/FileTabView.hpp"
+#include <QFileInfoList>
+
+class FileTableView;
+class QLabel;
+class QMenu;
+
 
 namespace Ui {
 	class MainWindow;
 }
 
-class FileTabSelector : public QTabWidget
-{
+class FileTabSelector : public QTabWidget {
 	Q_OBJECT
 public:
-    FileTabSelector(QWidget* parent = Q_NULLPTR);
-    ~FileTabSelector();
-	FileTableView *addNewTab(bool dup=false, QString dir="");
+	FileTabSelector(QWidget *parent = Q_NULLPTR);
+	~FileTabSelector();
+	FileTableView *addNewTab(bool dup = false, QString dir = "");
 	void readSettings();
-	void setLabel(QLabel* infoLabel){this->infoLabel = infoLabel;}
-	QLabel* getLabel(){return infoLabel;}
-	void init(Ui::MainWindow* ui);
+	void setLabel(QLabel *infoLabel) { this->infoLabel = infoLabel; }
+	QLabel *getLabel() { return infoLabel; }
+	void init(Ui::MainWindow *ui);
 	void showHidden(bool show);
 	void unfocus();
 
@@ -38,7 +37,7 @@ signals:
 	void gotResized(int logicalIndex, int oldSize, int newSize);
 	void gotMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
 	void focusAquired();
-    void setFocusSig(FileTabSelector* tab);
+	void setFocusSig(FileTabSelector *tab);
 	void setFileAction(QFileInfoList fileList, QString destination,
 					   Qt::DropAction action);
 	void deleteSelectedFiles();
@@ -52,9 +51,8 @@ private:
 private:
 	QMetaObject::Connection currentHeaderResizedConnection;
 	QMetaObject::Connection currentHeaderMovedConnection;
-	QLabel* infoLabel;
-
-	QAction* closeTabAction;
+	QAction *closeTabAction;
+	QLabel *infoLabel;
 	QMenu *menu;
 
 	friend class MainWindow;

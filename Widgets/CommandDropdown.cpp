@@ -1,42 +1,50 @@
 #include "CommandDropdown.hpp"
-#include "MainWndow.hpp"
+#include "MainWindow.hpp"
+#include <QSettings>
+#include <QLineEdit>
+#include <QDebug>
+#include <QProcess>
+#include <QStandardItemModel>
+#include <QKeyEvent>
+#include <QTimer>
 
 CommandDropDown::CommandDropDown(QWidget *parent) : QComboBox(parent) {
-	qDebug()<<"hello";
-
+	qDebug() << "hello";
 }
 
-void CommandDropDown::setMain(MainWindow *mainWindow){
-	this->mainWindow=mainWindow;
-	//readSettings();
-	QTimer::singleShot(200, this, &CommandDropDown::clearEditText);	//An ugly hack - never use it
+void CommandDropDown::setMain(MainWindow *mainWindow) {
+	this->mainWindow = mainWindow;
+	// readSettings();
+	QTimer::singleShot(
+		200, this,
+		&CommandDropDown::clearEditText); // An ugly hack - never use it
 }
 
-void CommandDropDown::processCommand(){
+void CommandDropDown::processCommand() {
 	QString cmd(lineEdit()->text());
 
-	QStandardItemModel* stModel = (QStandardItemModel*)model();
+	QStandardItemModel *stModel = (QStandardItemModel *)model();
 	auto index = findText(cmd);
-	if(index<0)
-		insertItem(0,cmd);
-	else{
+	if (index < 0)
+		insertItem(0, cmd);
+	else {
 		stModel->insertRow(0, stModel->takeRow(index));
 	}
-	if(cmd.startsWith("cd")){
-		cmd.remove(0,3);
+	if (cmd.startsWith("cd")) {
+		cmd.remove(0, 3);
 		emit cdTo(cmd.trimmed());
-	}else{
+	} else {
 		QProcess proc;
 		QString dir(mainWindow->getDirInFocus());
-		//QDir::setCurrent(dir);
+		// QDir::setCurrent(dir);
 		QString program;
 		QStringList args;
 #ifdef _WIN32
 
-		if(cmd.startsWith("\"")){
+		if (cmd.startsWith("\"")) {
 			args = cmd.split("\" ");
-			program = args.first()+"\"";
-		}else{
+			program = args.first() + "\"";
+		} else {
 			args = cmd.split(" ");
 			program = args.first();
 		}
@@ -45,51 +53,51 @@ void CommandDropDown::processCommand(){
 		args << "-exec";
 		args.append(cmd);
 		program = "sh";
-		//args.removeFirst();
+		// args.removeFirst();
 #endif
 		proc.startDetached(program, args, dir);
-		//qDebug()<<proc.execute(program, args);
+		// qDebug()<<proc.execute(program, args);
 	}
 
 	clearEditText();
 	emit focusPreviouslyFocused();
 }
 
-void CommandDropDown::keyPressEvent(QKeyEvent *event){
+void CommandDropDown::keyPressEvent(QKeyEvent *event) {
 	auto key = event->key();
 	switch (key) {
-		default:
-			QComboBox::keyPressEvent(event);
-			break;
-		case Qt::Key_Return:
-		case Qt::Key_Enter:
-			processCommand();
-			break;
+	default:
+		QComboBox::keyPressEvent(event);
+		break;
+	case Qt::Key_Return:
+	case Qt::Key_Enter:
+		processCommand();
+		break;
 	}
 }
 
 
-CommandDropDown::~CommandDropDown(){
+CommandDropDown::~CommandDropDown() {
 
 	QSettings settings;
-	int count=this->count();
-	settings.beginWriteArray("Commands",count);
-	for(int i=0;i<count && i<50;i++){
+	int count = this->count();
+	settings.beginWriteArray("Commands", count);
+	for (int i = 0; i < count && i < 50; i++) {
 		settings.setArrayIndex(i);
 		settings.setValue("command", itemText(i));
 	}
 	settings.endArray();
 }
 
-void CommandDropDown::readSettings(){
-	//return;
+void CommandDropDown::readSettings() {
+	// return;
 	QSettings settings;
 	int count = settings.beginReadArray("Commands");
-	int i=0;
+	int i = 0;
 	while (count-- > 0) {
 		settings.setArrayIndex(i);
-		insertItem(i++,settings.value("command").toString());
+		insertItem(i++, settings.value("command").toString());
 	};
 	clearEditText();
-	//insertItem(0,"");
+	// insertItem(0,"");
 }

@@ -1,8 +1,7 @@
-#include "MainWndow.hpp"
+#include "MainWindow.hpp"
+#include <QSettings>
 
-
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	QApplication a(argc, argv);
 	QCoreApplication::setOrganizationName("Roman's Dark Star Laptop");
 	QCoreApplication::setApplicationName("YAC Commander");

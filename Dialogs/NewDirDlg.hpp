@@ -2,16 +2,11 @@
 #define NEWDIR_H
 
 #include <QDialog>
-#include <QLineEdit>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QDialogButtonBox>
-#include <QLabel>
-#include <QCompleter>
-#include <QDirModel>
 
-class NewDir : public QDialog
-{
+class QLineEdit;
+class QCompleter;
+
+class NewDir : public QDialog {
 	Q_OBJECT
 public:
 	explicit NewDir(QString &label, QString &dirName, QWidget *parent = 0);
@@ -26,7 +21,5 @@ signals:
 
 public slots:
 };
-
-
 
 #endif // NEWDIR_H

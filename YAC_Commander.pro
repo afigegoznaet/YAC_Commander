@@ -31,7 +31,6 @@ SOURCES += main.cpp\
 	Models/FileFindingsModel.cpp \
 	Models/OrderedFileSystemModel.cpp \
 	Delegates/FileMoverDelegate.cpp \
-	Views/FileTabView.cpp \
 	Widgets/FileTabSelector.cpp \
 	MainWindow.cpp \
 	Dialogs/NewDirDlg.cpp \
@@ -40,7 +39,8 @@ SOURCES += main.cpp\
 	Delegates/TableItemDelegate.cpp \
 	Views/QHexView.cpp \
 	Menus/ItemContextMenu.cpp \
-    Views/QFastView.cpp
+    Views/QFastView.cpp \
+    Views/FileTableView.cpp
 
 HEADERS  += \
 	Delegates/FileMoverDelegate.hpp \
@@ -56,10 +56,10 @@ HEADERS  += \
 	Widgets/FileTabSelector.hpp \
 	Widgets/QuickAccessBar.hpp \
 	Views/QHexView.hpp \
-	Views/FileTabView.hpp \
 	Menus/ItemContextMenu.hpp \
-    MainWndow.hpp \
-    Views/QFastView.hpp
+    Views/QFastView.hpp \
+    MainWindow.hpp \
+    Views/FileTableView.hpp
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

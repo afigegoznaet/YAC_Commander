@@ -1,27 +1,42 @@
 #include "ItemContextMenu.hpp"
-#include "Views/FileTabView.hpp"
+#include "Views/FileTableView.hpp"
+#include <QDebug>
+#include <QGuiApplication>
+#include <QClipboard>
+#include <QMimeData>
+#include <QMimeDatabase>
+#include <Models/OrderedFileSystemModel.hpp>
+
 #ifdef __linux__
+
 #include <KConfigGroup>
 #include <KSharedConfig>
+#define Q_DECL_CONSTRUCTOR_DEPRECATED
+#include <KFileItemActions>
+#include <KFileItemListProperties>
+
 #endif
-ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
+
+
+ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent) {
 
 	initCommon();
-	this->parent = (FileTableView*)parent;
-	//qDebug()<<"parent name: "<<parent->objectName();
-	//clipboard = QGuiApplication::clipboard();
-	connect(this, &QMenu::aboutToHide, [&](){
+	this->parent = (FileTableView *)parent;
+	// qDebug()<<"parent name: "<<parent->objectName();
+	// clipboard = QGuiApplication::clipboard();
+	connect(this, &QMenu::aboutToHide, [&]() {
 #ifdef __linux__
-		//qDebug()<<fileItemActions->children();
-		//fileItemActions->deleteLater();
+	// qDebug()<<fileItemActions->children();
+	// fileItemActions->deleteLater();
 #endif
-			for(auto action: this->actions())
-				if(commonActions.contains(action))
-					continue;
-				else
-					removeAction(action);
+		for (auto action : this->actions())
+			if (commonActions.contains(action))
+				continue;
+			else
+				removeAction(action);
 
-		;});
+		;
+	});
 
 	cutActionIndicator.reserve(4);
 	cutActionIndicator[0] = 2;
@@ -35,11 +50,11 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent){
 	cutActionPadding[3] = 255;
 }
 
-void ItemContextMenu::init(){
+void ItemContextMenu::init() {
 	selectedFiles = parent->getSelectedFiles();
-	if(selectedFiles.length() == 1 &&
-			 (!selectedFiles.first().fileName().compare("..") ||
-				selectedFiles.first().fileName().isEmpty())){
+	if (selectedFiles.length() == 1
+		&& (!selectedFiles.first().fileName().compare("..")
+			|| selectedFiles.first().fileName().isEmpty())) {
 		cutAction->setDisabled(true);
 		copyAction->setDisabled(true);
 		renameAction->setDisabled(true);
@@ -47,44 +62,45 @@ void ItemContextMenu::init(){
 	}
 
 	auto data = QGuiApplication::clipboard()->mimeData();
-	if(!data->hasUrls())
+	if (!data->hasUrls())
 		pasteAction->setDisabled(true);
 	else
 		pasteAction->setEnabled(true);
 
 	initFolder();
 	initFile();
-
 }
 
-void ItemContextMenu::initCommon(){
+void ItemContextMenu::initCommon() {
 
 	cutAction = addAction("Cut", this, &ItemContextMenu::cutToClipboard,
-								QKeySequence(tr("Ctrl+X")));
+						  QKeySequence(tr("Ctrl+X")));
 	copyAction = addAction("Copy", this, &ItemContextMenu::copyToClipboard,
-								QKeySequence(tr("Ctrl+C")));
+						   QKeySequence(tr("Ctrl+C")));
 	pasteAction = addAction("Paste", this, &ItemContextMenu::pasteFromClipboard,
-								QKeySequence(tr("Ctrl+V")));
+							QKeySequence(tr("Ctrl+V")));
 
 	addSeparator();
-	deleteAction = addAction("Delete selected", this, &ItemContextMenu::deleteItems,
-								QKeySequence(tr("Del")));
+	deleteAction =
+		addAction("Delete selected", this, &ItemContextMenu::deleteItems,
+				  QKeySequence(tr("Del")));
 	renameAction = addAction("Rename", this, &ItemContextMenu::rename,
-								QKeySequence(tr("Ins")));
+							 QKeySequence(tr("Ins")));
 	addSeparator();
-	commonActions << pasteAction << copyAction << cutAction << deleteAction << renameAction;
+	commonActions << pasteAction << copyAction << cutAction << deleteAction
+				  << renameAction;
 }
-void ItemContextMenu::initFile(){
+void ItemContextMenu::initFile() {
 
 #ifdef __linux__
 
-	KFileItemActions* fileItemActions = new KFileItemActions(this);
+	KFileItemActions *fileItemActions = new KFileItemActions(this);
 
 	fileItemActions->setParentWidget(this);
 
-	//qDebug()<<"Adding files to list";
+	// qDebug()<<"Adding files to list";
 	KFileItemList kList;
-	for(const auto fileInfo : selectedFiles){
+	for (const auto fileInfo : selectedFiles) {
 		struct stat buf;
 		stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
 		KFileItem kItem(QUrl::fromLocalFile(fileInfo.absoluteFilePath()),
@@ -93,77 +109,77 @@ void ItemContextMenu::initFile(){
 		kList.append(kItem);
 	}
 
-	KFileItemListProperties kprops( kList );
+	KFileItemListProperties kprops(kList);
 
 	fileItemActions->setItemListProperties(kprops);
 
-	fileItemActions->addOpenWithActionsTo(this,
-		QStringLiteral("DesktopEntryName != '%1'").arg(qApp->desktopFileName()));
+	fileItemActions->addOpenWithActionsTo(
+		this, QStringLiteral("DesktopEntryName != '%1'")
+				  .arg(qApp->desktopFileName()));
 	fileItemActions->addServiceActionsTo(this);
 	fileItemActions->addPluginActionsTo(this);
 
 #endif
 }
-void ItemContextMenu::initFolder(){
+void ItemContextMenu::initFolder() {}
 
-}
-
-void ItemContextMenu::cutToClipboard(){
+void ItemContextMenu::cutToClipboard() {
 	auto data = parent->getModel()->mimeData(parent->getSelectedIndexes());
 #ifdef WIN32
-	data->setData("application/x-qt-windows-mime;value=\"Preferred DropEffect\"",cutActionIndicator);
-	data->setData("application/x-qt-windows-mime;value=\"DropDescription\"",cutActionPadding);
+	data->setData(
+		"application/x-qt-windows-mime;value=\"Preferred DropEffect\"",
+		cutActionIndicator);
+	data->setData("application/x-qt-windows-mime;value=\"DropDescription\"",
+				  cutActionPadding);
 #else
-	data->setData("application/x-kde-cutselection","1");
+	data->setData("application/x-kde-cutselection", "1");
 #endif
-	//qDebug()<<data->formats();
+	// qDebug()<<data->formats();
 	QGuiApplication::clipboard()->setMimeData(data);
 }
 
-void ItemContextMenu::copyToClipboard(){
+void ItemContextMenu::copyToClipboard() {
 	auto data = parent->getModel()->mimeData(parent->getSelectedIndexes());
 	QGuiApplication::clipboard()->setMimeData(data);
-
 }
 
-void ItemContextMenu::pasteFromClipboard(){
-	const auto& clipboard = QGuiApplication::clipboard();
+void ItemContextMenu::pasteFromClipboard() {
+	const auto &clipboard = QGuiApplication::clipboard();
 	auto data = clipboard->mimeData();
 
-	foreach (auto &url, data->urls()) {
-		qDebug()<<url;
-	}
+	foreach (auto &url, data->urls()) { qDebug() << url; }
 
 	foreach (auto &url, data->formats()) {
-		//qDebug()<<url;
+		// qDebug()<<url;
 		auto text = data->data(url);
-		//qDebug()<<text;
-		//qDebug()<<"*********************************************************";
+		// qDebug()<<text;
+		// qDebug()<<"*********************************************************";
 	}
 
-	auto status = data->data("application/x-qt-windows-mime;value=\"Preferred DropEffect\"");
-	//qDebug()<<status;
+	auto status = data->data(
+		"application/x-qt-windows-mime;value=\"Preferred DropEffect\"");
+	// qDebug()<<status;
 
 	bool move = false;
 #ifdef WIN32
-	move = (data->data("application/x-qt-windows-mime;value=\"Preferred DropEffect\"").at(0) == 2);
+	move =
+		(data->data(
+				 "application/x-qt-windows-mime;value=\"Preferred DropEffect\"")
+			 .at(0)
+		 == 2);
 #else
-	move = data->data("application/x-kde-cutselection").length() >0;
+	move = data->data("application/x-kde-cutselection").length() > 0;
 #endif
-	if( move ){
-		parent->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0, QModelIndex());
+	if (move) {
+		parent->getModel()->dropMimeData(data, Qt::MoveAction, 1, 0,
+										 QModelIndex());
 		selIndexes.clear();
 		pasteAction->setDisabled(true);
-	}else
-		parent->getModel()->dropMimeData(data, Qt::CopyAction, 1, 0, QModelIndex());
-
+	} else
+		parent->getModel()->dropMimeData(data, Qt::CopyAction, 1, 0,
+										 QModelIndex());
 }
 
-void ItemContextMenu::deleteItems(){
-	parent->deleteSelectedFiles();
-}
+void ItemContextMenu::deleteItems() { parent->deleteSelectedFiles(); }
 
-void ItemContextMenu::rename(){
-	parent->openEditor(selIndexes.first());
-}
-
+void ItemContextMenu::rename() { parent->openEditor(selIndexes.first()); }
