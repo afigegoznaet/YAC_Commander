@@ -86,7 +86,7 @@ void FileTableView::chDir(const QModelIndex &index, bool in_out) {
 }
 
 void FileTableView::keyPressEvent(QKeyEvent *event) {
-	QString filter;
+	// QString filter;
 	QModelIndex index;
 	if (currentIndex().isValid())
 		index = currentIndex();

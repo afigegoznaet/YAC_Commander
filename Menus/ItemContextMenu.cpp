@@ -149,15 +149,16 @@ void ItemContextMenu::pasteFromClipboard() {
 
 	foreach (auto &url, data->urls()) { qDebug() << url; }
 
-	foreach (auto &url, data->formats()) {
-		// qDebug()<<url;
-		auto text = data->data(url);
-		// qDebug()<<text;
-		// qDebug()<<"*********************************************************";
-	}
+	//	foreach (auto &url, data->formats()) {
+	//		// qDebug()<<url;
+	//		auto text = data->data(url);
+	//		// qDebug()<<text;
+	//		//
+	//qDebug()<<"*********************************************************";
+	//	}
 
-	auto status = data->data(
-		"application/x-qt-windows-mime;value=\"Preferred DropEffect\"");
+	// auto status = data->data(
+	//"application/x-qt-windows-mime;value=\"Preferred DropEffect\"");
 	// qDebug()<<status;
 
 	bool move = false;

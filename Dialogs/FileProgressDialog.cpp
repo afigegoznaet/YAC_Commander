@@ -73,8 +73,8 @@ void ProgressDialog::processFileAction(QFileInfoList fileList,
 			continue;
 
 
-		QString item = "Move " + fileInfo.fileName() + " to " + destination;
-		QString newName = destination + "/" + fileInfo.fileName();
+		// QString item = "Move " + fileInfo.fileName() + " to " + destination;
+		// QString newName = destination + "/" + fileInfo.fileName();
 
 		progress->tableWidget->insertRow(newRow);
 

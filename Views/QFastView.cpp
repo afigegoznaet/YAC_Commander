@@ -149,7 +149,7 @@ int QFastView::getNextPageStart() {
 	int pos = 0;
 	while (linesPassed < linesPerPage) {
 		auto newLinePos = data.toStdString().find('\n', pos);
-		if (newLinePos < 0) {
+		if (newLinePos == std::string::npos) {
 			pos += (maxChars - charsPerLine * linesPassed);
 			break;
 		}
@@ -171,7 +171,7 @@ int QFastView::getPrevPageStart() {
 	auto data = m_pdata->getData(firstLineIdx - maxChars - 1, maxChars);
 	while (linesRemaining > 0) {
 		auto newLinePos = data.toStdString().find_last_of('\n', pos - 1);
-		if (newLinePos < 0)
+		if (newLinePos == std::string::npos)
 			return pos - (maxChars - charsPerLine * linesRemaining);
 		linesRemaining += (pos - newLinePos) / charsPerLine + 1;
 		pos -= newLinePos;
@@ -188,8 +188,8 @@ void QFastView::paintEvent(QPaintEvent *event) {
 			   charsPerLine * charWidth, event->rect().height());
 
 
-	QBrush def = painter.brush();
-	QBrush selected = QBrush(QColor(0x6d, 0x9e, 0xff, 0xff));
+	// QBrush def = painter.brush();
+	// QBrush selected = QBrush(QColor(0x6d, 0x9e, 0xff, 0xff));
 	data = m_pdata->getData(firstLineIdx, 8192);
 	data.replace('\0', '?');
 	QString text(data);
