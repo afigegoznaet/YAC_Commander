@@ -1,6 +1,8 @@
 #include "Delegates/FileMoverDelegate.hpp"
 #include <QDebug>
 #include <QStorageInfo>
+#include <utility>
+#include <utility>
 
 /*
 #ifdef _WIN32
@@ -96,7 +98,7 @@ FileMoverDelegate::~FileMoverDelegate() {
 
 FileMoverDelegate::FileMoverDelegate(QString source, QString destination,
 									 QString action, QObject *parent)
-	: QObject(parent), destination(destination), source(source), action(action),
+	: QObject(parent), destination(std::move(std::move(destination))), source(std::move(std::move(source))), action(std::move(std::move(action))),
 	  status(true) {
 	// qDebug()<<"Mover constructor"<<thread();
 }

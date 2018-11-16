@@ -56,7 +56,7 @@ signals:
 
 public slots:
 	void on_searchButton_clicked();
-	void searchRecursion(QString pattern, QString startDir, searchFlags = NAME);
+	void searchRecursion(const QString& pattern, const QString& startDir, searchFlags = NAME);
 	void on_doubleClicked(const QModelIndex &index);
 
 private slots:
@@ -77,11 +77,11 @@ private:
 	QQueue<QString> dirQ;
 	QFuture<void> fut;
 	bool searching;
-	int firstRow;
+	int firstRow{};
 	SearchAttrib attrs;
 	QTime searchTime;
 	QMutex dirListLocker;
-	std::atomic_int counter;
+	std::atomic_int counter{};
 
 	QString updateCombo(EditableDropDown *combo);
 	void addFile(const QString &newFile);

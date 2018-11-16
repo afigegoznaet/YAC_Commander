@@ -109,7 +109,7 @@ QString SearchDialog::updateCombo(EditableDropDown *combo) {
 	return text;
 }
 
-void SearchDialog::searchRecursion(QString pattern, QString startDir,
+void SearchDialog::searchRecursion(const QString& pattern, const QString& startDir,
 								   searchFlags) {
 
 	model->blockSignals(true);

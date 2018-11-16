@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <set>
 ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f)
-	: QDialog(parent, f), progress(new Ui::ProgressDialog), status(1) {
+	: QDialog(parent, f), progress(new Ui::ProgressDialog), status(true) {
 	progress->setupUi(this);
 	progress->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	progress->tableWidget->setColumnCount(3);
@@ -44,7 +44,7 @@ ProgressDialog::~ProgressDialog() {
 }
 
 void ProgressDialog::processFileAction(QFileInfoList fileList,
-									   QString destination,
+									   const QString &destination,
 									   Qt::DropAction action) {
 
 	QFileInfo destDir(destination);
@@ -57,7 +57,7 @@ void ProgressDialog::processFileAction(QFileInfoList fileList,
 	if (isHidden())
 		show();
 	if (!progress->tableWidget->rowCount())
-		status = 1;
+		status = true;
 
 	int initialCount = progress->tableWidget->rowCount();
 	int newRow = progress->tableWidget->rowCount();
@@ -126,7 +126,7 @@ QMessageBox::StandardButton ProgressDialog::showError(int result) {
 			reply = QMessageBox::question(this, "Error!!!", errorMoveMasg,
 										  QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes)
-			status = 1;
+			status = true;
 		else
 			QMessageBox::warning(this, "Error!!!", errorMoveEOLMasg);
 
@@ -137,7 +137,7 @@ QMessageBox::StandardButton ProgressDialog::showError(int result) {
 			reply = QMessageBox::question(this, "Error!!!", errorCopyMasg,
 										  QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes)
-			status = 1;
+			status = true;
 		else
 			reply = QMessageBox::question(this, "Error!!!", errorCopyEOLMasg);
 
@@ -148,7 +148,7 @@ QMessageBox::StandardButton ProgressDialog::showError(int result) {
 
 void ProgressDialog::movementResult(int result) {
 
-	moverBlocker.lock();
+	QMutexLocker locker(&moverBlocker);
 	if (progress->tableWidget->rowCount())
 		progress->tableWidget->removeRow(0);
 
@@ -157,14 +157,12 @@ void ProgressDialog::movementResult(int result) {
 		// status = 1;
 		QtConcurrent::run(this, &ProgressDialog::processItemsInList);
 	}
-	moverBlocker.unlock();
 }
 
 
 void ProgressDialog::dirMovementResult(int result) {
-	moverBlocker.lock();
+	QMutexLocker locker(&moverBlocker);
 	showError(result);
-	moverBlocker.unlock();
 }
 
 void ProgressDialog::dirParsing(QDir &dir, QString &action, QString &dest,
@@ -179,12 +177,14 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString &dest,
 		QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
 
 	foreach (auto file, dirEntries) {
-		moverBlocker.lock();
-		moverBlocker.unlock();
-		// this is a very very very bad hack
-		if (!status) {
-			qDebug() << "Negative status?";
-			return;
+		{
+			QMutexLocker locker(&moverBlocker);
+			// this is a very very very bad hack
+			// Need to find a nother way
+			if (!status) {
+				// qDebug() << "Negative status?";
+				return;
+			}
 		}
 		QString destination(dest);
 		destination.append("/");
@@ -214,17 +214,15 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString &dest,
 		connect(this, SIGNAL(setStatus(int)), &mover, SLOT(setStatus(int)),
 				Qt::DirectConnection);
 		emit setStatus(status);
-		// delete mover;
-		// mover should be auto deleted now
 	}
 }
 
-void ProgressDialog::errorMsg(QString errorText) {
+void ProgressDialog::errorMsg(const QString &errorText) {
 	QMessageBox::warning(this, "Error", errorText);
 	cond.wakeOne();
 }
 
-void ProgressDialog::processItemsInList(void) {
+void ProgressDialog::processItemsInList() {
 	if (status && progress->tableWidget->rowCount()) {
 		// stub.waitForFinished();
 		QString source(progress->tableWidget->item(0, 1)->text());
@@ -297,7 +295,7 @@ void ProgressDialog::on_pauseButton_clicked() {
 }
 
 void ProgressDialog::on_removeButton_clicked() {
-	moverBlocker.lock();
+	QMutexLocker locker(&moverBlocker);
 	auto items = progress->tableWidget->selectedItems();
 	std::set<int> rows;
 	foreach (auto item, items)
@@ -310,12 +308,11 @@ void ProgressDialog::on_removeButton_clicked() {
 	}
 
 	if (!progress->tableWidget->rowCount())
-		status = 0;
-	moverBlocker.unlock();
+		status = false;
 }
 
 void ProgressDialog::on_abortButton_clicked() {
-	status = 0;
+	status = false;
 	emit setStatus(-1);
 	if (progress->tableWidget->rowCount())
 		progress->tableWidget->clear();

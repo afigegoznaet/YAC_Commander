@@ -27,9 +27,9 @@ public slots:
 	void onWrite(uint);
 	void movementResult(int);
 	void dirMovementResult(int);
-	void errorMsg(QString errorText);
+	void errorMsg(const QString& errorText);
 	void hideDialogSlot() { this->hide(); }
-	void processFileAction(QFileInfoList fileList, QString destination,
+	void processFileAction(QFileInfoList fileList, const QString& destination,
 						   Qt::DropAction action);
 private slots:
 	void on_pauseButton_clicked();
