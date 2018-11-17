@@ -12,8 +12,12 @@ QT       += core gui network widgets
 #QMAKE_CXXFLAGS+="-fsanitize=thread"
 #QMAKE_CFLAGS+="-fsanitize=address -fno-omit-frame-pointer"
 #QMAKE_LFLAGS+="-fsanitize=thread -shared"
-#QMAKE_CXXFLAGS+="-fsanitize=address  -fomit-frame-pointer"
-#QMAKE_LFLAGS+=" -fsanitize=address"
+CONFIG(debug, debug|release) {
+  message( "debug" )
+QMAKE_CXXFLAGS+="-fsanitize=address"
+QMAKE_LFLAGS+=" -fsanitize=address"
+}
+
 
 TARGET = yc
 TEMPLATE = app

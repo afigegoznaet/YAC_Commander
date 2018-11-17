@@ -26,8 +26,8 @@ void TextViewer::setDocument(QString &&docPath) {
 
 	pcntwgt->clear();
 
-	QByteArray arr = QByteArray::fromRawData((char *)file->map(0, file->size()),
-											 file->size());
+	QByteArray arr = QByteArray::fromRawData(
+		reinterpret_cast<char *>(file->map(0, file->size())), file->size());
 	file->close();
 
 	pcntwgt->setData(new DataStorageArray(arr));

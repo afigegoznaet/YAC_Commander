@@ -63,7 +63,7 @@ void ProgressDialog::processFileAction(QFileInfoList fileList,
 	int newRow = progress->tableWidget->rowCount();
 
 
-	foreach (auto fileInfo, fileList) {
+	for (const auto &fileInfo : fileList) {
 
 		if (!fileInfo.fileName().compare("..", Qt::CaseInsensitive)
 			|| !fileInfo.fileName().compare(".", Qt::CaseInsensitive))
@@ -105,7 +105,7 @@ void ProgressDialog::processFileAction(QFileInfoList fileList,
 }
 
 void ProgressDialog::onWrite(uint percentsWritten) {
-	if (percentsWritten > (uint)progress->progressBar->value())
+	if (percentsWritten > static_cast<uint>(progress->progressBar->value()))
 		progress->progressBar->setValue(percentsWritten);
 	if (100 == percentsWritten)
 		progress->progressBar->setValue(0);
@@ -176,7 +176,7 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString &dest,
 	QFileInfoList dirEntries = dir.entryInfoList(
 		QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
 
-	foreach (auto file, dirEntries) {
+	for (const auto &file : dirEntries) {
 		{
 			QMutexLocker locker(&moverBlocker);
 			// this is a very very very bad hack
@@ -257,7 +257,7 @@ void ProgressDialog::processItemsInList() {
 				}
 			} else
 				dirParsing(dir, action, destination, createdDirs);
-			dirMoved(1);
+			emit dirMoved(1);
 			return;
 		}
 
@@ -276,13 +276,13 @@ void ProgressDialog::processItemsInList() {
 
 	} else {
 		setWindowTitle("");
-		progress->pauseButton->setText(pauseButtonLabels[status]);
+		progress->pauseButton->setText(pauseButtonLabels->at(status));
 		emit hideDialogSignal();
 	}
 }
 
 void ProgressDialog::switchText() {
-	progress->pauseButton->setText(pauseButtonLabels[status]);
+	progress->pauseButton->setText(pauseButtonLabels->at(status));
 }
 
 void ProgressDialog::on_pauseButton_clicked() {
@@ -298,10 +298,10 @@ void ProgressDialog::on_removeButton_clicked() {
 	QMutexLocker locker(&moverBlocker);
 	auto items = progress->tableWidget->selectedItems();
 	std::set<int> rows;
-	foreach (auto item, items)
+	for (const auto &item : items)
 		rows.insert(item->row());
 
-	foreach (int rowNum, rows) {
+	for (const auto &rowNum : rows) {
 		if (0 == rowNum)
 			emit setStatus(-1);
 		progress->tableWidget->removeRow(rowNum);

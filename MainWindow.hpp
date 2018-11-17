@@ -21,6 +21,12 @@
 #define DEF_EDITOR "TextEdit"
 #endif
 
+#ifdef __GNUC__
+#define FALLTHROUGH __attribute__((fallthrough));
+#else
+#define FALLTHROUGH
+#endif
+
 class SearchDialog;
 class ProgressDialog;
 
@@ -31,7 +37,7 @@ namespace Ui {
 class MainWindow : public QMainWindow {
 	Q_OBJECT
 
-	public:
+public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	QString getDirInFocus(bool opposite = false);
 	~MainWindow();
@@ -41,16 +47,16 @@ class MainWindow : public QMainWindow {
 	bool showHidden();
 	void parseParams(int argc, char *argv[]);
 
-	signals:
+signals:
 	void setFocus(FileTabSelector *tab);
 	void setFileAction(QFileInfoList fileList, QString destination,
 					   Qt::DropAction action);
 
-	public slots:
+public slots:
 	void cdTo(const QString &);
 	void focusPreviouslyFocused();
 	void setFocusSlot(FileTabSelector *tab);
-	private slots:
+private slots:
 	void on_F3_clicked();
 	void on_F4_clicked();
 	void on_F5_clicked();
@@ -60,7 +66,7 @@ class MainWindow : public QMainWindow {
 	void on_action_show_hidden_files_changed();
 	void showAbout();
 
-	private:
+private:
 	Ui::MainWindow *ui;
 	ProgressDialog *movementProgress;
 	SearchDialog *searchDlg;

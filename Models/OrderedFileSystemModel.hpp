@@ -20,8 +20,7 @@ public:
 	QFileInfo fileInfo(QModelIndex index) const;
 	void setFilter(QDir::Filters filt) const;
 	void sort() { sort(column, order); }
-	virtual void sort(int column,
-					  Qt::SortOrder order = Qt::AscendingOrder) override;
+	void sort(int column, Qt::SortOrder order) override;
 	QFileSystemModel *sourceModel() const;
 	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row,
 					  int column, const QModelIndex &parent) override;

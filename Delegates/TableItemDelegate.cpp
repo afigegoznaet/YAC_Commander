@@ -34,8 +34,9 @@ void TableItemDelegate::paint(QPainter *painter,
 		// painter->setPen(QPen(Qt::blue));
 		QItemDelegate::paint(painter, option, index);
 		painter->fillRect(tempRect, grad);
-	} else
+	} else {
 		QItemDelegate::paint(painter, option, index);
+}
 }
 
 void TableItemDelegate::currentChanged(QModelIndex current, QModelIndex) {

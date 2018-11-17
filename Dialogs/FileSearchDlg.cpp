@@ -109,8 +109,8 @@ QString SearchDialog::updateCombo(EditableDropDown *combo) {
 	return text;
 }
 
-void SearchDialog::searchRecursion(const QString& pattern, const QString& startDir,
-								   searchFlags) {
+void SearchDialog::searchRecursion(const QString &pattern,
+								   const QString &startDir, searchFlags) {
 
 	model->blockSignals(true);
 	ui->label->setMaximumWidth(ui->label->width()
@@ -123,7 +123,7 @@ void SearchDialog::searchRecursion(const QString& pattern, const QString& startD
 						  QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs
 							  | QDir::System | QDir::Hidden | QDir::NoSymLinks);
 
-	foreach (auto file, dirEntries) {
+	for (const auto &file : dirEntries) {
 		// qDebug()<<"Test: "<<file.isFile()<<" || "<<ui->dirBox->isChecked();
 		if (file.isFile() || ui->dirBox->isChecked())
 			validateFile(file);
@@ -140,7 +140,7 @@ void SearchDialog::searchRecursion(const QString& pattern, const QString& startD
 		firstRow = model->rowCount();
 	}
 	dirListLocker.lock();
-	if (dirQ.size() && searching) {
+	if (!dirQ.empty() && searching) {
 		auto nextDir = std::move(dirQ.first());
 		dirQ.pop_front();
 		dirListLocker.unlock();
@@ -180,17 +180,17 @@ void SearchDialog::on_searchButton_clicked() {
 	}
 	if (ui->sizeCheck->isChecked()) {
 		attrs.togglesFlags |= Size;
-		attrs.op = (SizeOp)ui->cmpCombo->currentData().toInt();
+		attrs.op = static_cast<SizeOp>(ui->cmpCombo->currentData().toInt());
 		attrs.size = ui->sizeSpin->value();
 		int mod = 10 * ui->unitCombo->currentData().toInt();
 		attrs.size *= pow(2, mod);
 	}
 	if (ui->attributesCheck->isChecked()) {
 		attrs.togglesFlags |= Attributes;
-		attrs.attrFlags = (ui->executableBox->isChecked() ? 1 : 0)
-						  | (ui->writableBox->isChecked() ? 2 : 0)
-						  | (ui->readableBox->isChecked() ? 4 : 0)
-						  | (ui->dirBox->isChecked() ? 8 : 0);
+		attrs.attrFlags = (ui->executableBox->isChecked() ? X_EC : NONE)
+						  | (ui->writableBox->isChecked() ? WRITE : NONE)
+						  | (ui->readableBox->isChecked() ? READ : NONE)
+						  | (ui->dirBox->isChecked() ? DIR : NONE);
 	}
 	model->setStringList(QStringList{});
 	ui->searchButton->setText("Stop search");
@@ -213,7 +213,7 @@ void SearchDialog::on_doubleClicked(const QModelIndex &index) {
 	hide();
 }
 
-void SearchDialog::validateFile(QFileInfo &theFile) {
+void SearchDialog::validateFile(const QFileInfo &theFile) {
 	if (attrs.togglesFlags & TextPattern) {
 		auto file = new QFile(theFile.absoluteFilePath());
 		if (!file->open(QIODevice::ReadOnly))
@@ -292,7 +292,7 @@ void SearchDialog::validateFile(QFileInfo &theFile) {
 		qDebug()<<theFile.isExecutable();
 		qDebug()<<theFile.isReadable();
 		qDebug()<<theFile.isWritable();*/
-		if (attrs.attrFlags & 8) {
+		if (attrs.attrFlags & DIR) {
 			if (!theFile.isDir())
 				return;
 			QRegularExpression re(ui->fileMaskcombo->lineEdit()->text());
@@ -300,9 +300,9 @@ void SearchDialog::validateFile(QFileInfo &theFile) {
 				return;
 		}
 
-		if (!(attrs.attrFlags & 8)
-			&& !theFile.permission(
-				   QFileDevice::Permission(attrs.attrFlags & 7)))
+		if (!(attrs.attrFlags & DIR)
+			&& !theFile.permission(QFileDevice::Permission(
+				   attrs.attrFlags & (X_EC | READ | WRITE))))
 			return;
 	}
 

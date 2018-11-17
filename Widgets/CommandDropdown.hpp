@@ -20,7 +20,7 @@ signals:
 private:
 	virtual void keyPressEvent(QKeyEvent *event);
 	void processCommand();
-	MainWindow *mainWindow;
+	MainWindow *mainWindow{};
 };
 
 #endif // DROPDOWN_H

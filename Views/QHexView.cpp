@@ -34,15 +34,12 @@ QHexView::QHexView(QWidget *parent)
 }
 
 
-QHexView::~QHexView() {
-	if (m_pdata)
-		delete m_pdata;
-}
+QHexView::~QHexView() { delete m_pdata; }
 
 void QHexView::setData(DataStorage *pData) {
 	verticalScrollBar()->setValue(0);
-	if (m_pdata)
-		delete m_pdata;
+
+	delete m_pdata;
 	m_pdata = pData;
 	m_cursorPos = 0;
 	resetSelection(0);
@@ -126,7 +123,7 @@ void QHexView::paintEvent(QPaintEvent *event) {
 		for (uint xPos = m_posHex, i = 0;
 			 i < BYTES_PER_LINE
 			 && ((lineIdx - firstLineIdx) * BYTES_PER_LINE + i)
-					< (uint)data.size();
+					< static_cast<uint>(data.size());
 			 i++, xPos += 3 * m_charWidth) {
 			std::size_t pos = (lineIdx * BYTES_PER_LINE + i) * 2;
 			if (pos >= m_selectBegin && pos < m_selectEnd) {
@@ -159,7 +156,8 @@ void QHexView::paintEvent(QPaintEvent *event) {
 		}
 
 		for (uint xPosAscii = m_posAscii, i = 0;
-			 ((lineIdx - firstLineIdx) * BYTES_PER_LINE + i) < (uint)data.size()
+			 ((lineIdx - firstLineIdx) * BYTES_PER_LINE + i)
+				 < static_cast<uint>(data.size())
 			 && (i < BYTES_PER_LINE);
 			 i++, xPosAscii += m_charWidth) {
 			char ch = data[(lineIdx - firstLineIdx) * BYTES_PER_LINE + i];
@@ -388,15 +386,14 @@ void QHexView::mousePressEvent(QMouseEvent *event) {
 unsigned long long QHexView::cursorPos(const QPoint &position) {
 	int pos = -1;
 
-	if (((unsigned long long)position.x() >= m_posHex)
-		&& ((unsigned long long)position.x()
+	if ((static_cast<unsigned long long>(position.x()) >= m_posHex)
+		&& (static_cast<unsigned long long>(position.x())
 			< (m_posHex + HEXCHARS_IN_LINE * m_charWidth))) {
 		int x = (position.x() - m_posHex) / m_charWidth;
 		if ((x % 3) == 0)
 			x = (x / 3) * 2;
 		else
 			x = ((x / 3) * 2) + 1;
-
 		int firstLineIdx = verticalScrollBar()->value();
 		int y = (position.y() / m_charHeight) * 2 * BYTES_PER_LINE;
 		pos = x + y + firstLineIdx * BYTES_PER_LINE * 2;

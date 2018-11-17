@@ -30,10 +30,10 @@ private:
 	unsigned long long m_charHeight;
 
 
-	unsigned long long m_selectBegin;
-	unsigned long long m_selectEnd;
-	unsigned long long m_selectInit;
-	unsigned long long m_cursorPos;
+	unsigned long long m_selectBegin{};
+	unsigned long long m_selectEnd{};
+	unsigned long long m_selectInit{};
+	unsigned long long m_cursorPos{};
 
 
 	QSize fullSize() const;

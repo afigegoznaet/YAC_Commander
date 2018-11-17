@@ -19,7 +19,7 @@ class FileTableView : public QTableView {
 	enum Action { PLUS, MINUS, ASTERISK };
 
 public:
-	explicit FileTableView(QDir directory, QWidget *parent = 0);
+	explicit FileTableView(const QDir& directory, QWidget *parent = 0);
 	FileTableView(QWidget *parent) : FileTableView(QDir::homePath(), parent) {}
 	//~FileTableView(){delete prevSelection;}
 
@@ -55,7 +55,7 @@ signals:
 
 public slots:
 	void on_doubleClicked(const QModelIndex &index);
-	void setCurrentSelection(QString);
+	void setCurrentSelection(const QString&);
 	void headerClicked(int section);
 	void rowsRemoved(const QModelIndex &, int, int);
 	void rowsInserted(const QModelIndex &parent, int first, int) override;
@@ -70,7 +70,7 @@ protected:
 	void focusOutEvent(QFocusEvent *event) override;
 
 private:
-	int index;
+	int index{};
 	int prevRow = -1;
 	bool editorIsOpen = false;
 	bool slowDoubleClick = false;
@@ -80,7 +80,7 @@ private:
 	ItemContextMenu *menu;
 	QString directory;
 	QTimer slowDoubleClickTimer;
-	OrderedFileSystemModel *model;
+	OrderedFileSystemModel *model{};
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;

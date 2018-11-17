@@ -38,7 +38,7 @@ private:
 	int charWidth;
 	int charHeight;
 	int linesPerPage = 0;
-	int maxChars;
+	int maxChars{};
 	int charsPerLine = 80;
 	int linesCount = 0;
 

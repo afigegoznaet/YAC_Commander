@@ -1,7 +1,7 @@
 #include "QuickAccessBar.hpp"
 
 #include <QTimer>
-DriveButton::DriveButton(QString root, QWidget *parent)
+DriveButton::DriveButton(const QString& root, QWidget *parent)
 	: QPushButton(root, parent), rootPath(root) {
 	connect(this, SIGNAL(pressed()), this, SLOT(click()));
 	setFocusPolicy(Qt::NoFocus);
@@ -9,7 +9,7 @@ DriveButton::DriveButton(QString root, QWidget *parent)
 
 void DriveButton::click() {
 	// qDebug()<<rootPath;
-	((QuickAccessBar *)parent())->sendSignal(rootPath);
+	qobject_cast<QuickAccessBar *>(parent())->sendSignal(rootPath);
 }
 /*
 bool DriveButton::event(QEvent *e){

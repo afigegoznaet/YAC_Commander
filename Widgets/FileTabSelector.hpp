@@ -27,7 +27,7 @@ public:
 	void unfocus();
 
 public slots:
-	void onDirChanged(const QString dirName, int tabIndex);
+	void onDirChanged(const QString& dirName, int tabIndex);
 	void onFocusEvent(bool);
 	void sectionResized(int logicalIndex, int oldSize, int newSize);
 	void sectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
@@ -51,8 +51,8 @@ private:
 private:
 	QMetaObject::Connection currentHeaderResizedConnection;
 	QMetaObject::Connection currentHeaderMovedConnection;
-	QAction *closeTabAction;
-	QLabel *infoLabel;
+	QAction *closeTabAction{};
+	QLabel *infoLabel{};
 	QMenu *menu;
 
 	friend class MainWindow;

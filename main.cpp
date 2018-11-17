@@ -12,5 +12,5 @@ int main(int argc, char *argv[]) {
 	w.parseParams(argc, argv);
 
 	qApp->setDesktopFileName("YAC Commander");
-	return a.exec();
+	return QApplication::exec();
 }

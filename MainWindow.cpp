@@ -17,12 +17,6 @@
 #include <Models/OrderedFileSystemModel.hpp>
 #include <QKeyEvent>
 
-#ifdef __GNUC__
-#define FALLTHROUGH __attribute__((fallthrough));
-#else
-#define FALLTHROUGH
-#endif
-
 static char aboutText[] =
 	"WUFDIENvbW1hbmRlcgpJbmNlcHRlZCBpbiAyMDE3IGluIENoaXNpbmF1LCBNb2xkb3ZhCmJ5IFJvbWFuIFBvc3RhbmNpdWMKCkZvciBxdWVzdGlvbnMgb3IgZGV2IHNlcnZpY2VzOgpyb21hbi5wb3N0YW5jaXVjQGdtYWlsLmNvbQ==";
 
@@ -161,12 +155,13 @@ void MainWindow::writeSettings() {
 	settings.setValue("editor", editor);
 	settings.endGroup();
 
-	FileTableView *current =
-		(FileTableView *)ui->leftTabWidget->currentWidget();
+	auto current =
+		qobject_cast<FileTableView *>(ui->leftTabWidget->currentWidget());
 	settings.setValue("LeftColumns", current->horizontalHeader()->saveState());
-
-	current = (FileTableView *)ui->rightTabWidget->currentWidget();
+	current =
+		qobject_cast<FileTableView *>(ui->rightTabWidget->currentWidget());
 	settings.setValue("RightColumns", current->horizontalHeader()->saveState());
+
 	settings.setValue("showHidden", showHidden());
 }
 
@@ -326,14 +321,14 @@ void MainWindow::pasteFromClipboard() {
 	const auto &clipboard = QGuiApplication::clipboard();
 	auto data = clipboard->mimeData();
 
-	foreach (auto &url, data->urls()) { qDebug() << url; }
+	// foreach (auto &url, data->urls()) { qDebug() << url; }
 
 	//	foreach (auto &url, data->formats()) {
 	//		// qDebug()<<url;
 	//		auto text = data->data(url);
 	//		// qDebug()<<text;
 	//		//
-	//qDebug()<<"*********************************************************";
+	// qDebug()<<"*********************************************************";
 	//	}
 
 	//	auto status = data->data(
@@ -361,15 +356,17 @@ void MainWindow::pasteFromClipboard() {
 void MainWindow::deleteFiles() { focusedTab()->deleteSelectedFiles(); }
 
 QString MainWindow::getDirInFocus(bool opposite) {
-	auto left = (FileTableView *)ui->leftTabWidget->currentWidget();
-	auto right = (FileTableView *)ui->rightTabWidget->currentWidget();
+	auto left =
+		qobject_cast<FileTableView *>(ui->leftTabWidget->currentWidget());
+	auto right =
+		qobject_cast<FileTableView *>(ui->rightTabWidget->currentWidget());
 	bool focus = leftTabHasFocus;
 	if (opposite)
 		focus = !leftTabHasFocus;
 	if (focus)
 		return left->getDirectory();
-	else
-		return right->getDirectory();
+
+	return right->getDirectory();
 }
 
 QFileInfoList MainWindow::getSelectedFiles() {
@@ -389,7 +386,7 @@ FileTabSelector *MainWindow::focusedSelector() {
 
 
 FileTableView *MainWindow::focusedTab() {
-	return (FileTableView *)focusedSelector()->currentWidget();
+	return qobject_cast<FileTableView *>(focusedSelector()->currentWidget());
 }
 
 void MainWindow::cdTo(const QString &dir) {
@@ -430,8 +427,8 @@ bool MainWindow::getDir(QString &dirName, int numFiles, Qt::DropAction action) {
 		dirName = dialog->dirName();
 		lbl.setText(dirName);
 		return true;
-	} else
-		return false;
+	}
+	return false;
 }
 
 void MainWindow::makeDir() {
@@ -454,7 +451,7 @@ void MainWindow::on_F3_clicked() {
 	// QMessageBox::information(this,"Info","Not yet implemented");
 	QFileInfoList fileList = getSelectedFiles();
 	auto textViewer = new TextViewer(this);
-	foreach (auto file, fileList)
+	for (const auto &file : fileList)
 		textViewer->setDocument(file.absoluteFilePath());
 	textViewer->exec();
 }
@@ -462,13 +459,13 @@ void MainWindow::on_F3_clicked() {
 void MainWindow::on_F4_clicked() {
 
 	QFileInfoList fileList = getSelectedFiles();
-	foreach (auto file, fileList) {
+	for (const auto &file : fileList) {
 		if (file.isDir())
 			continue;
-		QProcess *notepad = new QProcess();
+
 		QStringList args;
 		args << file.absoluteFilePath();
-		notepad->start(editor, args);
+		QProcess::startDetached(editor, args);
 	}
 }
 
@@ -551,7 +548,7 @@ void MainWindow::setupActions() {
 
 	connect(copyTabPath, &QAction::triggered, [&]() {
 		QGuiApplication::clipboard()->setText(
-			((FileTableView *)focusedSelector()->currentWidget())
+			(qobject_cast<FileTableView *>(focusedSelector()->currentWidget()))
 				->getDirectory());
 	});
 	/**

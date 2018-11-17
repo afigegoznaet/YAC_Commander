@@ -24,11 +24,11 @@ private:
 	QList<QAction *> commonActions;
 	QList<QAction *> folderActions;
 	QList<QAction *> fileActions;
-	QAction *pasteAction;
-	QAction *copyAction;
-	QAction *cutAction;
-	QAction *deleteAction;
-	QAction *renameAction;
+	QAction *pasteAction{};
+	QAction *copyAction{};
+	QAction *cutAction{};
+	QAction *deleteAction{};
+	QAction *renameAction{};
 	FileTableView *parent;
 	// QClipboard* clipboard;
 	QFileInfoList selectedFiles;

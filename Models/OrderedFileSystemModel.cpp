@@ -13,14 +13,14 @@ bool OrderedFileSystemModel::lessThan(const QModelIndex &left,
 	if (leftFile.isDir() ^ rightFile.isDir()) {
 		if (this->order)
 			return !leftFile.isDir();
-		else
-			return leftFile.isDir(); // will it be optimized
+
+		return leftFile.isDir(); // will it be optimized
 	}
 	bool res = false;
 	if (!leftFile.fileName().compare(".."))
-		return order == Qt::AscendingOrder ? true : false;
+		return order == Qt::AscendingOrder;
 	if (!rightFile.fileName().compare(".."))
-		return order == Qt::AscendingOrder ? false : true;
+		return order == Qt::AscendingOrder;
 	switch (column) {
 	case 0:
 		res = leftFile.fileName().compare(rightFile.fileName()) < 0;
@@ -59,7 +59,7 @@ bool OrderedFileSystemModel::dropMimeData(const QMimeData *data,
 
 	auto dir = rootPath();
 
-	foreach (auto &uri, uriList)
+	for (const auto &uri : uriList)
 		itemsToMove << uri.toLocalFile();
 	if (0 == row) // selection is ".."
 		dir.truncate(dir.lastIndexOf('/'));
@@ -73,8 +73,8 @@ Qt::ItemFlags OrderedFileSystemModel::flags(const QModelIndex &index) const {
 		defaultFlags |= Qt::ItemIsEditable;
 	if (index.isValid())
 		return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
-	else
-		return Qt::ItemIsDropEnabled | defaultFlags;
+
+	return Qt::ItemIsDropEnabled | defaultFlags;
 }
 
 QString OrderedFileSystemModel::rootPath() {

@@ -5,7 +5,7 @@
 EditableDropDown::EditableDropDown(QWidget *parent) : QComboBox(parent) {}
 
 void EditableDropDown::processCommand() {
-	SearchDialog *parent = dynamic_cast<SearchDialog *>(parentDlg);
+	auto *parent = dynamic_cast<SearchDialog *>(parentDlg);
 	if (parent)
 		parent->on_searchButton_clicked();
 }

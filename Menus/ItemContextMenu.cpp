@@ -21,7 +21,7 @@
 ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent) {
 
 	initCommon();
-	this->parent = (FileTableView *)parent;
+	this->parent = qobject_cast<FileTableView *>(parent);
 	// qDebug()<<"parent name: "<<parent->objectName();
 	// clipboard = QGuiApplication::clipboard();
 	connect(this, &QMenu::aboutToHide, [&]() {
@@ -29,7 +29,7 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent) {
 	// qDebug()<<fileItemActions->children();
 	// fileItemActions->deleteLater();
 #endif
-		for (auto action : this->actions())
+		for (const auto &action : this->actions())
 			if (commonActions.contains(action))
 				continue;
 			else
@@ -100,8 +100,8 @@ void ItemContextMenu::initFile() {
 
 	// qDebug()<<"Adding files to list";
 	KFileItemList kList;
-	for (const auto fileInfo : selectedFiles) {
-		struct stat buf;
+	for (const auto &fileInfo : selectedFiles) {
+		struct stat buf {};
 		stat(fileInfo.absoluteFilePath().toLocal8Bit().data(), &buf);
 		KFileItem kItem(QUrl::fromLocalFile(fileInfo.absoluteFilePath()),
 						QMimeDatabase().mimeTypeForFile(fileInfo).name(),
@@ -147,14 +147,14 @@ void ItemContextMenu::pasteFromClipboard() {
 	const auto &clipboard = QGuiApplication::clipboard();
 	auto data = clipboard->mimeData();
 
-	foreach (auto &url, data->urls()) { qDebug() << url; }
+	// for (const auto &url : data->urls()) { qDebug() << url; }
 
 	//	foreach (auto &url, data->formats()) {
 	//		// qDebug()<<url;
 	//		auto text = data->data(url);
 	//		// qDebug()<<text;
 	//		//
-	//qDebug()<<"*********************************************************";
+	// qDebug()<<"*********************************************************";
 	//	}
 
 	// auto status = data->data(

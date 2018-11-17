@@ -23,12 +23,12 @@
 #define IN 1
 #define OUT 0
 
-FileTableView::FileTableView(QDir directory, QWidget *parent)
+FileTableView::FileTableView(const QDir &directory, QWidget *parent)
 	: QTableView(parent), directory(directory.absolutePath()),
 	  slowDoubleClickTimer(this) {
 	connect(&slowDoubleClickTimer, &QTimer::timeout, this,
 			[&] { slowDoubleClick = false; }); // update toolbar every 1 sec
-	infoLabel = ((FileTabSelector *)parent)->getLabel();
+	infoLabel = (qobject_cast<FileTabSelector *>(parent))->getLabel();
 	menu = new ItemContextMenu(this);
 	prevRow = -1;
 }
@@ -95,8 +95,7 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 	auto key = event->key();
 	QFlags<QItemSelectionModel::SelectionFlag> flags =
 		QItemSelectionModel::NoUpdate;
-	auto modifiers =
-		((QGuiApplication *)QGuiApplication::instance())->keyboardModifiers();
+	auto modifiers = qApp->keyboardModifiers();
 	if (modifiers & Qt::ShiftModifier)
 		flags = QItemSelectionModel::Toggle | QItemSelectionModel::Rows;
 	switch (key) {
@@ -125,6 +124,7 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 	case Qt::Key_Space:
 		selectionModel()->setCurrentIndex(
 			index, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
+		FALLTHROUGH
 	case Qt::Key_Down:
 		selectionModel()->setCurrentIndex(index, flags);
 		index = rootIndex().child(index.row() + 1, 0);
@@ -139,6 +139,13 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 			selectionModel()->setCurrentIndex(index,
 											  QItemSelectionModel::NoUpdate);
 		break;
+	case Qt::Key_A:
+		if (modifiers == Qt::ControlModifier) {
+			selectionModel()->clearSelection();
+			setSelectionAction(ASTERISK);
+			break;
+		}
+		FALLTHROUGH
 	default:
 		QAbstractItemView::keyPressEvent(event);
 		break;
@@ -170,7 +177,7 @@ void FileTableView::init() {
 	auto filters = QDir::AllEntries | QDir::NoDot | QDir::System;
 
 	for (auto widget : topWidgets) {
-		MainWindow *topWidget = dynamic_cast<MainWindow *>(widget);
+		MainWindow *topWidget = qobject_cast<MainWindow *>(widget);
 		if (topWidget) {
 			if (topWidget->showHidden())
 				filters |= QDir::Hidden;
@@ -233,7 +240,7 @@ void FileTableView::init() {
 			SLOT(commitNewName(QWidget *)));
 }
 
-void FileTableView::setCurrentSelection(QString) {
+void FileTableView::setCurrentSelection(const QString &) {
 	if (prevRow > 0) {
 		setCurrentIndex(rootIndex().child(prevRow, 0));
 		scrollTo(currentIndex());
@@ -266,13 +273,13 @@ void FileTableView::headerClicked(int section) {
 }
 
 void FileTableView::focusInEvent(QFocusEvent *event) {
-	QWidget::focusInEvent(event);
+	QAbstractItemView::focusInEvent(event);
 	emit focusEvent(true);
 	updateInfo();
 }
 
 void FileTableView::focusOutEvent(QFocusEvent *event) {
-	QWidget::focusOutEvent(event);
+	QAbstractItemView::focusOutEvent(event);
 	emit focusEvent(false);
 }
 
@@ -289,7 +296,7 @@ QFileInfoList FileTableView::getSelectedFiles() {
 QModelIndexList FileTableView::getSelectedIndexes() {
 	QModelIndexList items = selectionModel()->selectedRows();
 	auto currIdx = model->fileInfo(selectionModel()->currentIndex());
-	if (!items.size() && currIdx.fileName().compare(".."))
+	if (items.empty() && currIdx.fileName().compare(".."))
 		items.append(selectionModel()->currentIndex());
 	return items;
 }
@@ -315,10 +322,10 @@ void FileTableView::mousePressEvent(QMouseEvent *event) {
 	auto index = indexAt(event->pos());
 	if (slowDoubleClick && currentIndex() == index)
 		return openEditor(index);
-	else {
-		slowDoubleClickTimer.start(1000);
-		slowDoubleClick = true;
-	}
+
+	slowDoubleClickTimer.start(1000);
+	slowDoubleClick = true;
+
 
 	setSelectionMode(QAbstractItemView::ExtendedSelection);
 	QTableView::mousePressEvent(event);
@@ -331,8 +338,7 @@ void FileTableView::openEditor(QModelIndex &index) {
 }
 
 void FileTableView::mouseReleaseEvent(QMouseEvent *event) {
-	auto modifiers =
-		((QGuiApplication *)QGuiApplication::instance())->keyboardModifiers();
+	auto modifiers = qApp->keyboardModifiers();
 	if (!(modifiers & (Qt::ControlModifier | Qt::ShiftModifier)))
 		clearSelection();
 	QTableView::mouseReleaseEvent(event);

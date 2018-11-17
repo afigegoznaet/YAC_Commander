@@ -53,7 +53,7 @@ int FileMoverDelegate::copy() {
 		if (destinationFile.write(buffer, bytesRead) < 0)
 			return false;
 		tempSize += bytesRead;
-		emit bytesProgress((uint)(tempSize * 100. / totalSize * 1.));
+		emit bytesProgress(static_cast<uint>(tempSize * 100. / totalSize * 1.));
 		bytesRead = sourceFile.read(buffer, MAX_READ);
 	}
 
@@ -72,7 +72,7 @@ int FileMoverDelegate::copy() {
 
 int FileMoverDelegate::move() {
 
-	return 10 + (int)QFile::rename(source, destination);
+	return 10 + static_cast<int>(QFile::rename(source, destination));
 }
 /*
 void FileMover::execute(){

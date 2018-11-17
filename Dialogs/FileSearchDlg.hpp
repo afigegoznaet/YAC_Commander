@@ -14,7 +14,7 @@ namespace Ui {
 	class SearchDialog;
 }
 
-enum FileAttrib { X = 1, W = 2, R = 4, D = 8 };
+enum FileAttrib { NONE = 0, X_EC = 1, WRITE = 2, READ = 4, DIR = 8 };
 enum SearchToggles { TextPattern = 1, Date = 2, Size = 4, Attributes = 8 };
 
 enum SizeOp { EQ, G, L };
@@ -56,7 +56,8 @@ signals:
 
 public slots:
 	void on_searchButton_clicked();
-	void searchRecursion(const QString& pattern, const QString& startDir, searchFlags = NAME);
+	void searchRecursion(const QString &pattern, const QString &startDir,
+						 searchFlags = NAME);
 	void on_doubleClicked(const QModelIndex &index);
 
 private slots:
@@ -85,7 +86,7 @@ private:
 
 	QString updateCombo(EditableDropDown *combo);
 	void addFile(const QString &newFile);
-	void validateFile(QFileInfo &theFile);
+	void validateFile(const QFileInfo &theFile);
 	void resetGuiState();
 	// void paintEvent(QPaintEvent *event) override;
 };

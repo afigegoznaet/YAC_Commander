@@ -9,7 +9,7 @@
 #include <QTimer>
 
 CommandDropDown::CommandDropDown(QWidget *parent) : QComboBox(parent) {
-	qDebug() << "hello";
+	// qDebug() << "hello";
 }
 
 void CommandDropDown::setMain(MainWindow *mainWindow) {
@@ -23,7 +23,7 @@ void CommandDropDown::setMain(MainWindow *mainWindow) {
 void CommandDropDown::processCommand() {
 	QString cmd(lineEdit()->text());
 
-	QStandardItemModel *stModel = (QStandardItemModel *)model();
+	auto stModel = qobject_cast<QStandardItemModel *>(model());
 	auto index = findText(cmd);
 	if (index < 0)
 		insertItem(0, cmd);
@@ -34,7 +34,7 @@ void CommandDropDown::processCommand() {
 		cmd.remove(0, 3);
 		emit cdTo(cmd.trimmed());
 	} else {
-		QProcess proc;
+		// QProcess proc;
 		QString dir(mainWindow->getDirInFocus());
 		// QDir::setCurrent(dir);
 		QString program;
@@ -55,7 +55,7 @@ void CommandDropDown::processCommand() {
 		program = "sh";
 		// args.removeFirst();
 #endif
-		proc.startDetached(program, args, dir);
+		QProcess::startDetached(program, args, dir);
 		// qDebug()<<proc.execute(program, args);
 	}
 

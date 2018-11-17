@@ -32,10 +32,7 @@ QFastView::QFastView(QWidget *parent)
 }
 
 
-QFastView::~QFastView() {
-	if (m_pdata)
-		delete m_pdata;
-}
+QFastView::~QFastView() { delete m_pdata; }
 
 void QFastView::countLines() {
 	if (!m_pdata)
@@ -98,8 +95,8 @@ void QFastView::moveToLine(int lineNum) {
 
 void QFastView::setData(DataStorage *pData) {
 	verticalScrollBar()->setValue(0);
-	if (m_pdata)
-		delete m_pdata;
+
+	delete m_pdata;
 	m_pdata = pData;
 	verticalScrollBar()->setMaximum(m_pdata->size() / charsPerLine);
 	countLines();
@@ -126,8 +123,8 @@ int QFastView::getNextLineStart() {
 	auto newLinePos = data.toStdString().find('\n');
 	if (std::string::npos != newLinePos && newLinePos < charsPerLine)
 		return firstLineIdx + newLinePos + 1;
-	else
-		return firstLineIdx + charsPerLine;
+
+	return firstLineIdx + charsPerLine;
 }
 
 int QFastView::getPrevLineStart() {
@@ -140,8 +137,8 @@ int QFastView::getPrevLineStart() {
 	auto newLinePos = tempData.toStdString().find_last_of('\n');
 	if (std::string::npos != newLinePos && newLinePos < charsPerLine)
 		return newLinePos + 1;
-	else
-		return firstLineIdx - charsPerLine;
+
+	return firstLineIdx - charsPerLine;
 }
 
 int QFastView::getNextPageStart() {

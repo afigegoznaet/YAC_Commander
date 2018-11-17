@@ -14,7 +14,7 @@ FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 	menu = new QMenu(this);
 }
 
-QString showableName(const QString dirName) {
+QString showableName(const QString &dirName) {
 	QString newName = dirName;
 	if (dirName.length() > 50) {
 		QStringList dirs = dirName.split('/', QString::SkipEmptyParts);
@@ -30,9 +30,9 @@ QString showableName(const QString dirName) {
 void FileTabSelector::init(Ui::MainWindow *ui) {
 	setTabsClosable(false);
 	tabBar()->setFocusPolicy(Qt::NoFocus);
-	foreach (auto &child, tabBar()->children()) {
+	for (const auto &child : tabBar()->children()) {
 		if (child->isWidgetType())
-			((QWidget *)child)->setFocusPolicy(Qt::NoFocus);
+			qobject_cast<QWidget *>(child)->setFocusPolicy(Qt::NoFocus);
 	}
 	closeTabAction = ui->actionClose_tab;
 	menu->addAction(ui->actionAdd_tab);
@@ -46,17 +46,17 @@ void FileTabSelector::indexChanged(int index) {
 	disconnect(currentHeaderResizedConnection);
 	disconnect(currentHeaderMovedConnection);
 	;
-	currentHeaderResizedConnection =
-		connect(((FileTableView *)widget(index))->horizontalHeader(),
-				SIGNAL(sectionResized(int, int, int)), this,
-				SLOT(sectionResized(int, int, int)));
-	currentHeaderMovedConnection =
-		connect(((FileTableView *)currentWidget())->horizontalHeader(),
-				SIGNAL(sectionMoved(int, int, int)), this,
-				SLOT(sectionMoved(int, int, int)));
+	currentHeaderResizedConnection = connect(
+		qobject_cast<FileTableView *>(widget(index))->horizontalHeader(),
+		SIGNAL(sectionResized(int, int, int)), this,
+		SLOT(sectionResized(int, int, int)));
+	currentHeaderMovedConnection = connect(
+		qobject_cast<FileTableView *>(widget(index))->horizontalHeader(),
+		SIGNAL(sectionMoved(int, int, int)), this,
+		SLOT(sectionMoved(int, int, int)));
 }
 
-void FileTabSelector::onDirChanged(const QString dirName, int tabIndex) {
+void FileTabSelector::onDirChanged(const QString &dirName, int tabIndex) {
 
 	setTabText(tabIndex, showableName(dirName));
 	setTabToolTip(tabIndex, dirName);
@@ -77,14 +77,14 @@ void FileTabSelector::onFocusEvent(bool focused) {
 		infoLabel->setStyleSheet(labelStyle);
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
-		currentHeaderResizedConnection =
-			connect(((FileTableView *)currentWidget())->horizontalHeader(),
-					SIGNAL(sectionResized(int, int, int)), this,
-					SLOT(sectionResized(int, int, int)));
-		currentHeaderMovedConnection =
-			connect(((FileTableView *)currentWidget())->horizontalHeader(),
-					SIGNAL(sectionMoved(int, int, int)), this,
-					SLOT(sectionMoved(int, int, int)));
+		currentHeaderResizedConnection = connect(
+			qobject_cast<FileTableView *>(currentWidget())->horizontalHeader(),
+			SIGNAL(sectionResized(int, int, int)), this,
+			SLOT(sectionResized(int, int, int)));
+		currentHeaderMovedConnection = connect(
+			qobject_cast<FileTableView *>(currentWidget())->horizontalHeader(),
+			SIGNAL(sectionMoved(int, int, int)), this,
+			SLOT(sectionMoved(int, int, int)));
 		emit focusAquired();
 	}
 }
@@ -103,7 +103,7 @@ FileTableView *FileTabSelector::addNewTab(bool dup, QString dir) {
 	int index;
 	if (dup) {
 		index = currentIndex();
-		dir = ((FileTableView *)widget(index))->getDirectory();
+		dir = qobject_cast<FileTableView *>(widget(index))->getDirectory();
 	}
 
 	newTab = new FileTableView(dir, this);
@@ -125,7 +125,7 @@ FileTableView *FileTabSelector::addNewTab(bool dup, QString dir) {
 	QSettings settings;
 	QString settingsSection("LeftColumns");
 	if (this->objectName().startsWith("right"))
-		settingsSection = ("RightColumns");
+		settingsSection = {"RightColumns"};
 
 	auto headerState =
 		settings.value(settingsSection, defaultState).toByteArray();
@@ -157,14 +157,14 @@ void FileTabSelector::sectionResized(int logicalIndex, int oldSize,
 
 	if (check == newSize)
 		return;
-	else
-		check = newSize;
+
+	check = newSize;
 
 	for (int i = 0; i < count(); i++)
 		if (widget(i)->hasFocus())
 			continue;
 		else
-			((FileTableView *)widget(i))
+			qobject_cast<FileTableView *>(widget(i))
 				->horizontalHeader()
 				->resizeSection(logicalIndex, newSize);
 
@@ -178,7 +178,7 @@ void FileTabSelector::sectionMoved(int logicalIndex, int oldVisualIndex,
 		if (currentWidget()->hasFocus() && i == currentIndex())
 			continue;
 		else
-			((FileTableView *)widget(i))
+			qobject_cast<FileTableView *>(widget(i))
 				->horizontalHeader()
 				->moveSection(oldVisualIndex, newVisualIndex);
 
@@ -189,7 +189,7 @@ void FileTabSelector::sectionMoved(int logicalIndex, int oldVisualIndex,
 void FileTabSelector::mousePressEvent(QMouseEvent *event) {
 
 	if (event->button() != Qt::RightButton)
-		return setFocusSig(this);
+		return emit setFocusSig(this);
 
 	setCurrentIndex(tabBar()->tabAt(event->pos()));
 
@@ -199,7 +199,7 @@ void FileTabSelector::mousePressEvent(QMouseEvent *event) {
 	else
 		closeTabAction->setEnabled(true);
 	menu->exec(QCursor::pos());
-	setFocusSig(this);
+	emit setFocusSig(this);
 }
 
 FileTabSelector::~FileTabSelector() {
@@ -209,7 +209,8 @@ FileTabSelector::~FileTabSelector() {
 	settings.beginWriteArray(objectName(), count);
 	for (int i = 0; i < count; i++) {
 		settings.setArrayIndex(i);
-		settings.setValue("dir", ((FileTableView *)widget(i))->getDirectory());
+		settings.setValue(
+			"dir", qobject_cast<FileTableView *>(widget(i))->getDirectory());
 	}
 	settings.endArray();
 }
@@ -228,5 +229,5 @@ void FileTabSelector::readSettings() {
 void FileTabSelector::showHidden(bool show) {
 	int count = this->count();
 	for (int i = 0; i < count; i++)
-		((FileTableView *)widget(i))->showHidden(show);
+		qobject_cast<FileTableView *>(widget(i))->showHidden(show);
 }
