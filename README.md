@@ -28,9 +28,11 @@ Implemented sutff:
 * Search capability (by name, contents and file properties )
 * File renaming
 * drag and drop
+* Can be installed and used a default file manager on Linux
+* Supports KDE shell actions
 
 Known issues:
-* On Linux, dir doesn't refresh if some action is performed in the other tab, containing the same dir
-* Intense search generates flickering and seems to block the GUI thread.
+* On Linux, dir doesn't refresh if any changes happened while the app was in background
 
-# NEED VOLUNTEERS! TESTERS, DEVELOPERS and IDEAS
+# NEED VOLUNTEERS! TESTERS AND DEVELOPERS
+# FEATURE REQUESTS ARE WELCOME
