@@ -20,7 +20,7 @@ bool OrderedFileSystemModel::lessThan(const QModelIndex &left,
 	if (!leftFile.fileName().compare(".."))
 		return order == Qt::AscendingOrder;
 	if (!rightFile.fileName().compare(".."))
-		return order == Qt::AscendingOrder ? false : true;
+		return order != Qt::AscendingOrder;
 	switch (column) {
 	case 0:
 		res = leftFile.fileName().compare(rightFile.fileName()) < 0;

@@ -124,7 +124,7 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 	case Qt::Key_Space:
 		selectionModel()->setCurrentIndex(
 			index, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
-		FALLTHROUGH
+		[[fallthrough]];
 	case Qt::Key_Down:
 		selectionModel()->setCurrentIndex(index, flags);
 		index = rootIndex().child(index.row() + 1, 0);
@@ -145,7 +145,7 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 			setSelectionAction(ASTERISK);
 			break;
 		}
-		FALLTHROUGH
+		[[fallthrough]];
 	default:
 		QAbstractItemView::keyPressEvent(event);
 		break;

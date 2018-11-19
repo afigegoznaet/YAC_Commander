@@ -21,12 +21,6 @@
 #define DEF_EDITOR "TextEdit"
 #endif
 
-#ifdef __GNUC__
-#define FALLTHROUGH __attribute__((fallthrough));
-#else
-#define FALLTHROUGH
-#endif
-
 class SearchDialog;
 class ProgressDialog;
 

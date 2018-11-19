@@ -218,19 +218,19 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 			copyToClipboard();
 			break;
 		}
-		FALLTHROUGH
+		[[fallthrough]];
 	case Qt::Key_V:
 		if (event->modifiers() == Qt::ControlModifier) {
 			pasteFromClipboard();
 			break;
 		}
-		FALLTHROUGH
+		[[fallthrough]];
 	case Qt::Key_X:
 		if (event->modifiers() == Qt::ControlModifier) {
 			cutToClipboard();
 			break;
 		}
-		FALLTHROUGH
+		[[fallthrough]];
 	default:
 		// qDebug()<<event;
 		// qDebug()<<key;
