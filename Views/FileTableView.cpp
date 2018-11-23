@@ -382,22 +382,17 @@ void FileTableView::setSelectionAction(Action act) {
 	}
 
 	QRegExp reg(filter, Qt::CaseSensitive, QRegExp::Wildcard);
-	for (int i = 0; i < rowCount; i++) {
-		auto ind = rootIndex().child(i, 0);
+	for (int i = 1; i < rowCount; i++) {
+		auto ind = model->index(i, 0, rootIndex());
 		auto fName = model->fileInfo(ind).fileName();
-
-		if (!fName.compare(".."))
-			continue;
 
 		if (filter.isEmpty() || fName.contains(reg)) {
 			if (!fName.endsWith(reg.cap()))
 				continue;
 
 			// qDebug()<<model->fileInfo(ind).fileName();
-			selectionModel()->select(ind, selectionType);
-			for (int j = 1; j < columnCount; j++)
-				selectionModel()->select(rootIndex().child(i, j),
-										 selectionType);
+			this->selectionModel()->select(
+				ind, selectionType | QItemSelectionModel::Rows);
 		}
 	}
 }
