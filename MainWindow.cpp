@@ -47,11 +47,11 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->commandsBox, SIGNAL(focusPreviouslyFocused()), this,
 			SLOT(focusPreviouslyFocused()), Qt::QueuedConnection);
 	connect(ui->quickBar, SIGNAL(cdTo(QString)), this, SLOT(cdTo(QString)));
-	connect(ui->leftTabWidget, &FileTabSelector::focusAquired, [=]() {
+	connect(ui->leftTabWidget, &FileTabSelector::focusAquired, [this]() {
 		leftTabHasFocus = true;
 		ui->rightTabWidget->unfocus();
 	});
-	connect(ui->rightTabWidget, &FileTabSelector::focusAquired, [=]() {
+	connect(ui->rightTabWidget, &FileTabSelector::focusAquired, [this]() {
 		leftTabHasFocus = false;
 		ui->leftTabWidget->unfocus();
 	});

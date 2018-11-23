@@ -16,13 +16,13 @@ FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 
 QString showableName(const QString &dirName) {
 	QString newName = dirName;
-	if (dirName.length() > 50) {
+	if (dirName.length() > 20) {
 		QStringList dirs = dirName.split('/', QString::SkipEmptyParts);
-		if (dirs.size() < 3)
+		if (dirs.size() < 2)
 			return newName;
 		if (!dirs.first().compare("/"))
 			dirs.pop_front();
-		newName = "/" + dirs.first() + "/../" + dirs.last();
+		newName = "../" + dirs.last();
 	}
 	return newName;
 }
