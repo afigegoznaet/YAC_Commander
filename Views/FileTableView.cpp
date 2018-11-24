@@ -16,6 +16,7 @@
 #include <QStorageInfo>
 #include <QGuiApplication>
 #include <QDesktopServices>
+#include <QtConcurrent/QtConcurrent>
 #include "Models/OrderedFileSystemModel.hpp"
 #include "Delegates/TableItemDelegate.hpp"
 #include "Menus/ItemContextMenu.hpp"
@@ -364,7 +365,6 @@ void FileTableView::queryDialog(QString &filter, Action act) {
 void FileTableView::setSelectionAction(Action act) {
 	QString filter("");
 	int rowCount = model->rowCount(rootIndex());
-	int columnCount = model->columnCount(rootIndex());
 	QItemSelectionModel::SelectionFlag selectionType;
 	switch (act) {
 	case PLUS:
@@ -381,20 +381,33 @@ void FileTableView::setSelectionAction(Action act) {
 		break;
 	}
 
+	// QMutex selMutex;
+	//	QRegularExpression reg(
+	//		filter, QRegularExpression::DontCaptureOption
+	//					| QRegularExpression::OptimizeOnFirstUsageOption);
 	QRegExp reg(filter, Qt::CaseSensitive, QRegExp::Wildcard);
-	for (int i = 1; i < rowCount; i++) {
-		auto ind = model->index(i, 0, rootIndex());
-		auto fName = model->fileInfo(ind).fileName();
+	{
+		const QSignalBlocker blocker(selectionModel());
+		for (int i = 1; i < rowCount; i++) {
 
-		if (filter.isEmpty() || fName.contains(reg)) {
-			if (!fName.endsWith(reg.cap()))
-				continue;
+			auto ind = model->index(i, 0, rootIndex());
+			if (filter.isEmpty()) {
+				this->selectionModel()->select(
+					ind, selectionType | QItemSelectionModel::Rows);
+			} else {
+				auto fName = model->fileInfo(ind).fileName();
+				// auto m = reg.match(fName);
+				if (fName.contains(reg)) {
 
-			// qDebug()<<model->fileInfo(ind).fileName();
-			this->selectionModel()->select(
-				ind, selectionType | QItemSelectionModel::Rows);
+					this->selectionModel()->select(
+						ind, selectionType | QItemSelectionModel::Rows);
+				}
+			}
 		}
 	}
+	emit selectionModel()->selectionChanged(selectionModel()->selection(),
+											QItemSelection());
+	repaint();
 }
 
 void FileTableView::rowsRemoved(const QModelIndex &, int, int) {
