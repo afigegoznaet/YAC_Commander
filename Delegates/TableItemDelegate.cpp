@@ -4,11 +4,16 @@
 
 TableItemDelegate::TableItemDelegate(QObject *parent)
 	: QItemDelegate(parent), rect(0, 0, 1, 1),
-	  grad(QPointF(0, 0), QPointF(1, 1)) {
+	  gradFocused(QPointF(0, 0), QPointF(1, 1)),
+	  grad(QPointF(0, 0), QPointF(1, 1)), has_focus(false) {
 
-	grad.setColorAt(0.0, QColor(92, 203, 105, 25));
-	grad.setColorAt(0.5, QColor(174, 255, 211, 10));
-	grad.setColorAt(1.0, QColor(92, 203, 105, 25));
+	gradFocused.setColorAt(0.0, QColor(92, 203, 105, 40));
+	gradFocused.setColorAt(0.5, QColor(174, 255, 211, 25));
+	gradFocused.setColorAt(1.0, QColor(92, 203, 105, 40));
+
+	grad.setColorAt(0.0, QColor(92, 203, 105, 20));
+	grad.setColorAt(0.5, QColor(174, 255, 211, 5));
+	grad.setColorAt(1.0, QColor(92, 203, 105, 20));
 }
 
 void TableItemDelegate::paint(QPainter *painter,
@@ -23,20 +28,20 @@ void TableItemDelegate::paint(QPainter *painter,
 	tempRect.setTop(option.rect.top());
 	tempRect.setRight(rect.right());
 	tempRect.setBottom(option.rect.bottom());
-#else
-	const QRect &tempRect = option.rect;
 #endif
-#else
 	const QRect &tempRect = option.rect;
 #endif
 	if (index.row() == current.row()) {
 		// painter->setBackground(grad);
 		// painter->setPen(QPen(Qt::blue));
 		QItemDelegate::paint(painter, option, index);
-		painter->fillRect(tempRect, grad);
+		if (has_focus)
+			painter->fillRect(tempRect, gradFocused);
+		else
+			painter->fillRect(tempRect, grad);
 	} else {
 		QItemDelegate::paint(painter, option, index);
-}
+	}
 }
 
 void TableItemDelegate::currentChanged(QModelIndex current, QModelIndex) {

@@ -215,6 +215,7 @@ void FileTableView::init() {
 
 	delegate = new TableItemDelegate(this);
 	setItemDelegate(delegate);
+	connect(this, SIGNAL(focusEvent(bool)), delegate, SLOT(focused(bool)));
 	connect(horizontalHeader(), &QHeaderView::geometriesChanged,
 			[&]() { itemDelegate()->setRect(horizontalHeader()->geometry()); });
 	connect(selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex)),
@@ -398,7 +399,6 @@ void FileTableView::setSelectionAction(Action act) {
 				auto fName = model->fileInfo(ind).fileName();
 				// auto m = reg.match(fName);
 				if (fName.contains(reg)) {
-
 					this->selectionModel()->select(
 						ind, selectionType | QItemSelectionModel::Rows);
 				}

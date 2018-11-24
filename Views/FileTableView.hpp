@@ -19,7 +19,7 @@ class FileTableView : public QTableView {
 	enum Action { PLUS, MINUS, ASTERISK };
 
 public:
-	explicit FileTableView(const QDir& directory, QWidget *parent = 0);
+	explicit FileTableView(const QDir &directory, QWidget *parent = 0);
 	FileTableView(QWidget *parent) : FileTableView(QDir::homePath(), parent) {}
 	//~FileTableView(){delete prevSelection;}
 
@@ -28,6 +28,7 @@ public:
 	QFileInfoList getSelectedFiles();
 	void cdTo(const QString &);
 	TableItemDelegate *itemDelegate() const {
+		// return qobject_cast<TableItemDelegate *>(QTableView::itemDelegate());
 		return (TableItemDelegate *)QTableView::itemDelegate();
 	}
 	OrderedFileSystemModel *getModel() { return model; }
@@ -55,7 +56,7 @@ signals:
 
 public slots:
 	void on_doubleClicked(const QModelIndex &index);
-	void setCurrentSelection(const QString&);
+	void setCurrentSelection(const QString &);
 	void headerClicked(int section);
 	void rowsRemoved(const QModelIndex &, int, int);
 	void rowsInserted(const QModelIndex &parent, int first, int) override;

@@ -17,11 +17,14 @@ protected:
 						   const QRect & /*rect*/) const override {}
 public slots:
 	void currentChanged(QModelIndex current, QModelIndex);
+	void focused(bool focus) { has_focus = focus; }
 
 private:
 	QModelIndex current;
 	QRect rect;
+	mutable QLinearGradient gradFocused;
 	mutable QLinearGradient grad;
+	bool has_focus;
 };
 
 #endif // TABLEITEMDELEGATE_H
