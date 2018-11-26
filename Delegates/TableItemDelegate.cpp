@@ -7,13 +7,13 @@ TableItemDelegate::TableItemDelegate(QObject *parent)
 	  gradFocused(QPointF(0, 0), QPointF(1, 1)),
 	  grad(QPointF(0, 0), QPointF(1, 1)), has_focus(false) {
 
-	gradFocused.setColorAt(0.0, QColor(92, 203, 105, 40));
-	gradFocused.setColorAt(0.5, QColor(174, 255, 211, 25));
-	gradFocused.setColorAt(1.0, QColor(92, 203, 105, 40));
+	gradFocused.setColorAt(0.0, QColor(92, 203, 105, 55));
+	gradFocused.setColorAt(0.5, QColor(174, 255, 211, 40));
+	gradFocused.setColorAt(1.0, QColor(92, 203, 105, 55));
 
-	grad.setColorAt(0.0, QColor(92, 203, 105, 20));
-	grad.setColorAt(0.5, QColor(174, 255, 211, 5));
-	grad.setColorAt(1.0, QColor(92, 203, 105, 20));
+	grad.setColorAt(0.0, QColor(92, 105, 203, 20));
+	grad.setColorAt(0.5, QColor(174, 211, 255, 5));
+	grad.setColorAt(1.0, QColor(92, 105, 203, 20));
 }
 
 void TableItemDelegate::paint(QPainter *painter,

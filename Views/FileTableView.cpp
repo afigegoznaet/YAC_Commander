@@ -203,8 +203,10 @@ void FileTableView::init() {
 
 
 	// this is needed for clever file selection whn moving up and down
-	connect(fModel, &QFileSystemModel::directoryLoaded,
-			[&]() { model->sort(); });
+	connect(fModel, &QFileSystemModel::directoryLoaded, [&]() {
+		prevRow = model->mapToSource(currentIndex()).row();
+		model->sort();
+	});
 	connect(model, SIGNAL(directoryLoaded(QString)), this,
 			SLOT(setCurrentSelection(QString)));
 	connect(fModel, SIGNAL(rowsRemoved(QModelIndex, int, int)), this,
@@ -221,7 +223,7 @@ void FileTableView::init() {
 	connect(selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex)),
 			delegate, SLOT(currentChanged(QModelIndex, QModelIndex)));
 	connect(selectionModel(), &QItemSelectionModel::currentChanged, this,
-			[&](QModelIndex current, QModelIndex prev) {
+			[this](QModelIndex current, QModelIndex prev) {
 				for (int i = 0; i < 4; i++)
 					update(current.sibling(current.row(), i));
 				for (int i = 0; i < 4; i++)
@@ -244,7 +246,12 @@ void FileTableView::init() {
 
 void FileTableView::setCurrentSelection(const QString &) {
 	if (prevRow > 0) {
-		setCurrentIndex(rootIndex().child(prevRow, 0));
+		auto ind =
+			model->mapFromSource(model->getSourceRootIndex().child(prevRow, 0));
+		setCurrentIndex(ind);
+
+		selectionModel()->currentChanged(ind, ind);
+
 		scrollTo(currentIndex());
 		return;
 	}
@@ -261,12 +268,13 @@ void FileTableView::setCurrentSelection(const QString &) {
 	}
 
 	selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
-	prevRow = index.row();
+	prevRow = model->mapToSource(index).row();
 	scrollTo(index);
 }
 
 void FileTableView::headerClicked(int section) {
 
+	prevRow = model->mapToSource(currentIndex()).row();
 	Qt::SortOrder order = Qt::AscendingOrder;
 	if (section == horizontalHeader()->sortIndicatorSection())
 		if (Qt::AscendingOrder == horizontalHeader()->sortIndicatorOrder())
@@ -412,7 +420,9 @@ void FileTableView::setSelectionAction(Action act) {
 
 void FileTableView::rowsRemoved(const QModelIndex &, int, int) {
 
-	setCurrentIndex(rootIndex().child(prevRow, 0));
+	auto ind =
+		model->mapFromSource(model->getSourceRootIndex().child(prevRow, 0));
+	setCurrentIndex(ind);
 	delegate->currentChanged(currentIndex(), currentIndex());
 	updateInfo();
 }
@@ -502,11 +512,11 @@ void FileTableView::deleteSelectedFiles() {
 	if (reply == QMessageBox::No)
 		return;
 
-	if (selectionModel()->selectedRows().count())
-		prevRow = selectionModel()->selectedRows().first().row();
-	else
-		prevRow = selectionModel()->currentIndex().row();
+	auto index = selectionModel()->selectedRows().isEmpty()
+					 ? selectionModel()->currentIndex()
+					 : selectionModel()->selectedRows().first();
 
+	prevRow = model->mapToSource(index).row();
 
 	bool status;
 	int counter = 0;
@@ -560,9 +570,10 @@ void FileTableView::deleteSelectedFiles() {
 		}
 		counter++;
 	}
-
-	if (prevRow >= model->rowCount(rootIndex()) - counter)
-		prevRow = model->rowCount(rootIndex()) - counter - 1;
+	/*
+		if (prevRow >= model->rowCount(rootIndex()) - counter)
+			prevRow = model->rowCount(rootIndex()) - counter - 1;
+		*/
 }
 
 void FileTableView::showHidden(bool show) {

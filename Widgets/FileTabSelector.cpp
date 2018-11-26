@@ -73,7 +73,7 @@ void FileTabSelector::onFocusEvent(bool focused) {
 			"QTabWidget::pane, QTabWidget::tab-bar {border: 2px solid green}";
 		static const QString labelStyle =
 			"QLabel { background-color : navy; color : white; }";
-		setStyleSheet(style);
+		// setStyleSheet(style);
 		infoLabel->setStyleSheet(labelStyle);
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
