@@ -12,6 +12,8 @@ FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 			[&]() { emit setFocusSig(this); });
 
 	setStyle(parent->style());
+	defaultPalette = highlightedPalette = parent->style()->standardPalette();
+
 	menu = new QMenu(this);
 }
 
@@ -42,11 +44,16 @@ void FileTabSelector::init(Ui::MainWindow *ui) {
 	menu->addAction(ui->actionCopy_path);
 
 	// infoLabel->setAutoFillBackground(true);
-	defaultPalette = highlightedPalette = style()->standardPalette();
-	highlightedPalette.setColor(QPalette::Window, Qt::red);
 	setStyleSheet(defaultStyle);
 	setStyleSheet("selection-background-color: lightblue");
 	setStyleSheet(defaultStyle);
+	defaultPalette.setColor(QPalette::Window,
+							highlightedPalette.color(QPalette::Mid));
+	highlightedPalette.setColor(QPalette::Window,
+								highlightedPalette.color(QPalette::Highlight));
+	highlightedPalette.setColor(
+		QPalette::WindowText,
+		highlightedPalette.color(QPalette::HighlightedText));
 }
 
 void FileTabSelector::indexChanged(int index) {
@@ -77,12 +84,6 @@ void FileTabSelector::onDirChanged(const QString &dirName, int tabIndex) {
 
 void FileTabSelector::onFocusEvent(bool focused) {
 	if (focused) {
-		static const QString style =
-			"QTabWidget::pane, QTabWidget::tab-bar {border: 2px solid green}";
-		static const QString labelStyle =
-			"QLabel { background-color : navy; color : white; }";
-		// setStyleSheet(style);
-		infoLabel->setStyleSheet(labelStyle);
 		infoLabel->setPalette(highlightedPalette);
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
@@ -101,8 +102,7 @@ void FileTabSelector::onFocusEvent(bool focused) {
 void FileTabSelector::unfocus() {
 	infoLabel->setPalette(defaultPalette);
 
-	infoLabel->setStyleSheet(
-		"QLabel { background-color : gray; color : white; }");
+
 	disconnect(currentHeaderResizedConnection);
 	disconnect(currentHeaderMovedConnection);
 

@@ -28,14 +28,18 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ui->setupUi(this);
 	setStatusBar(nullptr);
-	ui->leftTabWidget->init(ui);
-	ui->rightTabWidget->init(ui);
+
 	ui->leftTabWidget->setLabel(ui->leftLabel);
 	ui->rightTabWidget->setLabel(ui->rightLabel);
+
+	ui->leftTabWidget->init(ui);
+	ui->rightTabWidget->init(ui);
+
 	ui->leftLabel->setText("Left");
 	ui->rightLabel->setText("Right");
-	ui->leftLabel->setStyleSheet("border: 1px solid green; background: gray");
-	ui->rightLabel->setStyleSheet("border: 1px solid green; background: gray");
+	// ui->leftLabel->setStyleSheet("border: 1px solid green; background:
+	// gray"); ui->rightLabel->setStyleSheet("border: 1px solid green;
+	// background: gray");
 
 	movementProgress = new ProgressDialog(this);
 	searchDlg = new SearchDialog(this);
