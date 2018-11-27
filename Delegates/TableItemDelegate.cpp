@@ -24,12 +24,6 @@ TableItemDelegate::TableItemDelegate(QObject *parent)
 	gradFocused.setColorAt(0.0, dark);
 	gradFocused.setColorAt(0.5, light);
 	gradFocused.setColorAt(1.0, dark);
-
-	/*
-	grad.setColorAt(0.0, QColor(92, 105, 203, 20));
-	grad.setColorAt(0.5, QColor(174, 211, 255, 5));
-	grad.setColorAt(1.0, QColor(92, 105, 203, 20));
-	*/
 }
 
 void TableItemDelegate::paint(QPainter *painter,

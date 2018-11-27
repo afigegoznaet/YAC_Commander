@@ -43,8 +43,10 @@ void FileTabSelector::init(Ui::MainWindow *ui) {
 
 	// infoLabel->setAutoFillBackground(true);
 	defaultPalette = highlightedPalette = style()->standardPalette();
-	highlightedPalette.setColor(QPalette::Background,
-								highlightedPalette.color(QPalette::Highlight));
+	highlightedPalette.setColor(QPalette::Window, Qt::red);
+	setStyleSheet(defaultStyle);
+	setStyleSheet("selection-background-color: lightblue");
+	setStyleSheet(defaultStyle);
 }
 
 void FileTabSelector::indexChanged(int index) {
@@ -98,13 +100,12 @@ void FileTabSelector::onFocusEvent(bool focused) {
 
 void FileTabSelector::unfocus() {
 	infoLabel->setPalette(defaultPalette);
+
 	infoLabel->setStyleSheet(
 		"QLabel { background-color : gray; color : white; }");
 	disconnect(currentHeaderResizedConnection);
 	disconnect(currentHeaderMovedConnection);
-	setStyleSheet(defaultStyle);
-	setStyleSheet("selection-background-color: lightblue");
-	setStyleSheet(defaultStyle);
+
 	setStyle(parentWidget()->style());
 }
 
