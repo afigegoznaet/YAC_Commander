@@ -11,6 +11,7 @@ FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 	connect(this->tabBar(), &QTabBar::tabBarClicked,
 			[&]() { emit setFocusSig(this); });
 
+	setStyle(parent->style());
 	menu = new QMenu(this);
 }
 
@@ -39,6 +40,11 @@ void FileTabSelector::init(Ui::MainWindow *ui) {
 	menu->addAction(ui->actionCopy_tab);
 	menu->addAction(ui->actionClose_tab);
 	menu->addAction(ui->actionCopy_path);
+
+	// infoLabel->setAutoFillBackground(true);
+	defaultPalette = highlightedPalette = style()->standardPalette();
+	highlightedPalette.setColor(QPalette::Background,
+								highlightedPalette.color(QPalette::Highlight));
 }
 
 void FileTabSelector::indexChanged(int index) {
@@ -75,6 +81,7 @@ void FileTabSelector::onFocusEvent(bool focused) {
 			"QLabel { background-color : navy; color : white; }";
 		// setStyleSheet(style);
 		infoLabel->setStyleSheet(labelStyle);
+		infoLabel->setPalette(highlightedPalette);
 		disconnect(currentHeaderResizedConnection);
 		disconnect(currentHeaderMovedConnection);
 		currentHeaderResizedConnection = connect(
@@ -90,12 +97,15 @@ void FileTabSelector::onFocusEvent(bool focused) {
 }
 
 void FileTabSelector::unfocus() {
+	infoLabel->setPalette(defaultPalette);
 	infoLabel->setStyleSheet(
 		"QLabel { background-color : gray; color : white; }");
 	disconnect(currentHeaderResizedConnection);
 	disconnect(currentHeaderMovedConnection);
 	setStyleSheet(defaultStyle);
 	setStyleSheet("selection-background-color: lightblue");
+	setStyleSheet(defaultStyle);
+	setStyle(parentWidget()->style());
 }
 
 FileTableView *FileTabSelector::addNewTab(bool dup, QString dir) {
@@ -120,6 +130,7 @@ FileTableView *FileTabSelector::addNewTab(bool dup, QString dir) {
 			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)), this,
 			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)));
 	newTab->setLabel(infoLabel);
+	infoLabel->setAutoFillBackground(true);
 	auto defaultState = newTab->horizontalHeader()->saveState(); // header state
 
 	QSettings settings;
