@@ -12,9 +12,9 @@ public:
 protected:
 	void paint(QPainter *painter, const QStyleOptionViewItem &option,
 			   const QModelIndex &index) const override;
-	virtual void drawFocus(QPainter * /*painter*/,
-						   const QStyleOptionViewItem & /*option*/,
-						   const QRect & /*rect*/) const override {}
+	void drawFocus(QPainter * /*painter*/,
+				   const QStyleOptionViewItem & /*option*/,
+				   const QRect & /*rect*/) const override {}
 public slots:
 	void currentChanged(QModelIndex current, QModelIndex);
 	void focused(bool focus) { has_focus = focus; }

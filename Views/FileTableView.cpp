@@ -246,13 +246,13 @@ void FileTableView::init() {
 
 void FileTableView::setCurrentSelection(const QString &) {
 	if (prevRow > 0) {
-		auto ind =
+		/*auto ind =
 			model->mapFromSource(model->getSourceRootIndex().child(prevRow, 0));
 		setCurrentIndex(ind);
+*/
+		selectionModel()->currentChanged(currentIndex(), currentIndex());
 
-		selectionModel()->currentChanged(ind, ind);
-
-		scrollTo(currentIndex());
+		//scrollTo(currentIndex());
 		return;
 	}
 	int rows = model->rowCount(rootIndex());
