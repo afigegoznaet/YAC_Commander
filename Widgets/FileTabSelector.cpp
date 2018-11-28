@@ -43,10 +43,6 @@ void FileTabSelector::init(Ui::MainWindow *ui) {
 	menu->addAction(ui->actionClose_tab);
 	menu->addAction(ui->actionCopy_path);
 
-	// infoLabel->setAutoFillBackground(true);
-	// setStyleSheet(defaultStyle);
-	// setStyleSheet("selection-background-color: lightblue");
-	// setStyleSheet(defaultStyle);
 	defaultPalette.setColor(QPalette::Window,
 							highlightedPalette.color(QPalette::Mid));
 	highlightedPalette.setColor(QPalette::Window,
@@ -101,12 +97,16 @@ void FileTabSelector::onFocusEvent(bool focused) {
 
 void FileTabSelector::unfocus() {
 	infoLabel->setPalette(defaultPalette);
-
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 9
+	setStyleSheet(defaultStyle);
+	setStyleSheet("selection-background-color: lightblue");
+	setStyleSheet(defaultStyle);
+#endif
 
 	disconnect(currentHeaderResizedConnection);
 	disconnect(currentHeaderMovedConnection);
 
-	setStyle(parentWidget()->style());
+	// setStyle(parentWidget()->style());
 }
 
 FileTableView *FileTabSelector::addNewTab(bool dup, QString dir) {
