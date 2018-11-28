@@ -44,9 +44,9 @@ void FileTabSelector::init(Ui::MainWindow *ui) {
 	menu->addAction(ui->actionCopy_path);
 
 	// infoLabel->setAutoFillBackground(true);
-	setStyleSheet(defaultStyle);
-	setStyleSheet("selection-background-color: lightblue");
-	setStyleSheet(defaultStyle);
+	// setStyleSheet(defaultStyle);
+	// setStyleSheet("selection-background-color: lightblue");
+	// setStyleSheet(defaultStyle);
 	defaultPalette.setColor(QPalette::Window,
 							highlightedPalette.color(QPalette::Mid));
 	highlightedPalette.setColor(QPalette::Window,

@@ -28,7 +28,17 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ui->setupUi(this);
 	setStatusBar(nullptr);
+	/*
+		qDebug() << QApplication::font();
+		QFont theFont(QApplication::font());
+		QFontMetrics metrix(theFont);
+		// setFont(theFont);
+		auto charHeight = metrix.height();
 
+
+		ui->leftLabel->setMinimumSize(0, charHeight * 3);
+		ui->rightLabel->setMinimumSize(0, charHeight * 3);
+	*/
 	ui->leftTabWidget->setLabel(ui->leftLabel);
 	ui->rightTabWidget->setLabel(ui->rightLabel);
 
