@@ -29,12 +29,12 @@ TableItemDelegate::TableItemDelegate(QObject *parent)
 void TableItemDelegate::paint(QPainter *painter,
 							  const QStyleOptionViewItem &option,
 							  const QModelIndex &index) const {
-#if QT_VERSION_MAJOR == 5
-#if QT_VERSION_MINOR < 9
 	grad.setStart(option.rect.topLeft());
 	grad.setFinalStop(option.rect.bottomLeft());
 	gradFocused.setStart(option.rect.topLeft());
 	gradFocused.setFinalStop(option.rect.bottomLeft());
+#if QT_VERSION_MAJOR == 5
+#if QT_VERSION_MINOR < 9
 	QRect tempRect;
 	tempRect.setLeft(rect.left());
 	tempRect.setTop(option.rect.top());
