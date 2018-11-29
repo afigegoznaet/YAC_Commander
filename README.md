@@ -5,7 +5,6 @@ At the moment it performs all the basic file manager operations, like copy/move/
 
 Things to add:
 * Some sort of Directory action if a drive is removed(maybe just notification)
-* chown / chmod
 * soft/hard linking
 * Plugins support
 * Addition of custom links to mountpoints bar
@@ -30,6 +29,7 @@ Implemented sutff:
 * drag and drop
 * Can be installed and used a default file manager on Linux
 * Supports KDE shell actions
+* chown / chmod
 
 Known issues:
 * On Linux, dir doesn't refresh if any changes happened while the app was in background
