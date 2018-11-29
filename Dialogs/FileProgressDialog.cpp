@@ -9,8 +9,8 @@ ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f)
 	progress->setupUi(this);
 	progress->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	progress->tableWidget->setColumnCount(3);
-	progress->tableWidget->verticalHeader()->setDefaultSectionSize(
-		this->fontMetrics().height() + 6);
+	// progress->tableWidget->verticalHeader()->setDefaultSectionSize(
+	// this->fontMetrics().height() + 6);
 
 	progress->tableWidget->horizontalHeader()->setStretchLastSection(true);
 	progress->tableWidget->horizontalHeader()->setSectionsMovable(true);

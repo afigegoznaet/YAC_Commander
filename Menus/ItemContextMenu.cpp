@@ -14,7 +14,8 @@
 #define Q_DECL_CONSTRUCTOR_DEPRECATED
 #include <KFileItemActions>
 #include <KFileItemListProperties>
-
+#include <KPropertiesDialog>
+#include <KActionCollection>
 #endif
 
 
@@ -22,7 +23,7 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent) {
 
 	initCommon();
 	this->parent = qobject_cast<FileTableView *>(parent);
-	// qDebug()<<"parent name: "<<parent->objectName();
+	qDebug() << "parent name: " << parent->objectName();
 	// clipboard = QGuiApplication::clipboard();
 	connect(this, &QMenu::aboutToHide, [&]() {
 #ifdef __linux__
@@ -89,6 +90,7 @@ void ItemContextMenu::initCommon() {
 	addSeparator();
 	commonActions << pasteAction << copyAction << cutAction << deleteAction
 				  << renameAction;
+	addSeparator();
 }
 void ItemContextMenu::initFile() {
 
@@ -119,6 +121,7 @@ void ItemContextMenu::initFile() {
 	fileItemActions->addServiceActionsTo(this);
 	fileItemActions->addPluginActionsTo(this);
 
+	initProperties(std::move(kList));
 #endif
 }
 void ItemContextMenu::initFolder() {}
@@ -147,20 +150,6 @@ void ItemContextMenu::pasteFromClipboard() {
 	const auto &clipboard = QGuiApplication::clipboard();
 	auto data = clipboard->mimeData();
 
-	// for (const auto &url : data->urls()) { qDebug() << url; }
-
-	//	foreach (auto &url, data->formats()) {
-	//		// qDebug()<<url;
-	//		auto text = data->data(url);
-	//		// qDebug()<<text;
-	//		//
-	// qDebug()<<"*********************************************************";
-	//	}
-
-	// auto status = data->data(
-	//"application/x-qt-windows-mime;value=\"Preferred DropEffect\"");
-	// qDebug()<<status;
-
 	bool move = false;
 #ifdef WIN32
 	move =
@@ -184,3 +173,24 @@ void ItemContextMenu::pasteFromClipboard() {
 void ItemContextMenu::deleteItems() { parent->deleteSelectedFiles(); }
 
 void ItemContextMenu::rename() { parent->openEditor(selIndexes.first()); }
+
+void ItemContextMenu::initProperties(KFileItemList &&kList) {
+#ifdef __linux__
+	auto propDlg = [&parent = this->parent, kList = std::move(kList)] {
+		KPropertiesDialog *dialog = nullptr;
+		if (kList.isEmpty()) {
+			return;
+		} else {
+			dialog = new KPropertiesDialog(std::move(kList), parent);
+		}
+
+		dialog->setAttribute(Qt::WA_DeleteOnClose);
+		dialog->show();
+		dialog->raise();
+		dialog->activateWindow();
+	};
+
+	addSeparator();
+	addAction("Properties", propDlg, QKeySequence(tr("Ctrl+P")));
+#endif
+}

@@ -4,8 +4,11 @@
 #include <QMenu>
 #include <QFileInfo>
 #include <QModelIndexList>
+#ifdef __linux__
+#include <KFileItem>
+#endif
 
-
+class KXmlGuiWindow;
 class FileTableView;
 class ItemContextMenu : public QMenu {
 	Q_OBJECT
@@ -19,6 +22,7 @@ public:
 signals:
 
 public slots:
+
 
 private:
 	QList<QAction *> commonActions;
@@ -35,12 +39,14 @@ private:
 	QModelIndexList selIndexes;
 
 #ifdef __linux__
+	KXmlGuiWindow *gui;
 	// KFileItemActions* fileItemActions;
 #endif
 
 	void initCommon();
 	void initFile();
 	void initFolder();
+	void initProperties(KFileItemList &&);
 	void cutToClipboard();
 	void copyToClipboard();
 	void pasteFromClipboard();
