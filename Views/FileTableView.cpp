@@ -29,7 +29,8 @@ FileTableView::FileTableView(const QDir &directory, QWidget *parent)
 	  slowDoubleClickTimer(this) {
 	connect(&slowDoubleClickTimer, &QTimer::timeout, this,
 			[&] { slowDoubleClick = false; }); // update toolbar every 1 sec
-	infoLabel = (qobject_cast<FileTabSelector *>(parent))->getLabel();
+	this->parent = (qobject_cast<FileTabSelector *>(parent));
+	infoLabel = this->parent->getLabel();
 	menu = new ItemContextMenu(this);
 	prevRow = -1;
 }
@@ -252,7 +253,7 @@ void FileTableView::setCurrentSelection(const QString &) {
 */
 		selectionModel()->currentChanged(currentIndex(), currentIndex());
 
-		//scrollTo(currentIndex());
+		// scrollTo(currentIndex());
 		return;
 	}
 	int rows = model->rowCount(rootIndex());
@@ -438,6 +439,8 @@ void FileTableView::rowsInserted(const QModelIndex &parent, int first,
 
 void FileTableView::updateInfo() {
 
+	if (!isCurrent())
+		return;
 	QStorageInfo storage(model->rootPath());
 	// qDebug()<<"Root path:"<< storage.rootPath();
 	QString fmt;
@@ -586,3 +589,7 @@ void FileTableView::showHidden(bool show) {
 }
 
 QString FileTableView::getDirectory() { return model->rootPath(); }
+
+bool FileTableView::isCurrent() const {
+	return parent->currentWidget() == this;
+}

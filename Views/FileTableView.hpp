@@ -12,6 +12,7 @@ class TableItemDelegate;
 class OrderedFileSystemModel;
 class QLabel;
 class ItemContextMenu;
+class FileTabSelector;
 
 class FileTableView : public QTableView {
 	Q_OBJECT
@@ -69,6 +70,7 @@ protected:
 	void chDir(const QModelIndex &index, bool in_out);
 	void focusInEvent(QFocusEvent *event) override;
 	void focusOutEvent(QFocusEvent *event) override;
+	bool isCurrent() const;
 
 private:
 	int index{};
@@ -82,6 +84,7 @@ private:
 	QString directory;
 	QTimer slowDoubleClickTimer;
 	OrderedFileSystemModel *model{};
+	FileTabSelector *parent = nullptr;
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
