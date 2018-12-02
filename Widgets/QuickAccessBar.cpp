@@ -1,7 +1,9 @@
 #include "QuickAccessBar.hpp"
 
+#include <QDebug>
+
 #include <QTimer>
-DriveButton::DriveButton(const QString& root, QWidget *parent)
+DriveButton::DriveButton(const QString &root, QWidget *parent)
 	: QPushButton(root, parent), rootPath(root) {
 	connect(this, SIGNAL(pressed()), this, SLOT(click()));
 	setFocusPolicy(Qt::NoFocus);

@@ -28,10 +28,11 @@ FileTableView::FileTableView(const QDir &directory, QWidget *parent)
 	: QTableView(parent), directory(directory.absolutePath()),
 	  slowDoubleClickTimer(this) {
 	connect(&slowDoubleClickTimer, &QTimer::timeout, this,
-			[&] { slowDoubleClick = false; }); // update toolbar every 1 sec
+			[&] { slowDoubleClick = false; });
 	this->parent = (qobject_cast<FileTabSelector *>(parent));
 	infoLabel = this->parent->getLabel();
 	menu = new ItemContextMenu(this);
+	model = new OrderedFileSystemModel(this);
 	prevRow = -1;
 }
 
@@ -93,7 +94,7 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 	if (currentIndex().isValid())
 		index = currentIndex();
 	else
-		index = rootIndex().child(0, 0);
+		index = model->index(0, 0, rootIndex()); // rootIndex().child(0, 0);
 	auto key = event->key();
 	QFlags<QItemSelectionModel::SelectionFlag> flags =
 		QItemSelectionModel::NoUpdate;
@@ -129,14 +130,16 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 		[[fallthrough]];
 	case Qt::Key_Down:
 		selectionModel()->setCurrentIndex(index, flags);
-		index = rootIndex().child(index.row() + 1, 0);
+		index = model->index(index.row() + 1, 0, rootIndex());
+		// index = rootIndex().child(index.row() + 1, 0);
 		if (index.isValid())
 			selectionModel()->setCurrentIndex(index,
 											  QItemSelectionModel::NoUpdate);
 		break;
 	case Qt::Key_Up:
 		selectionModel()->setCurrentIndex(index, flags);
-		index = rootIndex().child(index.row() - 1, 0);
+		index = model->index(index.row() - 1, 0, rootIndex());
+		// index = rootIndex().child(index.row() - 1, 0);
 		if (index.isValid())
 			selectionModel()->setCurrentIndex(index,
 											  QItemSelectionModel::NoUpdate);
@@ -169,9 +172,7 @@ void FileTableView::init() {
 	verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 4);
 
-	model = new OrderedFileSystemModel(this);
 	auto fModel = new QFileSystemModel(this);
-
 	model->setSourceModel(fModel);
 	model->setRootPath(this->directory);
 	auto topWidgets = QApplication::topLevelWidgets();
@@ -199,7 +200,7 @@ void FileTableView::init() {
 	// horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
 	connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this,
 			SLOT(headerClicked(int)));
-	selectionModel()->select(QModelIndex(rootIndex().child(1, 0)),
+	selectionModel()->select(model->index(1, 0, rootIndex()),
 							 QItemSelectionModel::Current);
 
 
@@ -258,7 +259,7 @@ void FileTableView::setCurrentSelection(const QString &) {
 	}
 	int rows = model->rowCount(rootIndex());
 	auto rootIndex = model->getRootIndex();
-	QModelIndex index = rootIndex.child(0, 0);
+	auto index = model->index(0, 0, rootIndex);
 	int i;
 	for (i = 0; i < rows; i++) {
 		auto ind = rootIndex.child(i, 0);
@@ -444,29 +445,17 @@ void FileTableView::updateInfo() {
 	QStorageInfo storage(model->rootPath());
 	// qDebug()<<"Root path:"<< storage.rootPath();
 	QString fmt;
-	double sizeTotal, sizeRemaining;
-	QString typeTotal, typeRemaining;
-	if (storage.bytesTotal() > 1024 * 1024 * 1024) {
-		sizeTotal = storage.bytesTotal() / 1024.0 / 1024 / 1024;
-		typeTotal = "GB";
-	} else {
-		sizeTotal = storage.bytesTotal() / 1024.0 / 1024;
-		typeTotal = "MB";
-	}
+	auto sizeTotal = QLocale::system().formattedDataSize(
+		storage.bytesTotal(), 2, QLocale::DataSizeTraditionalFormat);
+	auto sizeRemaining = QLocale::system().formattedDataSize(
+		storage.bytesAvailable(), 2, QLocale::DataSizeTraditionalFormat);
+	;
 
-	if (storage.bytesAvailable() > 1024 * 1024 * 1024) {
-		sizeRemaining = storage.bytesAvailable() / 1024.0 / 1024 / 1024;
-		typeRemaining = "GB";
-	} else {
-		sizeRemaining = storage.bytesAvailable() / 1024.0 / 1024;
-		typeRemaining = "MB";
-	}
 
 	fmt += model->rootPath();
 
 	fmt += "\n";
-	fmt += QString::number(sizeRemaining) + " " + typeRemaining
-		   + " available of " + QString::number(sizeTotal) + " " + typeTotal;
+	fmt += sizeRemaining + " available of " + sizeTotal;
 	fmt += "\t" + QString::number(selectionModel()->selectedRows().size())
 		   + " selected of " + QString::number(model->rowCount(rootIndex()) - 1)
 		   + " directory items";

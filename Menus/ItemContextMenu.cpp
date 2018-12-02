@@ -23,7 +23,6 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent) {
 
 	initCommon();
 	this->parent = qobject_cast<FileTableView *>(parent);
-	qDebug() << "parent name: " << parent->objectName();
 	// clipboard = QGuiApplication::clipboard();
 	connect(this, &QMenu::aboutToHide, [&]() {
 #ifdef __linux__

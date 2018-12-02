@@ -6,11 +6,11 @@
 #include <QStorageInfo>
 
 //#include <QAction>
-
+class KDirLister;
 class DriveButton : public QPushButton {
 	Q_OBJECT
 public:
-	explicit DriveButton(const QString& root, QWidget *parent = Q_NULLPTR);
+	explicit DriveButton(const QString &root, QWidget *parent = Q_NULLPTR);
 signals:
 
 public slots:

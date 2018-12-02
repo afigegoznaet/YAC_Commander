@@ -35,7 +35,7 @@ public:
 	OrderedFileSystemModel *getModel() { return model; }
 	QModelIndexList getSelectedIndexes();
 	QString getDirectory();
-	QLabel *getLabel() { return infoLabel; }
+	// QLabel *getLabel() { return infoLabel; }
 	void setTabOrderIndex(int index) { this->index = index; }
 	void setLabel(QLabel *infoLabel) { this->infoLabel = infoLabel; }
 
@@ -50,7 +50,6 @@ signals:
 	// void activated(const QModelIndex &index);
 	void dirChanged(const QString dirName, int index);
 	void focusEvent(bool);
-	void setInfo();
 	void setFileAction(QFileInfoList, QString, Qt::DropAction);
 	void contextMenuRequested(QPoint);
 
@@ -78,7 +77,6 @@ private:
 	bool editorIsOpen = false;
 	bool slowDoubleClick = false;
 	QLabel *infoLabel = nullptr;
-	QTabWidget *metaTab = nullptr;
 	TableItemDelegate *delegate = nullptr;
 	ItemContextMenu *menu;
 	QString directory;
