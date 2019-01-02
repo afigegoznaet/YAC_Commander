@@ -173,8 +173,9 @@ void ItemContextMenu::deleteItems() { parent->deleteSelectedFiles(); }
 
 void ItemContextMenu::rename() { parent->openEditor(selIndexes.first()); }
 
-void ItemContextMenu::initProperties(KFileItemList &&kList) {
 #ifdef __linux__
+void ItemContextMenu::initProperties(KFileItemList &&kList) {
+
 	auto propDlg = [&parent = this->parent, kList = std::move(kList)] {
 		KPropertiesDialog *dialog = nullptr;
 		if (kList.isEmpty()) {
@@ -191,5 +192,5 @@ void ItemContextMenu::initProperties(KFileItemList &&kList) {
 
 	addSeparator();
 	addAction("Properties", propDlg, QKeySequence(tr("Ctrl+P")));
-#endif
 }
+#endif

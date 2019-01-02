@@ -46,12 +46,16 @@ private:
 	void initCommon();
 	void initFile();
 	void initFolder();
-	void initProperties(KFileItemList &&);
+
 	void cutToClipboard();
 	void copyToClipboard();
 	void pasteFromClipboard();
 	void deleteItems();
 	void rename();
+
+#ifdef __linux__
+	void initProperties(KFileItemList &&);
+#endif
 };
 
 #endif // ITEMCONTEXTMENU_HPP

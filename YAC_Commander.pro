@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network widgets
-CONFIG += c++14
+CONFIG += c++17
 #greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #QMAKE_CXXFLAGS+="-fsanitize=address"
