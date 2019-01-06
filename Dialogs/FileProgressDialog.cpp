@@ -207,13 +207,15 @@ void ProgressDialog::dirParsing(QDir &dir, QString &action, QString &dest,
 		destination.append("/");
 		destination.append(file.fileName());
 		setWindowTitle(file.fileName());
+
+		emit setStatus(status);
+
 		FileMoverDelegate mover(source, destination, action, this);
 		connect(&mover, SIGNAL(bytesProgress(uint)), this, SLOT(onWrite(uint)));
 		connect(&mover, SIGNAL(completed(int)), this,
 				SLOT(dirMovementResult(int)));
 		connect(this, SIGNAL(setStatus(int)), &mover, SLOT(setStatus(int)),
 				Qt::DirectConnection);
-		emit setStatus(status);
 	}
 }
 
