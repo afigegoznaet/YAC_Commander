@@ -197,200 +197,47 @@ void QFastView::paintEvent(QPaintEvent *event) {
 void QFastView::keyPressEvent(QKeyEvent *event) {
 	bool setVisible = false;
 
-	/*****************************************************************************/
-	/* Cursor movements */
-	/*****************************************************************************/
-	/*if(event->matches(QKeySequence::MoveToNextChar))
-	{
-		setCursorPos(m_cursorPos + 1);
-		resetSelection(m_cursorPos);
-		setVisible = true;
-	}
-	if(event->matches(QKeySequence::MoveToPreviousChar))
-	{
-		setCursorPos(m_cursorPos - 1);
-		resetSelection(m_cursorPos);
-		setVisible = true;
-	}
-	if(event->matches(QKeySequence::MoveToEndOfLine))
-	{
-		setCursorPos(m_cursorPos | ((BYTES_PER_LINE * 2) - 1));
-		resetSelection(m_cursorPos);
-		setVisible = true;
-	}
-	if(event->matches(QKeySequence::MoveToStartOfLine))
-	{
-		setCursorPos(m_cursorPos | (m_cursorPos % (BYTES_PER_LINE * 2)));
-		resetSelection(m_cursorPos);
-		setVisible = true;
-	}*/
-	if (event->matches(QKeySequence::MoveToPreviousLine)) {
-		verticalScrollBar()->setValue(verticalScrollBar()->value() - 1);
-		firstLineIdx = getPrevLineStart();
-		// setCursorPos(m_cursorPos - 1);
-		// resetSelection(m_cursorPos);
-		setVisible = true;
-	}
-	if (event->matches(QKeySequence::MoveToNextLine)) {
+	switch (event->key()) {
+	case (Qt::Key_Down):
 		verticalScrollBar()->setValue(verticalScrollBar()->value() + 1);
 		firstLineIdx = getNextLineStart();
-		// setCursorPos(m_cursorPos + BYTES_PER_LINE * 2);
-		// resetSelection(m_cursorPos);
 		setVisible = true;
-	}
-
-	if (event->matches(QKeySequence::MoveToNextPage)) {
+		break;
+	case (Qt::Key_Up):
+		verticalScrollBar()->setValue(verticalScrollBar()->value() - 1);
+		firstLineIdx = getPrevLineStart();
+		setVisible = true;
+		break;
+	case (Qt::Key_PageDown):
 		verticalScrollBar()->setValue(verticalScrollBar()->value()
 									  - linesPerPage);
 		firstLineIdx = getNextPageStart();
-		// setCursorPos(m_cursorPos + (viewport()->height() / m_charHeight - 1)
-		// * 2 * BYTES_PER_LINE); resetSelection(m_cursorPos);
 		setVisible = true;
-	}
-	if (event->matches(QKeySequence::MoveToPreviousPage)) {
+		break;
+	case (Qt::Key_PageUp):
 		verticalScrollBar()->setValue(verticalScrollBar()->value()
 									  + linesPerPage);
 		firstLineIdx = getPrevPageStart();
-		// setCursorPos(m_cursorPos - (viewport()->height() / m_charHeight - 1)
-		// * 2 * BYTES_PER_LINE); resetSelection(m_cursorPos);
 		setVisible = true;
-	}
-	if (event->matches(QKeySequence::MoveToEndOfDocument)) {
-		verticalScrollBar()->setValue(verticalScrollBar()->maximum());
-		// if(m_pdata)
-		// setCursorPos(m_pdata->size() * 2);
-		// resetSelection(m_cursorPos);
-		setVisible = true;
-	}
-	if (event->matches(QKeySequence::MoveToStartOfDocument)) {
-		verticalScrollBar()->setValue(0);
-		// setCursorPos(0);
-		// resetSelection(m_cursorPos);
-		setVisible = true;
+		break;
+	case (Qt::Key_End):
+		if (event->modifiers() & Qt::ControlModifier) {
+			verticalScrollBar()->setValue(verticalScrollBar()->maximum());
+			setVisible = true;
+		}
+		break;
+	case (Qt::Key_Home):
+		if (event->modifiers() & Qt::ControlModifier) {
+			verticalScrollBar()->setValue(0);
+			setVisible = true;
+		}
+		break;
+	default:
+		QAbstractScrollArea::keyPressEvent(event);
 	}
 
 	atomicLineNum.store(verticalScrollBar()->value());
 
-	/*****************************************************************************/
-	/* Select commands */
-	/*****************************************************************************/
-	/*
-		if (event->matches(QKeySequence::SelectAll))
-		{
-			resetSelection(0);
-			if(m_pdata)
-				setSelection(2 * m_pdata->size() + 1);
-			setVisible = true;
-		}
-		if (event->matches(QKeySequence::SelectNextChar))
-		{
-			int pos = m_cursorPos + 1;
-			setCursorPos(pos);
-			setSelection(pos);
-			setVisible = true;
-		}
-		if (event->matches(QKeySequence::SelectPreviousChar))
-		{
-			int pos = m_cursorPos - 1;
-			setSelection(pos);
-			setCursorPos(pos);
-			setVisible = true;
-		}
-		if (event->matches(QKeySequence::SelectEndOfLine))
-		{
-			int pos = m_cursorPos - (m_cursorPos % (2 * BYTES_PER_LINE)) + (2 *
-	   BYTES_PER_LINE); setCursorPos(pos); setSelection(pos); setVisible = true;
-		}
-		if (event->matches(QKeySequence::SelectStartOfLine))
-		{
-			int pos = m_cursorPos - (m_cursorPos % (2 * BYTES_PER_LINE));
-			setCursorPos(pos);
-			setSelection(pos);
-			setVisible = true;
-		}
-		if (event->matches(QKeySequence::SelectPreviousLine))
-		{
-			int pos = m_cursorPos - (2 * BYTES_PER_LINE);
-			setCursorPos(pos);
-			setSelection(pos);
-			setVisible = true;
-		}
-		if (event->matches(QKeySequence::SelectNextLine))
-		{
-			int pos = m_cursorPos + (2 * BYTES_PER_LINE);
-			setCursorPos(pos);
-			setSelection(pos);
-			setVisible = true;
-		}
-
-		if (event->matches(QKeySequence::SelectNextPage))
-		{
-			int pos = m_cursorPos + (((viewport()->height() / m_charHeight) - 1)
-	   * 2 * BYTES_PER_LINE); setCursorPos(pos); setSelection(pos); setVisible =
-	   true;
-		}
-		if (event->matches(QKeySequence::SelectPreviousPage))
-		{
-			int pos = m_cursorPos - (((viewport()->height() / m_charHeight) - 1)
-	   * 2 * BYTES_PER_LINE); setCursorPos(pos); setSelection(pos); setVisible =
-	   true;
-		}
-		if (event->matches(QKeySequence::SelectEndOfDocument))
-		{
-			int pos = 0;
-			if(m_pdata)
-				pos = m_pdata->size() * 2;
-			setCursorPos(pos);
-			setSelection(pos);
-			setVisible = true;
-		}
-		if (event->matches(QKeySequence::SelectStartOfDocument))
-		{
-			int pos = 0;
-			setCursorPos(pos);
-			setSelection(pos);
-			setVisible = true;
-		}
-
-		if (event->matches(QKeySequence::Copy))
-		{
-			if(m_pdata)
-			{
-				QString res;
-				int idx = 0;
-				int copyOffset = 0;
-
-				QByteArray data = m_pdata->getData(m_selectBegin / 2,
-	   (m_selectEnd - m_selectBegin) / 2 + 1); if(m_selectBegin % 2)
-				{
-					res += QString::number((data.at((idx+1) / 2) & 0xF), 16);
-					res += " ";
-					idx++;
-					copyOffset = 1;
-				}
-
-				int selectedSize = m_selectEnd - m_selectBegin;
-				for (;idx < selectedSize; idx+= 2)
-				{
-					QString val = QString::number((data.at((copyOffset + idx) /
-	   2) & 0xF0) >> 4, 16); if(idx + 1 < selectedSize)
-					{
-						val += QString::number((data.at((copyOffset + idx) / 2)
-	   & 0xF), 16); val += " ";
-					}
-					res += val;
-
-					if((idx/2) % BYTES_PER_LINE == (BYTES_PER_LINE - 1))
-						res += "\n";
-				}
-				QClipboard *clipboard = QApplication::clipboard();
-				clipboard -> setText(res);
-			}
-		}
-
-		if(setVisible)
-			ensureVisible();
-	*/
 	viewport()->update();
 }
 /*

@@ -72,6 +72,7 @@ private:
 	void copyFiles();
 	void moveFiles();
 	void makeDir();
+	void editNewFile();
 	void deleteFiles();
 	void writeSettings();
 	void readSettings();
@@ -83,6 +84,7 @@ private:
 	QFileInfoList getSelectedFiles();
 	void keyPressEvent(QKeyEvent *event) override;
 	bool getDir(QString &dirName, int numFiles, Qt::DropAction action);
+	bool getFileName(QString &fileName);
 };
 
 #endif // MAINWINDOW_H

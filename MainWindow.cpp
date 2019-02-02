@@ -204,8 +204,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 		on_F3_clicked();
 		break;
 	case Qt::Key_F4:
-		on_F4_clicked();
-		break;
+		if (event->modifiers() == Qt::ShiftModifier) {
+			editNewFile();
+			break;
+		} else {
+			on_F4_clicked();
+			break;
+		}
 	case Qt::Key_F5:
 		copyFiles();
 		break;
@@ -427,7 +432,7 @@ bool MainWindow::getDir(QString &dirName, int numFiles, Qt::DropAction action) {
 	}
 
 	QLabel lbl(this);
-	NewDir *dialog = new NewDir(message, dirName, &lbl);
+	NewDirDlg *dialog = new NewDirDlg(message, dirName, &lbl);
 	dialog->adjustSize();
 	lbl.show();
 
@@ -438,12 +443,39 @@ bool MainWindow::getDir(QString &dirName, int numFiles, Qt::DropAction action) {
 	dialog->move(x, y);
 	int hz = dialog->exec();
 	if (hz) {
-		dirName = dialog->dirName();
+		dirName = dialog->getName();
 		lbl.setText(dirName);
 		return true;
 	}
 	return false;
 }
+
+
+bool MainWindow::getFileName(QString &fileName) {
+
+	QString message =
+		"<h3><font color=\"#22b14c\">Enter \
+		file name to edit:</font><h3>";
+
+	QLabel lbl(this);
+	NewFileDlg *dialog = new NewFileDlg(message, fileName, &lbl);
+	dialog->adjustSize();
+	lbl.show();
+
+	QRect r = geometry();
+	int x = r.x() + r.width() / 2;
+	int y = r.y() + r.height() / 2;
+
+	dialog->move(x, y);
+	int hz = dialog->exec();
+	if (hz) {
+		fileName = dialog->getName();
+		lbl.setText(fileName);
+		return true;
+	}
+	return false;
+}
+
 
 void MainWindow::makeDir() {
 
@@ -459,6 +491,26 @@ void MainWindow::makeDir() {
 		QMessageBox::critical(this, "Error!",
 							  "Unable to create directory " + dirName + " in "
 								  + currDir.dirName());
+}
+
+void MainWindow::editNewFile() {
+	auto path = getDirInFocus();
+	QString name = "";
+	QFileInfoList fileList = getSelectedFiles();
+	for (const auto &file : fileList) {
+		if (file.isDir())
+			continue;
+		name = file.fileName();
+	}
+
+	if (getFileName(name)) {
+		QStringList args;
+		path += '/';
+		path += name;
+		qDebug() << path;
+		args << path;
+		QProcess::startDetached(editor, args);
+	}
 }
 
 void MainWindow::on_F3_clicked() {

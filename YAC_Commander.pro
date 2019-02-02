@@ -44,7 +44,8 @@ SOURCES += main.cpp\
 	Views/QHexView.cpp \
 	Menus/ItemContextMenu.cpp \
     Views/QFastView.cpp \
-    Views/FileTableView.cpp
+    Views/FileTableView.cpp \
+    Dialogs/NewFileDlg.cpp
 
 HEADERS  += \
 	Delegates/FileMoverDelegate.hpp \
@@ -63,7 +64,8 @@ HEADERS  += \
 	Menus/ItemContextMenu.hpp \
     Views/QFastView.hpp \
     MainWindow.hpp \
-    Views/FileTableView.hpp
+    Views/FileTableView.hpp \
+    Dialogs/NewFileDlg.hpp
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360

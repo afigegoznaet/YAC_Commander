@@ -1,25 +1,14 @@
 #ifndef NEWDIR_H
 #define NEWDIR_H
 
-#include <QDialog>
+#include "NewFileDlg.hpp"
 
-class QLineEdit;
-class QCompleter;
-
-class NewDir : public QDialog {
+class NewDirDlg : public NewFileDlg {
 	Q_OBJECT
 public:
-	explicit NewDir(QString &label, QString &dirName, QWidget *parent = 0);
+	explicit NewDirDlg(QString &label, QString &getName, QWidget *parent = 0);
 
-	QString dirName() const;
-
-private:
-	QLineEdit *m_lineEdit;
-	QCompleter *dirCompleter;
-
-signals:
-
-public slots:
+protected:
+	QCompleter *fileCompleter;
 };
-
 #endif // NEWDIR_H
