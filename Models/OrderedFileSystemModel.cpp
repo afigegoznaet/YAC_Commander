@@ -21,15 +21,15 @@ bool OrderedFileSystemModel::lessThan(const QModelIndex &left,
 	return order == Qt::AscendingOrder;
   if (!rightFile.fileName().compare(".."))
 	return order != Qt::AscendingOrder;
+  if (leftFile.isDir() && (column != 3))
+	return leftFile.fileName().compare(rightFile.fileName()) < 0;
+
   switch (column) {
   case 0:
 	res = leftFile.fileName().compare(rightFile.fileName()) < 0;
 	break;
   case 2:
-	if (leftFile.isDir())
-	  res = leftFile.fileName().compare(rightFile.fileName()) < 0;
-	else
-	  res = leftFile.suffix().compare(rightFile.suffix()) < 0;
+	res = leftFile.suffix().compare(rightFile.suffix()) < 0;
 	break;
   case 3:
 	res = leftFile.created().toTime_t() < rightFile.created().toTime_t();

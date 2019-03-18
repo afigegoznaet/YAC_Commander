@@ -45,7 +45,14 @@ SOURCES += main.cpp\
 	Menus/ItemContextMenu.cpp \
     Views/QFastView.cpp \
     Views/FileTableView.cpp \
-    Dialogs/NewFileDlg.cpp
+    Dialogs/NewFileDlg.cpp \
+    Models/FileFindingsModel.cpp \
+    Models/OrderedFileSystemModel.cpp \
+    Models/QTrashTableModel.cpp \
+    Views/FileTableView.cpp \
+    Views/QFastView.cpp \
+    Views/QHexView.cpp \
+    Views/QTrashTableView.cpp
 
 HEADERS  += \
 	Delegates/FileMoverDelegate.hpp \
@@ -65,7 +72,14 @@ HEADERS  += \
     Views/QFastView.hpp \
     MainWindow.hpp \
     Views/FileTableView.hpp \
-    Dialogs/NewFileDlg.hpp
+    Dialogs/NewFileDlg.hpp \
+    Models/FileFindingsModel.hpp \
+    Models/OrderedFileSystemModel.hpp \
+    Models/QTrashTableModel.hpp \
+    Views/FileTableView.hpp \
+    Views/QFastView.hpp \
+    Views/QHexView.hpp \
+    Views/QTrashTableView.hpp
 
 win32-msvc* {
 	QMAKE_LFLAGS_WINDOWS += /STACK:10485760,655360
@@ -80,11 +94,12 @@ linux {
 	icon.path = /usr/share/icons/hicolor/32x32/apps/
 	icon.files = TC_QT.png
 	INSTALLS += target desktop icon
-	QT += KIOCore KIOFileWidgets KIOWidgets KNTLM KArchive KCoreAddons
+	QT += KIOCore KIOFileWidgets KIOWidgets KNTLM KArchive KCoreAddons KJobWidgets
 
 }
 
 DISTFILES += \
 	HexView/LICENSE \
-    tc_qt.ico
+    tc_qt.ico \
+    Views/QHEXVIEW_LICENSE
 
