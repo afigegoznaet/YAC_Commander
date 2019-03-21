@@ -1,5 +1,4 @@
 ﻿#include "QTrashTableView.hpp"
-#include "../Models/QTrashTableModel.hpp"
 #include <algorithm>
 #include <QHeaderView>
 #include <KDirLister>
@@ -20,7 +19,7 @@ QTrashTableView::QTrashTableView(const QDir &directory, QWidget *parent)
 	// this->parent = (qobject_cast<FileTabSelector *>(parent));
 	// infoLabel = this->parent->getLabel();
 
-	trashModel = new QTrashTableModel(this);
+	model = new QTrashTableModel(this);
 	menu = new QMenu(this);
 	menu->addAction("Restore selected items", this, SLOT(restoreItems()));
 	menu->addAction("Purge selected items", this, SLOT(purgeItems()));
@@ -28,8 +27,8 @@ QTrashTableView::QTrashTableView(const QDir &directory, QWidget *parent)
 	// menu->addAction("Purge selected items", [this] { });
 	menu->addAction("Empty Trash", [] { KIO::emptyTrash(); });
 
-	connect(trashModel, SIGNAL(trashNotEmpty()), this, SIGNAL(trashNotEmpty()));
-	connect(trashModel, SIGNAL(trashEmpty()), this, SIGNAL(trashEmpty()));
+	connect(model, SIGNAL(trashNotEmpty()), this, SIGNAL(trashNotEmpty()));
+	connect(model, SIGNAL(trashEmpty()), this, SIGNAL(trashEmpty()));
 }
 
 void QTrashTableView::restoreItems() {
@@ -43,7 +42,7 @@ void QTrashTableView::restoreItems() {
 				qDebug() << "Finsihed restorins";
 				qDebug() << job->error();
 				if (job->error() == KJob::NoError)
-					trashModel->removeRows(rows);
+					getTrashModel()->removeRows(rows);
 			});
 }
 void QTrashTableView::purgeItems() {
@@ -56,7 +55,7 @@ void QTrashTableView::purgeItems() {
 			[this, rows = std::move(rows)](KJob *job) {
 				qDebug() << "Finsihed purging";
 				if (job->error() == KJob::NoError)
-					trashModel->removeRows(rows);
+					getTrashModel()->removeRows(rows);
 			});
 }
 
@@ -64,16 +63,16 @@ void QTrashTableView::init() {
 
 	FileTableView::init();
 	directory = "{Trash}";
-	setModel(trashModel);
-	connect(trashModel, SIGNAL(completed()), this, SLOT(updateInfo()));
+	setModel(model);
+	connect(model, SIGNAL(completed()), this, SLOT(updateInfo()));
 	emit dirChanged(directory, this->index);
 }
 
 
 void QTrashTableView::on_doubleClicked(const QModelIndex &index) {
-	const auto &item = trashModel->itemAt(index.row());
+	const auto &item = getTrashModel()->itemAt(index.row());
 	if (item.isDir())
-		trashModel->cdTo(item.url());
+		getTrashModel()->cdTo(item.url());
 }
 
 bool QTrashTableView::parseItems(size_t &totalSize, int &dirCount,
@@ -86,7 +85,7 @@ bool QTrashTableView::parseItems(size_t &totalSize, int &dirCount,
 			KDirLister dirParser;
 			dirParser.openUrl(item.url());
 			parseItems(totalSize, dirCount, fileCount,
-					   trashModel->getItemsForDir(item.url()));
+					   getTrashModel()->getItemsForDir(item.url()));
 		} else {
 			fileCount++;
 			totalSize += item.size();
@@ -101,9 +100,9 @@ void QTrashTableView::updateInfo() {
 		return;
 
 	QString fmt;
-	qDebug() << trashModel->isFinished();
+	qDebug() << getTrashModel()->isFinished();
 	const auto &items =
-		trashModel->getItemsForDir(QUrl(QStringLiteral("trash:/")));
+		getTrashModel()->getItemsForDir(QUrl(QStringLiteral("trash:/")));
 	size_t totalSize{};
 	int dirCount{};
 	int fileCount{};
@@ -232,7 +231,7 @@ void QTrashTableView::mouseReleaseEvent(QMouseEvent *event) {
 
 QList<QUrl> QTrashTableView::getSelectedItems(QList<int> &rows) {
 	auto indexes = selectionModel()->selectedRows();
-	auto items = trashModel->currentItems();
+	auto items = getTrashModel()->currentItems();
 	QList<QUrl> outItems;
 	for (const auto idx : indexes) {
 		rows.append(idx.row());

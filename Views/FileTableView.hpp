@@ -8,6 +8,7 @@
 #include <QTableView>
 #include <QTimer>
 #include "Delegates/TableItemDelegate.hpp"
+#include "Models/OrderedFileSystemModel.hpp"
 
 // class TableItemDelegate;
 class OrderedFileSystemModel;
@@ -33,7 +34,9 @@ public:
 		// return qobject_cast<TableItemDelegate *>(QTableView::itemDelegate());
 		return qobject_cast<TableItemDelegate *>(QTableView::itemDelegate());
 	}
-	OrderedFileSystemModel *getModel() { return model; }
+	OrderedFileSystemModel *getModel() const {
+		return qobject_cast<OrderedFileSystemModel *>(model);
+	}
 	QModelIndexList getSelectedIndexes();
 	virtual QString getDirectory() const;
 
@@ -44,7 +47,6 @@ public:
 	void openEditor(QModelIndex &index);
 	void deleteSelectedFiles();
 	void showHidden(bool show);
-	OrderedFileSystemModel *getModel() const { return model; }
 
 signals:
 	// void activated(const QModelIndex &index);
@@ -79,9 +81,9 @@ protected:
 	FileTabSelector *parent{nullptr};
 	QString directory;
 	void queryDialog(QString &filter, Action act);
+	QAbstractItemModel *model{};
 
 private:
-	OrderedFileSystemModel *model{};
 	ItemContextMenu *menu{nullptr};
 	QTimer slowDoubleClickTimer;
 	bool editorIsOpen{false};

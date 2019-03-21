@@ -3,6 +3,7 @@
 
 #include "FileTableView.hpp"
 #include <KFileItem>
+#include "Models/QTrashTableModel.hpp"
 
 class QLabel;
 class TableItemDelegate;
@@ -41,8 +42,11 @@ protected:
 
 private:
 	QTabWidget *metaTab = nullptr;
-	QTrashTableModel *trashModel = nullptr;
 	QMenu *menu = nullptr;
+
+	QTrashTableModel *getTrashModel() {
+		return qobject_cast<QTrashTableModel *>(model);
+	}
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;

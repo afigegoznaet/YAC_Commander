@@ -5,7 +5,6 @@
 
 
 #include "Menus/ItemContextMenu.hpp"
-#include "Models/OrderedFileSystemModel.hpp"
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFileSystemModel>
@@ -37,8 +36,8 @@ FileTableView::FileTableView(const QDir &directory, QWidget *parent)
 
 
 	auto fModel = new QFileSystemModel(this);
-	model->setSourceModel(fModel);
-	model->setRootPath(this->directory);
+	getModel()->setSourceModel(fModel);
+	getModel()->setRootPath(this->directory);
 	auto topWidgets = QApplication::topLevelWidgets();
 
 	auto filters = QDir::AllEntries | QDir::NoDot | QDir::System;
@@ -52,18 +51,18 @@ FileTableView::FileTableView(const QDir &directory, QWidget *parent)
 		}
 	}
 
-	model->setFilter(filters);
+	getModel()->setFilter(filters);
 
 	connect(fModel, &QFileSystemModel::directoryLoaded, [&]() {
-		prevRow = model->mapToSource(currentIndex()).row();
-		model->sort();
+		prevRow = getModel()->mapToSource(currentIndex()).row();
+		getModel()->sort();
 	});
 	connect(fModel, SIGNAL(rowsRemoved(QModelIndex, int, int)), this,
 			SLOT(rowsRemoved(QModelIndex, int, int)));
 }
 
 void FileTableView::on_doubleClicked(const QModelIndex &index) {
-	QFileInfo info = model->fileInfo(index); // mapped
+	QFileInfo info = getModel()->fileInfo(index); // mapped
 	if (info.isDir()) {
 		if (info.fileName().compare(".."))
 			chDir(index, IN);
@@ -95,21 +94,21 @@ void FileTableView::chDir(const QModelIndex &index, bool in_out) {
 	prevRow = -1;
 	if (in_out == IN) {
 		directory = ".."; // clever selection
-		QDir parentDir(model->fileInfo(index).absoluteFilePath());
-		model->setRootPath(parentDir.absolutePath());
+		QDir parentDir(getModel()->fileInfo(index).absoluteFilePath());
+		getModel()->setRootPath(parentDir.absolutePath());
 		parentDir.cd(".");
-		setRootIndex(model->getRootIndex());
+		setRootIndex(getModel()->getRootIndex());
 	} else {
-		QDir parentDir(model->rootPath());
+		QDir parentDir(getModel()->rootPath());
 		if (parentDir.isRoot())
 			return;
 		directory = parentDir.dirName();
 		parentDir.cdUp();
-		setRootIndex(model->setRootPath(parentDir.absolutePath()));
+		setRootIndex(getModel()->setRootPath(parentDir.absolutePath()));
 	}
 	selectionModel()->clear();
 	updateInfo();
-	emit dirChanged(model->rootPath(), this->index);
+	emit dirChanged(getModel()->rootPath(), this->index);
 }
 
 void FileTableView::keyPressEvent(QKeyEvent *event) {
@@ -118,7 +117,8 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 	if (currentIndex().isValid())
 		index = currentIndex();
 	else
-		index = model->index(0, 0, rootIndex()); // rootIndex().child(0, 0);
+		index =
+			getModel()->index(0, 0, rootIndex()); // rootIndex().child(0, 0);
 	auto key = event->key();
 	QFlags<QItemSelectionModel::SelectionFlag> flags =
 		QItemSelectionModel::NoUpdate;
@@ -154,7 +154,7 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 		[[fallthrough]];
 	case Qt::Key_Down:
 		selectionModel()->setCurrentIndex(index, flags);
-		index = model->index(index.row() + 1, 0, rootIndex());
+		index = getModel()->index(index.row() + 1, 0, rootIndex());
 		// index = rootIndex().child(index.row() + 1, 0);
 		if (index.isValid())
 			selectionModel()->setCurrentIndex(index,
@@ -162,7 +162,7 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 		break;
 	case Qt::Key_Up:
 		selectionModel()->setCurrentIndex(index, flags);
-		index = model->index(index.row() - 1, 0, rootIndex());
+		index = getModel()->index(index.row() - 1, 0, rootIndex());
 		// index = rootIndex().child(index.row() - 1, 0);
 		if (index.isValid())
 			selectionModel()->setCurrentIndex(index,
@@ -179,7 +179,7 @@ void FileTableView::keyPressEvent(QKeyEvent *event) {
 		QAbstractItemView::keyPressEvent(event);
 		break;
 	}
-	// qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();
+	// qDebug()<<getModel()->fileInfo(currentIndex()).absoluteFilePath();
 }
 
 void FileTableView::init() {
@@ -197,10 +197,11 @@ void FileTableView::init() {
 	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 4);
 
 	setSelectionMode(QAbstractItemView::NoSelection);
-	setModel(model);
-	model->setFilterRegExp("");
+	setModel(getModel());
+	auto hz = getModel();
+	hz->setFilterRegExp("");
 
-	setRootIndex(model->getRootIndex());
+	setRootIndex(getModel()->getRootIndex());
 	verticalHeader()->setVisible(false);
 
 	connect(this, SIGNAL(doubleClicked(QModelIndex)), this,
@@ -208,7 +209,7 @@ void FileTableView::init() {
 	// horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
 	connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this,
 			SLOT(headerClicked(int)));
-	selectionModel()->select(model->index(1, 0, rootIndex()),
+	selectionModel()->select(getModel()->index(1, 0, rootIndex()),
 							 QItemSelectionModel::Current);
 
 	connect(model, SIGNAL(directoryLoaded(QString)), this,
@@ -250,7 +251,7 @@ void FileTableView::init() {
 void FileTableView::setCurrentSelection(const QString &) {
 	if (prevRow > 0) {
 		/*auto ind =
-				model->mapFromSource(model->getSourceRootIndex().child(prevRow,
+				getModel()->mapFromSource(getModel()->getSourceRootIndex().child(prevRow,
 		0)); setCurrentIndex(ind);
 	*/
 		selectionModel()->currentChanged(currentIndex(), currentIndex());
@@ -258,31 +259,31 @@ void FileTableView::setCurrentSelection(const QString &) {
 		// scrollTo(currentIndex());
 		return;
 	}
-	int rows = model->rowCount(rootIndex());
-	auto rootIndex = model->getRootIndex();
-	auto index = model->index(0, 0, rootIndex);
+	int rows = getModel()->rowCount(rootIndex());
+	auto rootIndex = getModel()->getRootIndex();
+	auto index = getModel()->index(0, 0, rootIndex);
 	int i;
 	for (i = 0; i < rows; i++) {
 		auto ind = rootIndex.child(i, 0);
-		if (!directory.compare(model->fileInfo(ind).fileName())) {
+		if (!directory.compare(getModel()->fileInfo(ind).fileName())) {
 			index = ind;
 			break;
 		}
 	}
 
 	selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
-	prevRow = model->mapToSource(index).row();
+	prevRow = getModel()->mapToSource(index).row();
 	scrollTo(index);
 }
 
 void FileTableView::headerClicked(int section) {
 
-	prevRow = model->mapToSource(currentIndex()).row();
+	prevRow = getModel()->mapToSource(currentIndex()).row();
 	Qt::SortOrder order = Qt::AscendingOrder;
 	if (section == horizontalHeader()->sortIndicatorSection())
 		if (Qt::AscendingOrder == horizontalHeader()->sortIndicatorOrder())
 			order = Qt::DescendingOrder;
-	model->sort(section, order);
+	getModel()->sort(section, order);
 }
 
 void FileTableView::focusInEvent(QFocusEvent *event) {
@@ -301,22 +302,22 @@ QFileInfoList FileTableView::getSelectedFiles() {
 	QModelIndexList items = getSelectedIndexes();
 
 	for (const auto &fileIndex : items)
-		selectedFiles.append(model->fileInfo(fileIndex));
+		selectedFiles.append(getModel()->fileInfo(fileIndex));
 
 	return selectedFiles;
 }
 
 QModelIndexList FileTableView::getSelectedIndexes() {
 	QModelIndexList items = selectionModel()->selectedRows();
-	auto currIdx = model->fileInfo(selectionModel()->currentIndex());
+	auto currIdx = getModel()->fileInfo(selectionModel()->currentIndex());
 	if (items.empty() && currIdx.fileName().compare(".."))
 		items.append(selectionModel()->currentIndex());
 	return items;
 }
 
 void FileTableView::cdTo(const QString &dir) {
-	model->setRootPath(dir);
-	setRootIndex(model->getRootIndex());
+	getModel()->setRootPath(dir);
+	setRootIndex(getModel()->getRootIndex());
 	emit dirChanged(dir, this->index);
 	updateInfo();
 }
@@ -375,7 +376,7 @@ void FileTableView::queryDialog(QString &filter, Action act) {
 
 void FileTableView::setSelectionAction(Action act) {
 	QString filter("");
-	int rowCount = model->rowCount(rootIndex());
+	int rowCount = getModel()->rowCount(rootIndex());
 	QItemSelectionModel::SelectionFlag selectionType;
 	switch (act) {
 	case PLUS:
@@ -402,12 +403,12 @@ void FileTableView::setSelectionAction(Action act) {
 		const QSignalBlocker blocker(selectionModel());
 		for (int i = 1; i < rowCount; i++) {
 
-			auto ind = model->index(i, 0, rootIndex());
+			auto ind = getModel()->index(i, 0, rootIndex());
 			if (filter.isEmpty()) {
 				this->selectionModel()->select(
 					ind, selectionType | QItemSelectionModel::Rows);
 			} else {
-				auto fName = model->fileInfo(ind).fileName();
+				auto fName = getModel()->fileInfo(ind).fileName();
 				// auto m = reg.match(fName);
 				if (fName.contains(reg)) {
 					this->selectionModel()->select(
@@ -423,8 +424,8 @@ void FileTableView::setSelectionAction(Action act) {
 
 void FileTableView::rowsRemoved(const QModelIndex &, int, int) {
 
-	auto ind =
-		model->mapFromSource(model->getSourceRootIndex().child(prevRow, 0));
+	auto ind = getModel()->mapFromSource(
+		getModel()->getSourceRootIndex().child(prevRow, 0));
 	setCurrentIndex(ind);
 	delegate->currentChanged(currentIndex(), currentIndex());
 	updateInfo();
@@ -443,7 +444,7 @@ void FileTableView::updateInfo() {
 
 	if (!isCurrent())
 		return;
-	QStorageInfo storage(model->rootPath());
+	QStorageInfo storage(getModel()->rootPath());
 	// qDebug()<<"Root path:"<< storage.rootPath();
 	QString fmt;
 	auto sizeTotal = QLocale::system().formattedDataSize(
@@ -452,12 +453,13 @@ void FileTableView::updateInfo() {
 		storage.bytesAvailable(), 2, QLocale::DataSizeTraditionalFormat);
 	;
 
-	fmt += model->rootPath();
+	fmt += getModel()->rootPath();
 
 	fmt += "\n";
 	fmt += sizeRemaining + " available of " + sizeTotal;
 	fmt += "\t" + QString::number(selectionModel()->selectedRows().size())
-		   + " selected of " + QString::number(model->rowCount(rootIndex()) - 1)
+		   + " selected of "
+		   + QString::number(getModel()->rowCount(rootIndex()) - 1)
 		   + " directory items";
 
 	infoLabel->setText(fmt);
@@ -482,7 +484,7 @@ void FileTableView::openContextMenu(QPoint) {
 void FileTableView::commitNewName(QWidget *editor) {
 	QString newName = editor->property("text").toString();
 
-	QFileInfo renamedFile = model->fileInfo(currentIndex());
+	QFileInfo renamedFile = getModel()->fileInfo(currentIndex());
 	QFile file(renamedFile.absoluteFilePath());
 	newName = renamedFile.absolutePath() + "/" + newName;
 	// qDebug()<<newName;
@@ -508,7 +510,7 @@ void FileTableView::deleteSelectedFiles() {
 					 ? selectionModel()->currentIndex()
 					 : selectionModel()->selectedRows().first();
 
-	prevRow = model->mapToSource(index).row();
+	prevRow = getModel()->mapToSource(index).row();
 
 	bool status;
 	int counter = 0;
@@ -563,8 +565,8 @@ void FileTableView::deleteSelectedFiles() {
 		counter++;
 	}
 	/*
-			if (prevRow >= model->rowCount(rootIndex()) - counter)
-					prevRow = model->rowCount(rootIndex()) - counter - 1;
+			if (prevRow >= getModel()->rowCount(rootIndex()) - counter)
+					prevRow = getModel()->rowCount(rootIndex()) - counter - 1;
 			*/
 }
 
@@ -574,10 +576,10 @@ void FileTableView::showHidden(bool show) {
 	if (show)
 		filters |= QDir::Hidden;
 
-	model->setFilter(filters);
+	getModel()->setFilter(filters);
 }
 
-QString FileTableView::getDirectory() const { return model->rootPath(); }
+QString FileTableView::getDirectory() const { return getModel()->rootPath(); }
 
 bool FileTableView::isCurrent() const {
 	return parent->currentWidget() == this;
