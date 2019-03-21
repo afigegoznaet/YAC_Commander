@@ -19,3 +19,7 @@ QVariant FileFindingsModel::data(const QModelIndex &index, int role) const {
 		return QVariant();
 	return files.at(index.row());
 }
+
+void FileFindingsModel::addItem(const QString &newItem) {
+	files.push_back(newItem);
+}

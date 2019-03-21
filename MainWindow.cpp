@@ -411,7 +411,10 @@ FileTableView *MainWindow::focusedTab() {
 void MainWindow::cdTo(const QString &dir) {
 
 	// qDebug()<<"Got it!!!!";
-	focusedTab()->cdTo(dir);
+	if (!dir.compare("{Trash}"))
+		focusedSelector()->addNewTab(false, dir);
+	else
+		focusedTab()->cdTo(dir);
 }
 
 bool MainWindow::getDir(QString &dirName, int numFiles, Qt::DropAction action) {

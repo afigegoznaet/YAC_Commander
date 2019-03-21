@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include "Views/FileTableView.hpp"
+#include "Views/QTrashTableView.hpp"
 
 FileTabSelector::FileTabSelector(QWidget *parent) : QTabWidget(parent) {
 	defaultStyle = styleSheet();
@@ -117,7 +118,10 @@ FileTableView *FileTabSelector::addNewTab(bool dup, QString dir) {
 		dir = qobject_cast<FileTableView *>(widget(index))->getDirectory();
 	}
 
-	newTab = new FileTableView(dir, this);
+	if (!dir.compare("{Trash}"))
+		newTab = new QTrashTableView(dir, this);
+	else
+		newTab = new FileTableView(dir, this);
 	newTab->init();
 
 	index = addTab(newTab, newTab->getDirectory());
@@ -137,7 +141,7 @@ FileTableView *FileTabSelector::addNewTab(bool dup, QString dir) {
 	QSettings settings;
 	QString settingsSection("LeftColumns");
 	if (this->objectName().startsWith("right"))
-		settingsSection = {"RightColumns"};
+		settingsSection = "RightColumns";
 
 	auto headerState =
 		settings.value(settingsSection, defaultState).toByteArray();

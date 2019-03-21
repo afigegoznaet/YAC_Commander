@@ -7,8 +7,9 @@
 #include <QDir>
 #include <QTableView>
 #include <QTimer>
+#include "Delegates/TableItemDelegate.hpp"
 
-class TableItemDelegate;
+// class TableItemDelegate;
 class OrderedFileSystemModel;
 class QLabel;
 class ItemContextMenu;
@@ -34,7 +35,7 @@ public:
 	}
 	OrderedFileSystemModel *getModel() { return model; }
 	QModelIndexList getSelectedIndexes();
-	QString getDirectory();
+	virtual QString getDirectory() const;
 
 	void setTabOrderIndex(int index) { this->index = index; }
 	void setLabel(QLabel *infoLabel) { this->infoLabel = infoLabel; }
@@ -76,13 +77,12 @@ protected:
 	QLabel *infoLabel{nullptr};
 	TableItemDelegate *delegate{nullptr};
 	FileTabSelector *parent{nullptr};
-
+	QString directory;
 	void queryDialog(QString &filter, Action act);
 
 private:
 	OrderedFileSystemModel *model{};
 	ItemContextMenu *menu{nullptr};
-	QString directory;
 	QTimer slowDoubleClickTimer;
 	bool editorIsOpen{false};
 	bool slowDoubleClick{false};

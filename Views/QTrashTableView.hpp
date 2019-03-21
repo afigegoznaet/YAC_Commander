@@ -12,11 +12,12 @@ class QTrashTableModel;
 class QTrashTableView : public FileTableView {
 	Q_OBJECT
 public:
-	explicit QTrashTableView(QWidget *parent = nullptr);
+	explicit QTrashTableView(const QDir &directory, QWidget *parent = nullptr);
 
 	KFileItemList getSelectedFiles();
 
 	void init() override;
+	QString getDirectory() const override { return directory; }
 
 signals:
 	void trashNotEmpty();
@@ -33,7 +34,7 @@ public slots:
 
 
 protected:
-	void keyPressEvent(QKeyEvent *event) override;
+	// void keyPressEvent(QKeyEvent *event) override;
 	bool parseItems(size_t &totalSize, int &dirCount, int &fileCount,
 					const KFileItemList &items);
 	QList<QUrl> getSelectedItems(QList<int> &rows);

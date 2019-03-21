@@ -54,6 +54,8 @@ void QuickAccessBar::refreshMountPoints() {
 
 	DriveButton *button = new DriveButton(QDir::homePath(), this);
 	addWidget(button);
+	DriveButton *trash = new DriveButton("{Trash}", this);
+	addWidget(trash);
 }
 
 void QuickAccessBar::sendSignal(const QString &dir) const { emit cdTo(dir); }

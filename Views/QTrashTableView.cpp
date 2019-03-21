@@ -12,8 +12,10 @@
 #include <KIO/DeleteJob>
 #include <KJobWidgets>
 #include <KJobUiDelegate>
+#include "Delegates/TableItemDelegate.hpp"
 
-QTrashTableView::QTrashTableView(QWidget *parent) : FileTableView(parent) {
+QTrashTableView::QTrashTableView(const QDir &directory, QWidget *parent)
+	: FileTableView(directory, parent) {
 
 	// this->parent = (qobject_cast<FileTabSelector *>(parent));
 	// infoLabel = this->parent->getLabel();
@@ -60,54 +62,11 @@ void QTrashTableView::purgeItems() {
 
 void QTrashTableView::init() {
 
+	FileTableView::init();
+	directory = "{Trash}";
 	setModel(trashModel);
-
-	verticalHeader()->setVisible(false);
-	verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 4);
-
-	horizontalHeader()->setStretchLastSection(true);
-	horizontalHeader()->setSectionsMovable(true);
-	horizontalHeader()->setSectionsClickable(true);
-	horizontalHeader()->setSortIndicatorShown(true);
-
-
-	connect(this, SIGNAL(doubleClicked(const QModelIndex &index)), this,
-			SLOT(on_doubleClicked(const QModelIndex &index)));
-
-	setEditTriggers(QAbstractItemView::SelectedClicked);
-	setSelectionBehavior(QAbstractItemView::SelectRows);
-	setTabKeyNavigation(false);
-
-	setSelectionMode(QAbstractItemView::NoSelection);
-
-	// horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
-	connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this,
-			SLOT(headerClicked(int)));
-
-	// delegate = new TableItemDelegate(this);
-	// setItemDelegate(delegate);
-	// connect(this, SIGNAL(focusEvent(bool)), delegate, SLOT(focused(bool)));
-	// connect(horizontalHeader(), &QHeaderView::geometriesChanged, [&]() {
-	// itemDelegate()->setRect(horizontalHeader()->geometry()); });
-	// connect(selectionModel(), SIGNAL(currentChanged(QModelIndex,
-	// QModelIndex)), delegate, SLOT(currentChanged(QModelIndex, QModelIndex)));
-	connect(selectionModel(), &QItemSelectionModel::currentChanged, this,
-			[this](QModelIndex current, QModelIndex prev) {
-				for (int i = 0; i < 4; i++)
-					update(current.sibling(current.row(), i));
-				for (int i = 0; i < 4; i++)
-					update(prev.sibling(prev.row(), i));
-			});
-
-	// setDragEnabled(true);
-	// setDragDropMode(QAbstractItemView::DragDrop);
-	// setDropIndicatorShown(true);
-
-	connect(this, SIGNAL(contextMenuRequested(QPoint)), this,
-			SLOT(openContextMenu(QPoint)));
-
 	connect(trashModel, SIGNAL(completed()), this, SLOT(updateInfo()));
+	emit dirChanged(directory, this->index);
 }
 
 
@@ -168,11 +127,9 @@ void QTrashTableView::updateInfo() {
 	infoLabel->setText(fmt);
 }
 
-void QTrashTableView::openContextMenu(QPoint) { menu->popup(QCursor::pos()); }
-
-bool QTrashTableView::isCurrent() const {
-	return true;
-	// return parent->currentWidget() == this;
+void QTrashTableView::openContextMenu(QPoint) {
+	qDebug() << "popup called";
+	menu->popup(QCursor::pos());
 }
 
 void QTrashTableView::mousePressEvent(QMouseEvent *event) {
@@ -199,89 +156,79 @@ void QTrashTableView::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 
-void QTrashTableView::keyPressEvent(QKeyEvent *event) {
-	// QString filter;
-	QModelIndex index;
-	if (currentIndex().isValid())
-		index = currentIndex();
-	else
-		index = trashModel->index(0, 0, rootIndex());
-	const auto &item = trashModel->rootItem();
+// void QTrashTableView::keyPressEvent(QKeyEvent *event) {
+//	// QString filter;
+//	QModelIndex index;
+//	if (currentIndex().isValid())
+//		index = currentIndex();
+//	else
+//		index = trashModel->index(0, 0, rootIndex());
+//	const auto &item = trashModel->rootItem();
 
-	auto urlString = item.url().toString();
-	auto lastIndex = urlString.lastIndexOf('/', -1);
-	auto parentUrl = urlString.mid(0, lastIndex + 1);
+//	auto urlString = item.url().toString();
+//	auto lastIndex = urlString.lastIndexOf('/', -1);
+//	auto parentUrl = urlString.mid(0, lastIndex + 1);
 
-	auto key = event->key();
-	QFlags<QItemSelectionModel::SelectionFlag> flags =
-		QItemSelectionModel::NoUpdate;
-	auto modifiers = qApp->keyboardModifiers();
-	if (modifiers & Qt::ShiftModifier)
-		flags = QItemSelectionModel::Toggle | QItemSelectionModel::Rows;
-	switch (key) {
-	case Qt::Key_Return:
-		on_doubleClicked(index);
-		break;
-	case Qt::Key_Backspace:
-		trashModel->cdTo(parentUrl);
-		break;
-		/*
-	case Qt::Key_Plus:
-		setSelectionAction(PLUS);
-		break;
-	case Qt::Key_Minus:
-		setSelectionAction(MINUS);
-		break;
-	case Qt::Key_Asterisk:
-		setSelectionAction(ASTERISK);
-		break;
-		*/
-	case Qt::Key_Right:
-	case Qt::Key_Left:
-		break;
-	case Qt::Key_Space:
-		selectionModel()->setCurrentIndex(
-			index, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
-		[[fallthrough]];
-	case Qt::Key_Down:
-		selectionModel()->setCurrentIndex(index, flags);
-		index = trashModel->index(index.row() + 1, 0, rootIndex());
-		if (index.isValid())
-			selectionModel()->setCurrentIndex(index,
-											  QItemSelectionModel::NoUpdate);
-		break;
-	case Qt::Key_Up:
-		selectionModel()->setCurrentIndex(index, flags);
-		index = trashModel->index(index.row() - 1, 0, rootIndex());
-		if (index.isValid())
-			selectionModel()->setCurrentIndex(index,
-											  QItemSelectionModel::NoUpdate);
-		break;
-		/*
-	case Qt::Key_A:
-		if (modifiers == Qt::ControlModifier) {
-			selectionModel()->clearSelection();
-			setSelectionAction(ASTERISK);
-			break;
-		}
-		[[fallthrough]];
-		*/
-	default:
-		QAbstractItemView::keyPressEvent(event);
-		break;
-	}
-	// qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();
-}
-
-void QTrashTableView::focusInEvent(QFocusEvent *event) {
-	QAbstractItemView::focusInEvent(event);
-	emit focusEvent(true);
-}
-
-void QTrashTableView::focusOutEvent(QFocusEvent *event) {
-	QAbstractItemView::focusOutEvent(event);
-	emit focusEvent(false);
-}
+//	auto key = event->key();
+//	QFlags<QItemSelectionModel::SelectionFlag> flags =
+//		QItemSelectionModel::NoUpdate;
+//	auto modifiers = qApp->keyboardModifiers();
+//	if (modifiers & Qt::ShiftModifier)
+//		flags = QItemSelectionModel::Toggle | QItemSelectionModel::Rows;
+//	switch (key) {
+//	case Qt::Key_Return:
+//		on_doubleClicked(index);
+//		break;
+//	case Qt::Key_Backspace:
+//		trashModel->cdTo(parentUrl);
+//		break;
+//		/*
+//	case Qt::Key_Plus:
+//		setSelectionAction(PLUS);
+//		break;
+//	case Qt::Key_Minus:
+//		setSelectionAction(MINUS);
+//		break;
+//	case Qt::Key_Asterisk:
+//		setSelectionAction(ASTERISK);
+//		break;
+//		*/
+//	case Qt::Key_Right:
+//	case Qt::Key_Left:
+//		break;
+//	case Qt::Key_Space:
+//		selectionModel()->setCurrentIndex(
+//			index, QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
+//		[[fallthrough]];
+//	case Qt::Key_Down:
+//		selectionModel()->setCurrentIndex(index, flags);
+//		index = trashModel->index(index.row() + 1, 0, rootIndex());
+//		if (index.isValid())
+//			selectionModel()->setCurrentIndex(index,
+//											  QItemSelectionModel::NoUpdate);
+//		break;
+//	case Qt::Key_Up:
+//		selectionModel()->setCurrentIndex(index, flags);
+//		index = trashModel->index(index.row() - 1, 0, rootIndex());
+//		if (index.isValid())
+//			selectionModel()->setCurrentIndex(index,
+//											  QItemSelectionModel::NoUpdate);
+//		break;
+//		/*
+//	case Qt::Key_A:
+//		if (modifiers == Qt::ControlModifier) {
+//			selectionModel()->clearSelection();
+//			setSelectionAction(ASTERISK);
+//			break;
+//		}
+//		[[fallthrough]];
+//		*/
+//	default:
+//		QAbstractItemView::keyPressEvent(event);
+//		break;
+//	}
+//	// qDebug()<<model->fileInfo(currentIndex()).absoluteFilePath();
+//}
 
 QList<QUrl> QTrashTableView::getSelectedItems(QList<int> &rows) {
 	auto indexes = selectionModel()->selectedRows();

@@ -14,8 +14,8 @@ CONFIG += c++17
 #QMAKE_LFLAGS+="-fsanitize=thread -shared"
 CONFIG(debug, debug|release) {
   message( "debug" )
-QMAKE_CXXFLAGS+="-fsanitize=address"
-QMAKE_LFLAGS+=" -fsanitize=address"
+#QMAKE_CXXFLAGS_DEBUG+="-fsanitize=address"
+#QMAKE_LFLAGS_DEBUG+=" -fsanitize=address"
 }
 
 
@@ -45,13 +45,8 @@ SOURCES += main.cpp\
 	Menus/ItemContextMenu.cpp \
     Views/QFastView.cpp \
     Views/FileTableView.cpp \
-    Dialogs/NewFileDlg.cpp \
-    Models/FileFindingsModel.cpp \
-    Models/OrderedFileSystemModel.cpp \
-    Models/QTrashTableModel.cpp \
-    Views/FileTableView.cpp \
-    Views/QFastView.cpp \
-    Views/QHexView.cpp \
+	Dialogs/NewFileDlg.cpp \
+	Models/QTrashTableModel.cpp \
     Views/QTrashTableView.cpp
 
 HEADERS  += \
@@ -72,13 +67,8 @@ HEADERS  += \
     Views/QFastView.hpp \
     MainWindow.hpp \
     Views/FileTableView.hpp \
-    Dialogs/NewFileDlg.hpp \
-    Models/FileFindingsModel.hpp \
-    Models/OrderedFileSystemModel.hpp \
-    Models/QTrashTableModel.hpp \
-    Views/FileTableView.hpp \
-    Views/QFastView.hpp \
-    Views/QHexView.hpp \
+	Dialogs/NewFileDlg.hpp \
+	Models/QTrashTableModel.hpp \
     Views/QTrashTableView.hpp
 
 win32-msvc* {

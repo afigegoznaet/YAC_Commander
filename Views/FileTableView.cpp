@@ -3,7 +3,7 @@
 #include "Widgets/FileTabSelector.hpp"
 #include <QMessageBox>
 
-#include "Delegates/TableItemDelegate.hpp"
+
 #include "Menus/ItemContextMenu.hpp"
 #include "Models/OrderedFileSystemModel.hpp"
 #include <QDebug>
@@ -211,10 +211,11 @@ void FileTableView::init() {
 	selectionModel()->select(model->index(1, 0, rootIndex()),
 							 QItemSelectionModel::Current);
 
-
 	connect(model, SIGNAL(directoryLoaded(QString)), this,
 			SLOT(setCurrentSelection(QString)));
-
+	connect(model,
+			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)), this,
+			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)));
 
 	connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
 			&FileTableView::updateInfo);
@@ -234,9 +235,7 @@ void FileTableView::init() {
 					update(prev.sibling(prev.row(), i));
 			});
 
-	connect(model,
-			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)), this,
-			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)));
+
 	setDragEnabled(true);
 	setDragDropMode(QAbstractItemView::DragDrop);
 	setDropIndicatorShown(true);
@@ -578,7 +577,7 @@ void FileTableView::showHidden(bool show) {
 	model->setFilter(filters);
 }
 
-QString FileTableView::getDirectory() { return model->rootPath(); }
+QString FileTableView::getDirectory() const { return model->rootPath(); }
 
 bool FileTableView::isCurrent() const {
 	return parent->currentWidget() == this;

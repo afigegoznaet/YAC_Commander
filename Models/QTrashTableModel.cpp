@@ -65,6 +65,7 @@ QVariant QTrashTableModel::data(const QModelIndex &index, int role) const {
 
 QVariant QTrashTableModel::headerData(int section, Qt::Orientation orientation,
 									  int role) const {
+	Q_UNUSED(orientation)
 	if (role == Qt::DisplayRole) {
 		switch (section) {
 		default:
