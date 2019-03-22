@@ -21,9 +21,12 @@ class FileTableView : public QTableView {
 protected:
 	enum Action { PLUS, MINUS, ASTERISK };
 
+protected:
+	FileTableView(QWidget *parent);
+
 public:
 	explicit FileTableView(const QDir &directory, QWidget *parent = nullptr);
-	FileTableView(QWidget *parent) : FileTableView(QDir::homePath(), parent) {}
+
 	//~FileTableView(){delete prevSelection;}
 
 	virtual void init();
@@ -60,10 +63,10 @@ public slots:
 	virtual void openContextMenu(QPoint);
 
 	void setCurrentSelection(const QString &);
-	void headerClicked(int section);
+	virtual void headerClicked(int section);
 	void rowsRemoved(const QModelIndex &, int, int);
 	void rowsInserted(const QModelIndex &parent, int first, int) override;
-	void updateInfo();
+	virtual void updateInfo();
 	void commitNewName(QWidget *editor);
 
 protected:

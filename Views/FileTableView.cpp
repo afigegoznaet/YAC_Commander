@@ -3,7 +3,7 @@
 #include "Widgets/FileTabSelector.hpp"
 #include <QMessageBox>
 
-
+#include "Views/QTrashTableView.hpp"
 #include "Menus/ItemContextMenu.hpp"
 #include <QDebug>
 #include <QDesktopServices>
@@ -23,25 +23,32 @@
 #define IN 1
 #define OUT 0
 
+FileTableView::FileTableView(QWidget *parent)
+	: QTableView(parent), slowDoubleClickTimer(this) {
+	this->parent = (qobject_cast<FileTabSelector *>(parent));
+	infoLabel = this->parent->getLabel();
+	prevRow = -1;
+}
+
 FileTableView::FileTableView(const QDir &directory, QWidget *parent)
-	: QTableView(parent), directory(directory.absolutePath()),
-	  slowDoubleClickTimer(this) {
+	: FileTableView(parent) {
+	directory.setCurrent(directory.absolutePath());
+
 	connect(&slowDoubleClickTimer, &QTimer::timeout, this,
 			[&] { slowDoubleClick = false; });
 	this->parent = (qobject_cast<FileTabSelector *>(parent));
-	infoLabel = this->parent->getLabel();
+
 	menu = new ItemContextMenu(this);
 	model = new OrderedFileSystemModel(this);
-	prevRow = -1;
 
 
 	auto fModel = new QFileSystemModel(this);
 	getModel()->setSourceModel(fModel);
 	getModel()->setRootPath(this->directory);
-	auto topWidgets = QApplication::topLevelWidgets();
+
 
 	auto filters = QDir::AllEntries | QDir::NoDot | QDir::System;
-
+	auto topWidgets = QApplication::topLevelWidgets();
 	for (auto widget : topWidgets) {
 		MainWindow *topWidget = qobject_cast<MainWindow *>(widget);
 		if (topWidget) {
@@ -197,11 +204,15 @@ void FileTableView::init() {
 	verticalHeader()->setDefaultSectionSize(fontMetrics().height() + 4);
 
 	setSelectionMode(QAbstractItemView::NoSelection);
-	setModel(getModel());
-	auto hz = getModel();
-	hz->setFilterRegExp("");
+	if (!qobject_cast<QTrashTableView *>(this)) {
+		setModel(getModel());
+		auto hz = getModel();
+		hz->setFilterRegExp("");
+		setRootIndex(getModel()->getRootIndex());
+		selectionModel()->select(getModel()->index(1, 0, rootIndex()),
+								 QItemSelectionModel::Current);
+	}
 
-	setRootIndex(getModel()->getRootIndex());
 	verticalHeader()->setVisible(false);
 
 	connect(this, SIGNAL(doubleClicked(QModelIndex)), this,
@@ -209,8 +220,7 @@ void FileTableView::init() {
 	// horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
 	connect(horizontalHeader(), SIGNAL(sectionClicked(int)), this,
 			SLOT(headerClicked(int)));
-	selectionModel()->select(getModel()->index(1, 0, rootIndex()),
-							 QItemSelectionModel::Current);
+
 
 	connect(model, SIGNAL(directoryLoaded(QString)), this,
 			SLOT(setCurrentSelection(QString)));
@@ -249,6 +259,7 @@ void FileTableView::init() {
 }
 
 void FileTableView::setCurrentSelection(const QString &) {
+
 	if (prevRow > 0) {
 		/*auto ind =
 				getModel()->mapFromSource(getModel()->getSourceRootIndex().child(prevRow,
@@ -271,7 +282,8 @@ void FileTableView::setCurrentSelection(const QString &) {
 		}
 	}
 
-	selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
+	auto sel = selectionModel();
+	sel->setCurrentIndex(index, QItemSelectionModel::NoUpdate);
 	prevRow = getModel()->mapToSource(index).row();
 	scrollTo(index);
 }

@@ -28,10 +28,11 @@ public slots:
 
 	void on_doubleClicked(const QModelIndex &index) override;
 	// void headerClicked(int section);
-	void updateInfo();
+	void updateInfo() override;
 	void openContextMenu(QPoint) override;
 	void restoreItems();
 	void purgeItems();
+	void headerClicked(int section) override;
 
 
 protected:

@@ -14,7 +14,7 @@
 #include "Delegates/TableItemDelegate.hpp"
 
 QTrashTableView::QTrashTableView(const QDir &directory, QWidget *parent)
-	: FileTableView(directory, parent) {
+	: FileTableView(parent) {
 
 	// this->parent = (qobject_cast<FileTabSelector *>(parent));
 	// infoLabel = this->parent->getLabel();
@@ -239,4 +239,14 @@ QList<QUrl> QTrashTableView::getSelectedItems(QList<int> &rows) {
 	}
 	// qSort(rows);
 	return outItems;
+}
+
+void QTrashTableView::headerClicked(int section) {
+	return;
+	prevRow = currentIndex().row();
+	Qt::SortOrder order = Qt::AscendingOrder;
+	if (section == horizontalHeader()->sortIndicatorSection())
+		if (Qt::AscendingOrder == horizontalHeader()->sortIndicatorOrder())
+			order = Qt::DescendingOrder;
+	getTrashModel()->sort(section, order);
 }
