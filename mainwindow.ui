@@ -51,30 +51,30 @@
     </item>
     <item row="0" column="1">
      <widget class="QLabel" name="rightLabel">
-	 <property name="font">
-	  <font>
-	   <weight>75</weight>
-	   <bold>true</bold>
-	  </font>
-	 </property>
-	 <property name="autoFillBackground">
-	  <bool>true</bool>
-	 </property>
-	 <property name="lineWidth">
-	  <number>1</number>
-	 </property>
-	 <property name="text">
-	  <string>TextLabel</string>
-	 </property>
-	 <property name="textFormat">
-	  <enum>Qt::PlainText</enum>
-	 </property>
-	 <property name="alignment">
-	  <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-	 </property>
-	 <property name="wordWrap">
-	  <bool>true</bool>
-	 </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::PlainText</enum>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
     <item row="1" column="0">
@@ -230,7 +230,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
@@ -282,6 +282,8 @@
     <addaction name="actionHide_quick_access_bar"/>
     <addaction name="separator"/>
     <addaction name="action_show_hidden_files"/>
+    <addaction name="separator"/>
+    <addaction name="actionDefault_editor"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -423,16 +425,25 @@
    </property>
   </action>
   <action name="actionProgram_appearance">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Program appearance</string>
    </property>
   </action>
   <action name="actionEdit_quick_access_buttons">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Edit quick access buttons</string>
    </property>
   </action>
   <action name="actionHide_quick_access_bar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Hide quick access bar</string>
    </property>
@@ -501,6 +512,11 @@
   <action name="actionCopy_path">
    <property name="text">
     <string>Copy tab &amp;path</string>
+   </property>
+  </action>
+  <action name="actionDefault_editor">
+   <property name="text">
+    <string>Default editor</string>
    </property>
   </action>
  </widget>

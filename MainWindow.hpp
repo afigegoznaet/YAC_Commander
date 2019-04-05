@@ -60,6 +60,8 @@ private slots:
 	void on_action_show_hidden_files_changed();
 	void showAbout();
 
+	void on_actionDefault_editor_triggered();
+
 private:
 	Ui::MainWindow *ui;
 	ProgressDialog *movementProgress;

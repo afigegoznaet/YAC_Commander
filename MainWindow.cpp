@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QApplication>
+#include <QLineEdit>
+#include <QDialogButtonBox>
 #include <Dialogs/NewDirDlg.hpp>
 #include <utility>
 #include "Views/QHexView.hpp"
@@ -167,6 +169,7 @@ void MainWindow::writeSettings() {
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
 	settings.setValue("editor", editor);
+	settings.setValue("maximized", isMaximized());
 	settings.endGroup();
 
 	auto current =
@@ -186,14 +189,23 @@ void MainWindow::readSettings() {
 	resize(settings.value("size", QSize(400, 400)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	editor = settings.value("editor", DEF_EDITOR).toString();
+	bool maximized = settings.value("maximized", false).toBool();
+	if(maximized)
+		setWindowState(Qt::WindowMaximized);
 	settings.endGroup();
 
 	ui->action_show_hidden_files->setChecked(
 		settings.value("showHidden", true).toBool());
 
+	//ui->actionDefault_editor
+
+	editor = settings.value("defaultEditor", DEF_EDITOR).toString();
+
 	ui->rightTabWidget->readSettings();
 	ui->leftTabWidget->readSettings();
 	ui->commandsBox->readSettings();
+
+
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -277,7 +289,7 @@ void MainWindow::copyFiles() {
 	QDir dir;
 	if (!dir.exists(destination)) {
 		QString message =
-			"Directory\n" + destination + "\ndoesn't exit.\nCreate it?";
+			"Directory\n" + destination + "\ndoesn't exist.\nCreate it?";
 		auto reply = QMessageBox::warning(this, "Warning!", message,
 										  QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::No)
@@ -300,7 +312,7 @@ void MainWindow::moveFiles() {
 	QDir dir;
 	if (!dir.exists(destination)) {
 		QString message =
-			"Directory\n" + destination + "\ndoesn't exit.\nCreate it?";
+			"Directory\n" + destination + "\ndoesn't exist.\nCreate it?";
 		auto reply = QMessageBox::warning(this, "Warning!", message,
 										  QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::No)
@@ -638,4 +650,51 @@ void MainWindow::parseParams(int argc, char *argv[]) {
 
 bool MainWindow::showHidden() {
 	return ui->action_show_hidden_files->isChecked();
+}
+
+void MainWindow::on_actionDefault_editor_triggered()
+{
+	auto qlabel = new QLabel("Default editor", this);
+	auto lineEdit = new QLineEdit(editor, this);
+
+	QPushButton *createButton = new QPushButton(tr("Ok"));
+	createButton->setDefault(true);
+
+	QPushButton *cancelButton = new QPushButton(tr("Cancel"));
+
+	QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+	buttonBox->addButton(createButton, QDialogButtonBox::AcceptRole);
+	buttonBox->addButton(cancelButton, QDialogButtonBox::RejectRole);
+
+
+
+	QVBoxLayout *lt = new QVBoxLayout;
+
+	lt->addWidget(qlabel);
+	lt->addWidget(lineEdit);
+	lt->addWidget(buttonBox);
+
+	QDialog edName(this);
+	edName.setModal(true);
+	edName.setLayout(lt);
+
+	connect(buttonBox, &QDialogButtonBox::accepted, this, [this, lineEdit]{
+		qDebug()<<"Line!";
+		editor = lineEdit->text();
+	});
+	connect(buttonBox, SIGNAL(accepted()), &edName, SLOT(accept()));
+	connect(buttonBox, SIGNAL(rejected()), &edName, SLOT(reject()));
+
+	edName.adjustSize();
+	//qlabel.show();
+
+	QRect r = geometry();
+	int x = r.x() + r.width() / 2;
+	int y = r.y() + r.height() / 2;
+
+	edName.move(x, y);
+	edName.exec();
+
+
+
 }
