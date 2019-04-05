@@ -168,7 +168,7 @@ void MainWindow::writeSettings() {
 	settings.beginGroup("MainWindow");
 	settings.setValue("size", size());
 	settings.setValue("pos", pos());
-	settings.setValue("editor", editor);
+	settings.setValue("defaultEditor", editor);
 	settings.setValue("maximized", isMaximized());
 	settings.endGroup();
 
@@ -188,7 +188,7 @@ void MainWindow::readSettings() {
 	settings.beginGroup("MainWindow");
 	resize(settings.value("size", QSize(400, 400)).toSize());
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
-	editor = settings.value("editor", DEF_EDITOR).toString();
+	editor = settings.value("defaultEditor", DEF_EDITOR).toString();
 	bool maximized = settings.value("maximized", false).toBool();
 	if(maximized)
 		setWindowState(Qt::WindowMaximized);
@@ -198,8 +198,6 @@ void MainWindow::readSettings() {
 		settings.value("showHidden", true).toBool());
 
 	//ui->actionDefault_editor
-
-	editor = settings.value("defaultEditor", DEF_EDITOR).toString();
 
 	ui->rightTabWidget->readSettings();
 	ui->leftTabWidget->readSettings();
