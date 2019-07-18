@@ -34,5 +34,3 @@ Implemented sutff:
 Known issues:
 * On Linux, dir doesn't refresh if any changes happened while the app was in background
 
-# Drop me a message if you would like to contribute
-# Feature requests are welcome
