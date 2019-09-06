@@ -106,7 +106,7 @@ void ProgressDialog::processFileAction(QFileInfoList fileList,
 
 void ProgressDialog::onWrite(uint percentsWritten) {
 	if (percentsWritten > static_cast<uint>(progress->progressBar->value()))
-		progress->progressBar->setValue(percentsWritten);
+        progress->progressBar->setValue(int(percentsWritten));
 	if (100 == percentsWritten)
 		progress->progressBar->setValue(0);
 }

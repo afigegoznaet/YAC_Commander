@@ -38,12 +38,13 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f)
 	model = new QStringListModel(this);
 	ui->listView->setModel(model);
 
-	connect(this, &SearchDialog::startSearchRecursion, this,
-			[&](QString pattern, QString dir) {
-				fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,
-										pattern, dir, NAME);
-			},
-			Qt::QueuedConnection);
+	connect(
+		this, &SearchDialog::startSearchRecursion, this,
+		[&](QString pattern, QString dir) {
+			fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,
+									pattern, dir, NAME);
+		},
+		Qt::QueuedConnection);
 
 	connect(this, SIGNAL(rowsInserted(QModelIndex, int, int)), model,
 			SIGNAL(rowsInserted(QModelIndex, int, int)));
@@ -58,7 +59,10 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f)
 	counter = 0;
 }
 
-SearchDialog::~SearchDialog() { delete ui; }
+SearchDialog::~SearchDialog() {
+	stopSearch = true;
+	delete ui;
+}
 
 void SearchDialog::show(const QString &startDir) {
 	if (!searching)
@@ -139,6 +143,7 @@ void SearchDialog::searchRecursion(const QString &pattern,
 		emit rowsInserted(model->index(0).parent(), firstRow, lastRow);
 		firstRow = model->rowCount();
 	}
+
 	dirListLocker.lock();
 	if (!dirQ.empty() && searching) {
 		auto nextDir = std::move(dirQ.first());
@@ -214,6 +219,8 @@ void SearchDialog::on_doubleClicked(const QModelIndex &index) {
 }
 
 void SearchDialog::validateFile(const QFileInfo &theFile) {
+	if (stopSearch)
+		return;
 	if (attrs.togglesFlags & TextPattern) {
 		auto file = new QFile(theFile.absoluteFilePath());
 		if (!file->open(QIODevice::ReadOnly))
@@ -224,20 +231,20 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 		bool regEx = ui->regExpCheckBox->isChecked();
 		auto searchCond =
 			regEx ? std::function<bool(const QString &, const QString &, bool)>(
-						[](const QString &line, const QString &pattern, bool) {
-							QRegularExpression rx(pattern);
-							return rx.globalMatch(line).hasNext();
-						})
+				[](const QString &line, const QString &pattern, bool) {
+					QRegularExpression rx(pattern);
+					return rx.globalMatch(line).hasNext();
+				})
 				  : std::function<bool(const QString &, const QString &, bool)>(
-						[](const QString &line, const QString &pattern,
-						   bool caseSens) {
-							return line.contains(pattern,
-												 Qt::CaseSensitivity(caseSens));
-						});
+					  [](const QString &line, const QString &pattern,
+						 bool caseSens) {
+						  return line.contains(pattern,
+											   Qt::CaseSensitivity(caseSens));
+					  });
 
 		bool found = false;
 		while (!in.atEnd()) {
-			if (!searching)
+			if (!searching || stopSearch)
 				break;
 			line = in.readLine();
 			if (searchCond(line, attrs.pattern, caseSens)) {
@@ -255,15 +262,15 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 		auto startDate = ui->dateTimeFrom->dateTime();
 		auto endDate = ui->dateTimeTo->dateTime();
 
-		if (theFile.created() < startDate || theFile.created() > endDate)
+		if (theFile.birthTime() < startDate || theFile.birthTime() > endDate)
 			return;
 	}
 
 	if (attrs.togglesFlags & Size) {
 
-		qulonglong searchedSize = ui->sizeSpin->value();
+		qint64 searchedSize{qint64(ui->sizeSpin->value())};
 		auto operation = ui->cmpCombo->currentData().toInt();
-		auto multiplier = ui->unitCombo->currentData().toULongLong();
+		qint64 multiplier = ui->unitCombo->currentData().toLongLong();
 
 		//	ui->cmpCombo->addItem("=",0);
 		// ui->cmpCombo->addItem(">=",1);
@@ -302,7 +309,7 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 
 		if (!(attrs.attrFlags & DIR)
 			&& !theFile.permission(QFileDevice::Permission(
-				   attrs.attrFlags & (X_EC | READ | WRITE))))
+				attrs.attrFlags & (X_EC | READ | WRITE))))
 			return;
 	}
 

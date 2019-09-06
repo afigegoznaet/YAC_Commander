@@ -83,6 +83,7 @@ private:
 	QTime searchTime;
 	QMutex dirListLocker;
 	std::atomic_int counter{};
+    std::atomic_bool stopSearch{};
 
 	QString updateCombo(EditableDropDown *combo);
 	void addFile(const QString &newFile);
