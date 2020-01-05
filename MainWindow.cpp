@@ -94,9 +94,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->rightTabWidget, SIGNAL(setFocusSig(FileTabSelector *)), this,
 			SLOT(setFocusSlot(FileTabSelector *)));
 
-	connect(this, SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)),
+	connect(this, SIGNAL(setFileAction(QFileInfoList, QString, FilleOperation)),
 			movementProgress,
-			SLOT(processFileAction(QFileInfoList, QString, Qt::DropAction)));
+			SLOT(processFileAction(QFileInfoList, QString, FilleOperation)));
 	connect(ui->leftTabWidget,
 			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)), this,
 			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)));
@@ -125,10 +125,10 @@ MainWindow::MainWindow(QWidget *parent)
 	cutActionIndicator[2] = '\0';
 	cutActionIndicator[3] = '\0';
 	cutActionPadding.reserve(1044);
-	cutActionPadding[0] = 255;
-	cutActionPadding[1] = 255;
-	cutActionPadding[2] = 255;
-	cutActionPadding[3] = 255;
+	cutActionPadding[0] = -1;
+	cutActionPadding[1] = -1;
+	cutActionPadding[2] = -1;
+	cutActionPadding[3] = -1;
 }
 
 MainWindow::~MainWindow() {
@@ -190,20 +190,18 @@ void MainWindow::readSettings() {
 	move(settings.value("pos", QPoint(200, 200)).toPoint());
 	editor = settings.value("defaultEditor", DEF_EDITOR).toString();
 	bool maximized = settings.value("maximized", false).toBool();
-	if(maximized)
+	if (maximized)
 		setWindowState(Qt::WindowMaximized);
 	settings.endGroup();
 
 	ui->action_show_hidden_files->setChecked(
 		settings.value("showHidden", true).toBool());
 
-	//ui->actionDefault_editor
+	// ui->actionDefault_editor
 
 	ui->rightTabWidget->readSettings();
 	ui->leftTabWidget->readSettings();
 	ui->commandsBox->readSettings();
-
-
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -295,7 +293,7 @@ void MainWindow::copyFiles() {
 		dir.mkdir(destination);
 	}
 
-	emit setFileAction(fileList, destination, Qt::CopyAction);
+	emit setFileAction(fileList, destination, Copy);
 }
 
 void MainWindow::moveFiles() {
@@ -318,7 +316,7 @@ void MainWindow::moveFiles() {
 		dir.mkdir(destination);
 	}
 
-	emit setFileAction(fileList, destination, Qt::MoveAction);
+	emit setFileAction(fileList, destination, Move);
 }
 
 
@@ -348,7 +346,7 @@ void MainWindow::copyToClipboard() {
 
 void MainWindow::pasteFromClipboard() {
 	const auto &clipboard = QGuiApplication::clipboard();
-	auto data = clipboard->mimeData();
+	auto		data = clipboard->mimeData();
 
 	// foreach (auto &url, data->urls()) { qDebug() << url; }
 
@@ -441,14 +439,14 @@ bool MainWindow::getDir(QString &dirName, int numFiles, Qt::DropAction action) {
 		message = "<h3><font color=\"#22b14c\">New directory name:</font><h3>";
 	}
 
-	QLabel lbl(this);
+	QLabel	   lbl(this);
 	NewDirDlg *dialog = new NewDirDlg(message, dirName, &lbl);
 	dialog->adjustSize();
 	lbl.show();
 
 	QRect r = geometry();
-	int x = r.x() + r.width() / 2;
-	int y = r.y() + r.height() / 2;
+	int	  x = r.x() + r.width() / 2;
+	int	  y = r.y() + r.height() / 2;
 
 	dialog->move(x, y);
 	int hz = dialog->exec();
@@ -467,14 +465,14 @@ bool MainWindow::getFileName(QString &fileName) {
 		"<h3><font color=\"#22b14c\">Enter \
 		file name to edit:</font><h3>";
 
-	QLabel lbl(this);
+	QLabel		lbl(this);
 	NewFileDlg *dialog = new NewFileDlg(message, fileName, &lbl);
 	dialog->adjustSize();
 	lbl.show();
 
 	QRect r = geometry();
-	int x = r.x() + r.width() / 2;
-	int y = r.y() + r.height() / 2;
+	int	  x = r.x() + r.width() / 2;
+	int	  y = r.y() + r.height() / 2;
 
 	dialog->move(x, y);
 	int hz = dialog->exec();
@@ -504,8 +502,8 @@ void MainWindow::makeDir() {
 }
 
 void MainWindow::editNewFile() {
-	auto path = getDirInFocus();
-	QString name = "";
+	auto		  path = getDirInFocus();
+	QString		  name = "";
 	QFileInfoList fileList = getSelectedFiles();
 	for (const auto &file : fileList) {
 		if (file.isDir())
@@ -526,7 +524,7 @@ void MainWindow::editNewFile() {
 void MainWindow::on_F3_clicked() {
 	// QMessageBox::information(this,"Info","Not yet implemented");
 	QFileInfoList fileList = getSelectedFiles();
-	auto textViewer = new TextViewer(this);
+	auto		  textViewer = new TextViewer(this);
 	for (const auto &file : fileList)
 		textViewer->setDocument(file.absoluteFilePath());
 	textViewer->exec();
@@ -612,7 +610,7 @@ void MainWindow::setupActions() {
 		if (selector->count() <= 1)
 			return;
 		auto curWidget = selector->currentWidget();
-		int curIndex = selector->currentIndex();
+		int	 curIndex = selector->currentIndex();
 		selector->removeTab(curIndex);
 		delete curWidget;
 		if (curIndex == selector->count())
@@ -650,8 +648,7 @@ bool MainWindow::showHidden() {
 	return ui->action_show_hidden_files->isChecked();
 }
 
-void MainWindow::on_actionDefault_editor_triggered()
-{
+void MainWindow::on_actionDefault_editor_triggered() {
 	auto qlabel = new QLabel("Default editor", this);
 	auto lineEdit = new QLineEdit(editor, this);
 
@@ -665,7 +662,6 @@ void MainWindow::on_actionDefault_editor_triggered()
 	buttonBox->addButton(cancelButton, QDialogButtonBox::RejectRole);
 
 
-
 	QVBoxLayout *lt = new QVBoxLayout;
 
 	lt->addWidget(qlabel);
@@ -676,23 +672,20 @@ void MainWindow::on_actionDefault_editor_triggered()
 	edName.setModal(true);
 	edName.setLayout(lt);
 
-	connect(buttonBox, &QDialogButtonBox::accepted, this, [this, lineEdit]{
-		qDebug()<<"Line!";
+	connect(buttonBox, &QDialogButtonBox::accepted, this, [this, lineEdit] {
+		qDebug() << "Line!";
 		editor = lineEdit->text();
 	});
 	connect(buttonBox, SIGNAL(accepted()), &edName, SLOT(accept()));
 	connect(buttonBox, SIGNAL(rejected()), &edName, SLOT(reject()));
 
 	edName.adjustSize();
-	//qlabel.show();
+	// qlabel.show();
 
 	QRect r = geometry();
-	int x = r.x() + r.width() / 2;
-	int y = r.y() + r.height() / 2;
+	int	  x = r.x() + r.width() / 2;
+	int	  y = r.y() + r.height() / 2;
 
 	edName.move(x, y);
 	edName.exec();
-
-
-
 }

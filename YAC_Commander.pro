@@ -12,11 +12,7 @@ CONFIG += c++17
 #QMAKE_CXXFLAGS+="-fsanitize=thread"
 #QMAKE_CFLAGS+="-fsanitize=address -fno-omit-frame-pointer"
 #QMAKE_LFLAGS+="-fsanitize=thread -shared"
-CONFIG(debug, debug|release) {
-  message( "debug" )
-QMAKE_CXXFLAGS+="-fsanitize=address"
-QMAKE_LFLAGS+=" -fsanitize=address"
-}
+
 
 
 TARGET = yc
@@ -81,6 +77,12 @@ linux {
 	icon.files = TC_QT.png
 	INSTALLS += target desktop icon
 	QT += KIOCore KIOFileWidgets KIOWidgets KNTLM KArchive KCoreAddons
+
+    CONFIG(debug, debug|release) {
+      message( "debug" )
+    QMAKE_CXXFLAGS+="-fsanitize=address"
+    QMAKE_LFLAGS+=" -fsanitize=address"
+    }
 
 }
 

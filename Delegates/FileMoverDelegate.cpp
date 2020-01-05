@@ -1,4 +1,5 @@
-#include "Delegates/FileMoverDelegate.hpp"
+#include "FileMoverDelegate.hpp"
+#include "Dialogs/FileProgressDialog.hpp"
 #include <QDebug>
 #include <QStorageInfo>
 #include <utility>
@@ -28,10 +29,10 @@ int FileMoverDelegate::copy() {
 		QIODevice::WriteOnly
 		| QIODevice::Truncate); // Need to add a ask box for this
 
-	quint64 totalSize = sourceFile.size();
-	quint64 tempSize = 0;
+	qint64 totalSize = sourceFile.size();
+	qint64 tempSize = 0;
 
-	char buffer[MAX_READ]; // 1 Mb
+	char   buffer[MAX_READ]; // 1 Mb
 	qint64 bytesRead = 0;
 	QMutex blocker;
 	blocker.lock();
@@ -82,29 +83,30 @@ void FileMover::execute(){
 FileMoverDelegate::~FileMoverDelegate() {
 
 	int res = 0;
-	if (!action.compare("Copy", Qt::CaseInsensitive)) {
+	if (Copy == action) {
 		res = this->copy();
 	} else {
 		if (isMovable(source, destination))
 			res = this->move();
 		else
 			res = this->copy();
-		QFile::remove(source);
+		if (10 == res || 1 == res)
+			QFile::remove(source);
 	}
 
 	emit completed(res);
 	// qDebug()<<"FileMover completed?!";
 }
 
-FileMoverDelegate::FileMoverDelegate(QString source, QString destination,
-									 QString action, QObject *parent)
-	: QObject(parent), destination(std::move(std::move(destination))), source(std::move(std::move(source))), action(std::move(std::move(action))),
-	  status(true) {
+FileMoverDelegate::FileMoverDelegate(QString _source, QString _destination,
+									 FilleOperation _action, QObject *parent)
+	: QObject(parent), source(std::move(_source)),
+	  destination(std::move(_destination)), action{_action}, status(true) {
 	// qDebug()<<"Mover constructor"<<thread();
 }
 
-void FileMoverDelegate::setStatus(int status) {
-	this->status = status;
+void FileMoverDelegate::setStatus(int _status) {
+	this->status = _status;
 	// qDebug()<<"*************************************";
 	// qDebug()<<"status "<<status<<" emmitted";
 	cond.wakeOne();
