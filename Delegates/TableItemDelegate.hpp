@@ -2,7 +2,7 @@
 #define TABLEITEMDELEGATE_H
 
 #include <QItemDelegate>
-
+#include <QDebug>
 class TableItemDelegate : public QItemDelegate {
 	Q_OBJECT
 public:
@@ -14,7 +14,9 @@ protected:
 			   const QModelIndex &index) const override;
 	void drawFocus(QPainter * /*painter*/,
 				   const QStyleOptionViewItem & /*option*/,
-				   const QRect & /*rect*/) const override {}
+				   const QRect & /*rect*/) const override {
+		qDebug() << "test";
+	}
 public slots:
 	void currentChanged(QModelIndex current, QModelIndex);
 	void focused(bool focus) { has_focus = focus; }

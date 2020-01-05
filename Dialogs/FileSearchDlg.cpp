@@ -32,18 +32,18 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f)
 	ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->searchButton->setFocus();
-	;
 	setFocusPolicy(Qt::NoFocus);
 
 	model = new QStringListModel(this);
 	ui->listView->setModel(model);
 
-	connect(this, &SearchDialog::startSearchRecursion, this,
-			[&](QString pattern, QString dir) {
-				fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,
-										pattern, dir, NAME);
-			},
-			Qt::QueuedConnection);
+	connect(
+		this, &SearchDialog::startSearchRecursion, this,
+		[&](QString pattern, QString dir) {
+			fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,
+									pattern, dir, NAME);
+		},
+		Qt::QueuedConnection);
 
 	connect(this, SIGNAL(rowsInserted(QModelIndex, int, int)), model,
 			SIGNAL(rowsInserted(QModelIndex, int, int)));
@@ -224,16 +224,16 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 		bool regEx = ui->regExpCheckBox->isChecked();
 		auto searchCond =
 			regEx ? std::function<bool(const QString &, const QString &, bool)>(
-						[](const QString &line, const QString &pattern, bool) {
-							QRegularExpression rx(pattern);
-							return rx.globalMatch(line).hasNext();
-						})
+				[](const QString &line, const QString &pattern, bool) {
+					QRegularExpression rx(pattern);
+					return rx.globalMatch(line).hasNext();
+				})
 				  : std::function<bool(const QString &, const QString &, bool)>(
-						[](const QString &line, const QString &pattern,
-						   bool caseSens) {
-							return line.contains(pattern,
-												 Qt::CaseSensitivity(caseSens));
-						});
+					  [](const QString &line, const QString &pattern,
+						 bool caseSens) {
+						  return line.contains(pattern,
+											   Qt::CaseSensitivity(caseSens));
+					  });
 
 		bool found = false;
 		while (!in.atEnd()) {
@@ -302,7 +302,7 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 
 		if (!(attrs.attrFlags & DIR)
 			&& !theFile.permission(QFileDevice::Permission(
-				   attrs.attrFlags & (X_EC | READ | WRITE))))
+				attrs.attrFlags & (X_EC | READ | WRITE))))
 			return;
 	}
 
