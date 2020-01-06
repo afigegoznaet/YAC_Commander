@@ -3,6 +3,7 @@
 
 #include <QtConcurrent/QtConcurrent>
 #include <QMessageBox>
+#include <array>
 
 namespace Ui {
 	class ProgressDialog;
@@ -18,7 +19,7 @@ class ProgressDialog : public QDialog {
 public:
 	explicit ProgressDialog(QWidget *		parent = nullptr,
 							Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
-	~ProgressDialog();
+	~ProgressDialog() final;
 
 signals:
 	void sendErrMsg(QString errorText);
@@ -33,24 +34,24 @@ public slots:
 	void dirMovementResult(int);
 	void errorMsg(const QString &errorText);
 	void hideDialogSlot() { this->hide(); }
-	void processFileAction(QFileInfoList fileList, const QString &destination,
-						   FilleOperation action);
+	void processFileAction(const QFileInfoList &fileList,
+						   const QString &destination, FilleOperation action);
 private slots:
 	void on_pauseButton_clicked();
 	void on_removeButton_clicked();
 	void on_abortButton_clicked();
 
 private:
-	Ui::ProgressDialog *progress;
-	QFuture<void>		stub;
-	bool				status;
-	QWaitCondition		cond;
-	QWaitCondition		condStatus;
-	QString				pauseButtonLabels[2] = {"Continue", "Pause"};
-	QMutex				moverBlocker;
+	Ui::ProgressDialog *   progress;
+	QFuture<void>		   stub;
+	bool				   status{true};
+	QWaitCondition		   cond;
+	QWaitCondition		   condStatus;
+	std::array<QString, 2> pauseButtonLabels{"Continue", "Pause"};
+	QMutex				   moverBlocker;
 
 	void switchText();
-	void processItemsInList(void);
+	void processItemsInList();
 	void dirParsing(QDir &dir, FilleOperation action, QString &destination,
 					QList<QString> &createdDirs);
 	QMessageBox::StandardButton showError(int result);

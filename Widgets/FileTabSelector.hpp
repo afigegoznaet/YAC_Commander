@@ -17,14 +17,14 @@ class FileTabSelector : public QTabWidget {
 	Q_OBJECT
 public:
 	FileTabSelector(QWidget *parent = Q_NULLPTR);
-	~FileTabSelector();
+	~FileTabSelector() final;
 	FileTableView *addNewTab(bool dup = false, QString dir = "");
-	void readSettings();
-	void setLabel(QLabel *infoLabel) { this->infoLabel = infoLabel; }
-	QLabel *getLabel() { return infoLabel; }
-	void init(Ui::MainWindow *ui);
-	void showHidden(bool show);
-	void unfocus();
+	void		   readSettings();
+	void		   setLabel(QLabel *infoLabel) { this->infoLabel = infoLabel; }
+	QLabel *	   getLabel() { return infoLabel; }
+	void		   init(Ui::MainWindow *ui);
+	void		   showHidden(bool show);
+	void		   unfocus();
 
 public slots:
 	void onDirChanged(const QString &dirName, int tabIndex);
@@ -42,18 +42,18 @@ signals:
 					   Qt::DropAction action);
 	void deleteSelectedFiles();
 
-protected:
+private:
 	QString defaultStyle;
 
 private:
-	virtual void mousePressEvent(QMouseEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
 
 private:
 	QMetaObject::Connection currentHeaderResizedConnection;
 	QMetaObject::Connection currentHeaderMovedConnection;
-	QAction *closeTabAction{};
-	QLabel *infoLabel{};
-	QMenu *menu;
+	QAction *				closeTabAction{};
+	QLabel *				infoLabel{};
+	QMenu *					menu;
 
 	QPalette defaultPalette;
 	QPalette highlightedPalette;

@@ -28,7 +28,7 @@ bool DriveButton::event(QEvent *e){
 QuickAccessBar::QuickAccessBar(QWidget *parent) : QToolBar(parent) {
 	volumes = QStorageInfo::mountedVolumes();
 	refreshMountPoints();
-	QTimer *timer = new QTimer(this);
+	auto timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this,
 			SLOT(update())); // update toolbar every 1 sec
 	timer->start(1000);

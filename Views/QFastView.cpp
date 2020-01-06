@@ -15,7 +15,7 @@
 #include "../Dialogs/TextViewerDlg.hpp"
 
 QFastView::QFastView(QWidget *parent)
-	: QAbstractScrollArea(parent), m_pdata(nullptr) {
+	: QAbstractScrollArea(parent), pdata(nullptr) {
 	QFont theFont("DejaVu Sans Mono", 12);
 	QFontMetrics metrix(theFont);
 	setFont(theFont);
@@ -32,17 +32,17 @@ QFastView::QFastView(QWidget *parent)
 }
 
 
-QFastView::~QFastView() { delete m_pdata; }
+QFastView::~QFastView() { delete pdata; }
 
 void QFastView::countLines() {
-	if (!m_pdata)
+	if (!pdata)
 		return;
 
 	if (!linesPerPage)
 		linesPerPage = size().height() / charHeight;
 
 	futureHolder = QtConcurrent::run([&] {
-		auto data = m_pdata->getData(0, m_pdata->size());
+		auto data = pdata->getData(0, pdata->size());
 		// QStringView view((QChar*)data.data(), m_pdata->size());
 		auto first = data.cbegin();
 
@@ -96,9 +96,9 @@ void QFastView::moveToLine(int lineNum) {
 void QFastView::setData(DataStorage *pData) {
 	verticalScrollBar()->setValue(0);
 
-	delete m_pdata;
-	m_pdata = pData;
-	verticalScrollBar()->setMaximum(m_pdata->size() / charsPerLine);
+	delete pdata;
+	pdata = pData;
+	verticalScrollBar()->setMaximum(pdata->size() / charsPerLine);
 	countLines();
 	// verticalScrollBar()->setMaximum()
 	// m_cursorPos = 0;
@@ -107,7 +107,7 @@ void QFastView::setData(DataStorage *pData) {
 
 
 void QFastView::showFromOffset(unsigned long long offset) {
-	if (m_pdata && offset < m_pdata->size()) {
+	if (pdata && offset < pdata->size()) {
 		// setCursorPos(offset * 2);
 
 		// int cursorY = m_cursorPos / (2 * BYTES_PER_LINE);
@@ -133,7 +133,7 @@ int QFastView::getPrevLineStart() {
 		return 0;
 
 	auto tempData =
-		m_pdata->getData(firstLineIdx - charsPerLine - 1, charsPerLine);
+		pdata->getData(firstLineIdx - charsPerLine - 1, charsPerLine);
 	auto newLinePos = tempData.toStdString().find_last_of('\n');
 	if (std::string::npos != newLinePos && newLinePos < charsPerLine)
 		return newLinePos + 1;
@@ -154,7 +154,7 @@ int QFastView::getNextPageStart() {
 		pos += (newLinePos + 1);
 	}
 
-	if (firstLineIdx + pos > m_pdata->size())
+	if (firstLineIdx + pos > pdata->size())
 		return firstLineIdx;
 
 	return firstLineIdx + pos;
@@ -165,7 +165,7 @@ int QFastView::getPrevPageStart() {
 		return 0;
 	int linesRemaining = linesPerPage;
 	int pos = maxChars;
-	auto data = m_pdata->getData(firstLineIdx - maxChars - 1, maxChars);
+	auto data = pdata->getData(firstLineIdx - maxChars - 1, maxChars);
 	while (linesRemaining > 0) {
 		auto newLinePos = data.toStdString().find_last_of('\n', pos - 1);
 		if (newLinePos == std::string::npos)
@@ -177,7 +177,7 @@ int QFastView::getPrevPageStart() {
 }
 
 void QFastView::paintEvent(QPaintEvent *event) {
-	if (!m_pdata)
+	if (!pdata)
 		return;
 
 	QPainter painter(viewport());
@@ -187,7 +187,7 @@ void QFastView::paintEvent(QPaintEvent *event) {
 
 	// QBrush def = painter.brush();
 	// QBrush selected = QBrush(QColor(0x6d, 0x9e, 0xff, 0xff));
-	data = m_pdata->getData(firstLineIdx, 8192);
+	data = pdata->getData(firstLineIdx, 8192);
 	data.replace('\0', '?');
 	QString text(data);
 	painter.drawText(rect, text);

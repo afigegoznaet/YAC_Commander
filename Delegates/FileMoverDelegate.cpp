@@ -4,6 +4,7 @@
 #include <QStorageInfo>
 #include <utility>
 #include <utility>
+#include <array>
 
 /*
 #ifdef _WIN32
@@ -11,10 +12,13 @@
 #endif
 */
 
-#define MAX_READ 1048576
+static constexpr auto MAX_READ = 1048576;
+static constexpr auto MOVE_OK = 10;
+static constexpr auto COPY_OK = 1;
 
 bool isMovable(QString &from, QString &to) {
-	QStorageInfo in, out;
+	QStorageInfo in;
+	QStorageInfo out;
 	in.setPath(from);
 	out.setPath(to.mid(0, to.lastIndexOf('/')));
 	return in == out;
@@ -32,12 +36,12 @@ int FileMoverDelegate::copy() {
 	qint64 totalSize = sourceFile.size();
 	qint64 tempSize = 0;
 
-	char   buffer[MAX_READ]; // 1 Mb
-	qint64 bytesRead = 0;
-	QMutex blocker;
+	std::array<char, MAX_READ> buffer{}; // 1 Mb
+	qint64					   bytesRead = 0;
+	QMutex					   blocker;
 	blocker.lock();
 
-	bytesRead = sourceFile.read(buffer, MAX_READ);
+	bytesRead = sourceFile.read(buffer.data(), MAX_READ);
 
 	while (bytesRead > 0) {
 		switch (status) {
@@ -51,11 +55,11 @@ int FileMoverDelegate::copy() {
 			return true;
 		}
 
-		if (destinationFile.write(buffer, bytesRead) < 0)
+		if (destinationFile.write(buffer.data(), bytesRead) < 0)
 			return false;
 		tempSize += bytesRead;
 		emit bytesProgress(static_cast<uint>(tempSize * 100. / totalSize * 1.));
-		bytesRead = sourceFile.read(buffer, MAX_READ);
+		bytesRead = sourceFile.read(buffer.data(), MAX_READ);
 	}
 
 	blocker.unlock();
@@ -73,7 +77,7 @@ int FileMoverDelegate::copy() {
 
 int FileMoverDelegate::move() {
 
-	return 10 + static_cast<int>(QFile::rename(source, destination));
+	return MOVE_OK + static_cast<int>(QFile::rename(source, destination));
 }
 /*
 void FileMover::execute(){
@@ -90,7 +94,7 @@ FileMoverDelegate::~FileMoverDelegate() {
 			res = this->move();
 		else
 			res = this->copy();
-		if (10 == res || 1 == res)
+		if (MOVE_OK == res || COPY_OK == res)
 			QFile::remove(source);
 	}
 

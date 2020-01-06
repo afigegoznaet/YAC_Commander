@@ -34,8 +34,6 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent) {
 				continue;
 			else
 				removeAction(action);
-
-		;
 	});
 
 	cutActionIndicator.reserve(4);
@@ -44,10 +42,10 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent) {
 	cutActionIndicator[2] = '\0';
 	cutActionIndicator[3] = '\0';
 	cutActionPadding.reserve(1044);
-	cutActionPadding[0] = 255;
-	cutActionPadding[1] = 255;
-	cutActionPadding[2] = 255;
-	cutActionPadding[3] = 255;
+	cutActionPadding[0] = -1;
+	cutActionPadding[1] = -1;
+	cutActionPadding[2] = -1;
+	cutActionPadding[3] = -1;
 }
 
 void ItemContextMenu::init() {
@@ -147,7 +145,7 @@ void ItemContextMenu::copyToClipboard() {
 
 void ItemContextMenu::pasteFromClipboard() {
 	const auto &clipboard = QGuiApplication::clipboard();
-	auto data = clipboard->mimeData();
+	auto		data = clipboard->mimeData();
 
 	bool move = false;
 #ifdef WIN32

@@ -6,19 +6,21 @@
 
 //
 
-#define DEF_EDITOR "undefined"
+// static constexpr auto  DEF_EDITOR = "undefined";
 
 #ifdef __linux__
 #undef DEF_EDITOR
-#define DEF_EDITOR "kate"
+
+static constexpr auto DEF_EDITOR = "kate";
 #endif
 #ifdef _WIN32
 #undef DEF_EDITOR
-#define DEF_EDITOR "notepad"
+
+static constexpr auto DEF_EDITOR = "notepad";
 #endif
 #ifdef __APPLE__
 #undef DEF_EDITOR
-#define DEF_EDITOR "TextEdit"
+static constexpr auto DEF_EDITOR = "TextEdit";
 #endif
 
 class SearchDialog;
@@ -36,8 +38,8 @@ class MainWindow : public QMainWindow {
 public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	QString getDirInFocus(bool opposite = false);
-	~MainWindow();
-	FileTableView *	 focusedTab();
+	~MainWindow() final;
+	FileTableView *  focusedTab();
 	FileTabSelector *focusedSelector();
 	ProgressDialog * getFileMover() { return movementProgress; }
 	bool			 showHidden();
@@ -67,7 +69,7 @@ private slots:
 private:
 	Ui::MainWindow *ui;
 	ProgressDialog *movementProgress;
-	SearchDialog *	searchDlg;
+	SearchDialog *  searchDlg;
 	QString			editor;
 	bool			leftTabHasFocus;
 	QByteArray		cutActionIndicator;

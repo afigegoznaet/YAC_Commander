@@ -15,5 +15,5 @@ NewDirDlg::NewDirDlg(QString &label, QString &dirName, QWidget *parent)
 	fileCompleter->setModel(dm);
 	fileCompleter->setCompletionMode(QCompleter::PopupCompletion);
 	if (!dirName.isEmpty())
-		m_lineEdit->setCompleter(fileCompleter);
+		getLineEdit()->setCompleter(fileCompleter);
 }

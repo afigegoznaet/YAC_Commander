@@ -12,9 +12,9 @@ public:
 	void setParentDlg(QDialog *parentDlg) { this->parentDlg = parentDlg; }
 
 private:
-	virtual void keyPressEvent(QKeyEvent *event);
+	virtual void keyPressEvent(QKeyEvent *event) final;
 	virtual void processCommand();
-	QDialog *parentDlg = nullptr;
+	QDialog *	parentDlg = nullptr;
 
 	friend class SearchDialog;
 };

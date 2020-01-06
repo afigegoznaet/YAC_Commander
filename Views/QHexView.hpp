@@ -8,7 +8,7 @@ class DataStorage;
 class QHexView : public QAbstractScrollArea {
 public:
 	QHexView(QWidget *parent = nullptr);
-	~QHexView();
+	~QHexView() final;
 
 public slots:
 	void setData(DataStorage *pData);
@@ -16,13 +16,13 @@ public slots:
 	void showFromOffset(unsigned long long offset);
 
 protected:
-	void paintEvent(QPaintEvent *event);
-	void keyPressEvent(QKeyEvent *event);
-	void mouseMoveEvent(QMouseEvent *event);
-	void mousePressEvent(QMouseEvent *event);
+	void paintEvent(QPaintEvent *event) final;
+	void keyPressEvent(QKeyEvent *event) final;
+	void mouseMoveEvent(QMouseEvent *event) final;
+	void mousePressEvent(QMouseEvent *event) final;
 
 private:
-	DataStorage *m_pdata;
+	DataStorage *	  m_pdata;
 	unsigned long long m_posAddr;
 	unsigned long long m_posHex;
 	unsigned long long m_posAscii;
@@ -36,13 +36,13 @@ private:
 	unsigned long long m_cursorPos{};
 
 
-	QSize fullSize() const;
-	void resetSelection();
-	void resetSelection(int pos);
-	void setSelection(unsigned long long pos);
-	void ensureVisible();
-	void setCursorPos(int pos);
-	unsigned long long cursorPos(const QPoint &position);
+	[[nodiscard]] QSize fullSize() const;
+	void				resetSelection();
+	void				resetSelection(int pos);
+	void				setSelection(unsigned long long pos);
+	void				ensureVisible();
+	void				setCursorPos(int pos);
+	unsigned long long  cursorPos(const QPoint &position);
 };
 
 #endif

@@ -6,9 +6,10 @@
 class NewDirDlg : public NewFileDlg {
 	Q_OBJECT
 public:
-	explicit NewDirDlg(QString &label, QString &getName, QWidget *parent = 0);
+	explicit NewDirDlg(QString &label, QString &dirName,
+					   QWidget *parent = nullptr);
 
-protected:
+private:
 	QCompleter *fileCompleter;
 };
 #endif // NEWDIR_H

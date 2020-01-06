@@ -22,13 +22,13 @@ enum SizeOp { EQ, G, L };
 enum SizeMod { Byte, KByte, MByte, GByte };
 
 struct SearchAttrib {
-	QString pattern;
-	quint8 attrFlags;
-	quint8 togglesFlags;
+	QString   pattern;
+	quint8	attrFlags{};
+	quint8	togglesFlags{};
 	QDateTime startDate;
 	QDateTime endDate;
-	SizeOp op;
-	quint64 size;
+	SizeOp	op{};
+	quint64   size{};
 };
 
 class MainWindow;
@@ -45,9 +45,9 @@ class SearchDialog : public QDialog {
 	};
 
 public:
-	explicit SearchDialog(QWidget *parent = 0,
+	explicit SearchDialog(QWidget *		  parent = nullptr,
 						  Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
-	~SearchDialog();
+	~SearchDialog() override;
 	void show(const QString &startDir);
 
 signals:
@@ -57,7 +57,7 @@ signals:
 public slots:
 	void on_searchButton_clicked();
 	void searchRecursion(const QString &pattern, const QString &startDir,
-						 searchFlags = NAME);
+						 SearchDialog::searchFlags = NAME);
 	void on_doubleClicked(const QModelIndex &index);
 
 private slots:
@@ -73,21 +73,21 @@ private slots:
 private:
 	Ui::SearchDialog *ui;
 	QStringListModel *model;
-	MainWindow *parentWindow;
-	QMutex addBlocker;
-	QQueue<QString> dirQ;
-	QFuture<void> fut;
-	int firstRow{};
-	SearchAttrib attrs;
-	QTime searchTime;
-	QMutex dirListLocker;
-	std::atomic_int counter{};
-	std::atomic_bool searching{};
+	MainWindow *	  parentWindow;
+	QMutex			  addBlocker;
+	QQueue<QString>   dirQ;
+	QFuture<void>	 fut;
+	int				  firstRow{};
+	SearchAttrib	  attrs;
+	QTime			  searchTime;
+	QMutex			  dirListLocker;
+	std::atomic_int   counter{};
+	std::atomic_bool  searching{};
 
 	QString updateCombo(EditableDropDown *combo);
-	void addFile(const QString &newFile);
-	void validateFile(const QFileInfo &theFile);
-	void resetGuiState();
+	void	addFile(const QString &newFile);
+	void	validateFile(const QFileInfo &theFile);
+	void	resetGuiState();
 	// void paintEvent(QPaintEvent *event) override;
 };
 

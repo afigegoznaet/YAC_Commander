@@ -7,7 +7,7 @@
 
 class DataStorage {
 public:
-	virtual ~DataStorage() {}
+	virtual ~DataStorage() = default;
 	virtual QByteArray getData(std::size_t position, std::size_t length) = 0;
 	virtual unsigned long long size() = 0;
 };
@@ -16,8 +16,8 @@ public:
 class DataStorageArray : public DataStorage {
 public:
 	DataStorageArray(const QByteArray &arr);
-	virtual QByteArray getData(std::size_t position, std::size_t length);
-	virtual unsigned long long size();
+	QByteArray		   getData(std::size_t position, std::size_t length) final;
+	unsigned long long size() final;
 
 private:
 	QByteArray m_data;
@@ -26,8 +26,8 @@ private:
 class DataStorageFile : public DataStorage {
 public:
 	DataStorageFile(const QString &fileName);
-	virtual QByteArray getData(std::size_t position, std::size_t length);
-	virtual unsigned long long size();
+	QByteArray		   getData(std::size_t position, std::size_t length) final;
+	unsigned long long size() final;
 
 private:
 	QFile m_file;
@@ -42,8 +42,8 @@ class TextViewer : public QDialog {
 	Q_OBJECT
 
 public:
-	explicit TextViewer(QWidget *parent = 0);
-	~TextViewer();
+	explicit TextViewer(QWidget *parent = nullptr);
+	~TextViewer() override;
 	void setDocument(QString &&docPath);
 
 private:

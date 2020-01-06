@@ -26,7 +26,7 @@ private:
 class QuickAccessBar : public QToolBar {
 	Q_OBJECT
 public:
-	explicit QuickAccessBar(QWidget *parent = 0);
+	explicit QuickAccessBar(QWidget *parent = nullptr);
 	void sendSignal(const QString &) const;
 
 signals:
@@ -36,7 +36,7 @@ public slots:
 	void update();
 
 private:
-	void refreshMountPoints();
+	void				refreshMountPoints();
 	QList<QStorageInfo> volumes;
 };
 

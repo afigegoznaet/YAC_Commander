@@ -11,21 +11,21 @@ class OrderedFileSystemModel : public QSortFilterProxyModel {
 	Q_OBJECT
 public:
 	explicit OrderedFileSystemModel(QObject *parent = Q_NULLPTR);
-	bool lessThan(const QModelIndex &left,
+	[[nodiscard]] bool lessThan(const QModelIndex &left,
 				  const QModelIndex &right) const override;
 	QString rootPath();
-	QModelIndex setRootPath(const QString &rootPath) const;
-	QModelIndex getRootIndex() const;
-	QModelIndex getSourceRootIndex() const;
-	QFileInfo fileInfo(QModelIndex index) const;
+	[[nodiscard]] QModelIndex setRootPath(const QString &rootPath) const;
+	[[nodiscard]] QModelIndex getRootIndex() const;
+	[[nodiscard]] QModelIndex getSourceRootIndex() const;
+	[[nodiscard]] QFileInfo fileInfo(QModelIndex index) const;
 	void setFilter(QDir::Filters filt) const;
 	void sort() { sort(column, order); }
 	void sort(int column, Qt::SortOrder order) override;
-	QFileSystemModel *sourceModel() const;
+	[[nodiscard]] QFileSystemModel *sourceModel() const;
 	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row,
 					  int column, const QModelIndex &parent) override;
 
-	Qt::ItemFlags flags(const QModelIndex &index) const override;
+	[[nodiscard]] Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 
 signals:

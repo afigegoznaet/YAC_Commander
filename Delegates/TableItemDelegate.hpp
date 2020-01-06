@@ -20,11 +20,11 @@ public slots:
 	void focused(bool focus) { has_focus = focus; }
 
 private:
-	QModelIndex current;
-	QRect rect;
+	QModelIndex				current;
+	QRect					rect;
 	mutable QLinearGradient gradFocused;
 	mutable QLinearGradient grad;
-	bool has_focus;
+	bool					has_focus{};
 };
 
 #endif // TABLEITEMDELEGATE_H

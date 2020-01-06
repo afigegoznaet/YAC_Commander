@@ -16,6 +16,7 @@ public:
 	explicit ItemContextMenu(QWidget *parent = nullptr);
 	void init();
 
+private:
 	QByteArray cutActionIndicator;
 	QByteArray cutActionPadding;
 
@@ -28,14 +29,14 @@ private:
 	QList<QAction *> commonActions;
 	QList<QAction *> folderActions;
 	QList<QAction *> fileActions;
-	QAction *pasteAction{};
-	QAction *copyAction{};
-	QAction *cutAction{};
-	QAction *deleteAction{};
-	QAction *renameAction{};
-	FileTableView *parent;
+	QAction *		 pasteAction{};
+	QAction *		 copyAction{};
+	QAction *		 cutAction{};
+	QAction *		 deleteAction{};
+	QAction *		 renameAction{};
+	FileTableView *  parent;
 	// QClipboard* clipboard;
-	QFileInfoList selectedFiles;
+	QFileInfoList   selectedFiles;
 	QModelIndexList selIndexes;
 
 #ifdef __linux__

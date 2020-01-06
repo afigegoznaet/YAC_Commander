@@ -5,7 +5,7 @@
 TableItemDelegate::TableItemDelegate(QObject *parent)
 	: QItemDelegate(parent), rect(0, 0, 1, 1),
 	  gradFocused(QPointF(0, 0), QPointF(1, 1)),
-	  grad(QPointF(0, 0), QPointF(1, 1)), has_focus(false) {
+	  grad(QPointF(0, 0), QPointF(1, 1)) {
 
 
 	QColor dark =
@@ -26,9 +26,9 @@ TableItemDelegate::TableItemDelegate(QObject *parent)
 	gradFocused.setColorAt(1.0, dark);
 }
 
-void TableItemDelegate::paint(QPainter *painter,
+void TableItemDelegate::paint(QPainter *				  painter,
 							  const QStyleOptionViewItem &option,
-							  const QModelIndex &index) const {
+							  const QModelIndex &		  index) const {
 	grad.setStart(option.rect.topLeft());
 	grad.setFinalStop(option.rect.bottomLeft());
 	gradFocused.setStart(option.rect.topLeft());

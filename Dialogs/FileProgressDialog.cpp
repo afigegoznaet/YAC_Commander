@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <set>
 ProgressDialog::ProgressDialog(QWidget *parent, Qt::WindowFlags f)
-	: QDialog(parent, f), progress(new Ui::ProgressDialog), status(true) {
+	: QDialog(parent, f), progress(new Ui::ProgressDialog) {
 	progress->setupUi(this);
 	progress->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	progress->tableWidget->setColumnCount(3);
@@ -45,9 +45,9 @@ ProgressDialog::~ProgressDialog() {
 	delete progress;
 }
 
-void ProgressDialog::processFileAction(QFileInfoList  fileList,
-									   const QString &destination,
-									   FilleOperation action) {
+void ProgressDialog::processFileAction(const QFileInfoList &fileList,
+									   const QString &		destination,
+									   FilleOperation		action) {
 
 	QFileInfo destDir(destination);
 	if (!destDir.isWritable()) {
@@ -78,7 +78,7 @@ void ProgressDialog::processFileAction(QFileInfoList  fileList,
 		// QString item = "Move " + fileInfo.fileName() + " to " + destination;
 		// QString newName = destination + "/" + fileInfo.fileName();
 
-		auto newItem = [](QString _name, FilleOperation _action) {
+		auto newItem = [](const QString &_name, FilleOperation _action) {
 			auto item = new QTableWidgetItem(_name);
 			item->setData(Qt::UserRole, _action);
 			return item;
@@ -233,7 +233,7 @@ void ProgressDialog::processItemsInList() {
 		QString source(progress->tableWidget->item(0, 1)->text());
 		QString destination(progress->tableWidget->item(0, 2)->text());
 		destination.append("/");
-		QFileInfo	   fileInfo(source);
+		QFileInfo	  fileInfo(source);
 		QString		   fileName(fileInfo.fileName());
 		FilleOperation action = static_cast<FilleOperation>(
 			progress->tableWidget->item(0, 0)->data(Qt::UserRole).toInt());
@@ -281,13 +281,13 @@ void ProgressDialog::processItemsInList() {
 
 	} else {
 		changeWindowTitle("");
-		progress->pauseButton->setText(pauseButtonLabels->at(status));
+		progress->pauseButton->setText(pauseButtonLabels[status]);
 		emit hideDialogSignal();
 	}
 }
 
 void ProgressDialog::switchText() {
-	progress->pauseButton->setText(pauseButtonLabels->at(status));
+	progress->pauseButton->setText(pauseButtonLabels[status]);
 }
 
 void ProgressDialog::on_pauseButton_clicked() {

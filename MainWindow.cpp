@@ -19,7 +19,7 @@
 #include <Models/OrderedFileSystemModel.hpp>
 #include <QKeyEvent>
 
-static char aboutText[] =
+static constexpr auto aboutText =
 	"WUFDIENvbW1hbmRlcgpJbmNlcHRlZCBpbiAyMDE3IGluIENoaXNpbmF1LCBNb2xkb3ZhCmJ5IFJvbWFuIFBvc3RhbmNpdWMKCkZvciBxdWVzdGlvbnMgb3IgZGV2IHNlcnZpY2VzOgpyb21hbi5wb3N0YW5jaXVjQGdtYWlsLmNvbQ==";
 
 MainWindow::MainWindow(QWidget *parent)
@@ -439,14 +439,14 @@ bool MainWindow::getDir(QString &dirName, int numFiles, Qt::DropAction action) {
 		message = "<h3><font color=\"#22b14c\">New directory name:</font><h3>";
 	}
 
-	QLabel	   lbl(this);
-	NewDirDlg *dialog = new NewDirDlg(message, dirName, &lbl);
+	QLabel lbl(this);
+	auto   dialog = new NewDirDlg(message, dirName, &lbl);
 	dialog->adjustSize();
 	lbl.show();
 
 	QRect r = geometry();
-	int	  x = r.x() + r.width() / 2;
-	int	  y = r.y() + r.height() / 2;
+	int   x = r.x() + r.width() / 2;
+	int   y = r.y() + r.height() / 2;
 
 	dialog->move(x, y);
 	int hz = dialog->exec();
@@ -465,14 +465,14 @@ bool MainWindow::getFileName(QString &fileName) {
 		"<h3><font color=\"#22b14c\">Enter \
 		file name to edit:</font><h3>";
 
-	QLabel		lbl(this);
-	NewFileDlg *dialog = new NewFileDlg(message, fileName, &lbl);
+	QLabel lbl(this);
+	auto   dialog = new NewFileDlg(message, fileName, &lbl);
 	dialog->adjustSize();
 	lbl.show();
 
 	QRect r = geometry();
-	int	  x = r.x() + r.width() / 2;
-	int	  y = r.y() + r.height() / 2;
+	int   x = r.x() + r.width() / 2;
+	int   y = r.y() + r.height() / 2;
 
 	dialog->move(x, y);
 	int hz = dialog->exec();
@@ -610,7 +610,7 @@ void MainWindow::setupActions() {
 		if (selector->count() <= 1)
 			return;
 		auto curWidget = selector->currentWidget();
-		int	 curIndex = selector->currentIndex();
+		int  curIndex = selector->currentIndex();
 		selector->removeTab(curIndex);
 		delete curWidget;
 		if (curIndex == selector->count())
@@ -657,12 +657,12 @@ void MainWindow::on_actionDefault_editor_triggered() {
 
 	QPushButton *cancelButton = new QPushButton(tr("Cancel"));
 
-	QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+	auto buttonBox = new QDialogButtonBox(Qt::Horizontal);
 	buttonBox->addButton(createButton, QDialogButtonBox::AcceptRole);
 	buttonBox->addButton(cancelButton, QDialogButtonBox::RejectRole);
 
 
-	QVBoxLayout *lt = new QVBoxLayout;
+	auto lt = new QVBoxLayout;
 
 	lt->addWidget(qlabel);
 	lt->addWidget(lineEdit);
@@ -683,8 +683,8 @@ void MainWindow::on_actionDefault_editor_triggered() {
 	// qlabel.show();
 
 	QRect r = geometry();
-	int	  x = r.x() + r.width() / 2;
-	int	  y = r.y() + r.height() / 2;
+	int   x = r.x() + r.width() / 2;
+	int   y = r.y() + r.height() / 2;
 
 	edName.move(x, y);
 	edName.exec();

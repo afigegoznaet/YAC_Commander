@@ -17,7 +17,7 @@ void TextViewer::insertFromMimeData( const QMimeData *source ){
 */
 void TextViewer::setDocument(QString &&docPath) {
 
-	QFastView *pcntwgt = new QFastView;
+	auto pcntwgt = new QFastView;
 	ui->tabWidget->addTab(pcntwgt, docPath);
 	auto file = new QFile(docPath, this);
 

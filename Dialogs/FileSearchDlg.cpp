@@ -40,7 +40,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f)
 
 	connect(
 		this, &SearchDialog::startSearchRecursion, this,
-		[&](QString pattern, QString dir) {
+		[&](const QString &pattern, const QString &dir) {
 			fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,
 									pattern, dir, NAME);
 		},
@@ -225,11 +225,11 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 		auto file = new QFile(theFile.absoluteFilePath());
 		if (!file->open(QIODevice::ReadOnly))
 			return;
-		QString line;
+		QString		line;
 		QTextStream in(file);
-		bool caseSens = ui->caseCheckBox->isChecked();
-		bool regEx = ui->regExpCheckBox->isChecked();
-		auto searchCond =
+		bool		caseSens = ui->caseCheckBox->isChecked();
+		bool		regEx = ui->regExpCheckBox->isChecked();
+		auto		searchCond =
 			regEx ? std::function<bool(const QString &, const QString &, bool)>(
 				[](const QString &line, const QString &pattern, bool) {
 					QRegularExpression rx(pattern);
@@ -269,7 +269,7 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 	if (attrs.togglesFlags & Size) {
 
 		qint64 searchedSize{qint64(ui->sizeSpin->value())};
-		auto operation = ui->cmpCombo->currentData().toInt();
+		auto   operation = ui->cmpCombo->currentData().toInt();
 		qint64 multiplier = ui->unitCombo->currentData().toLongLong();
 
 		//	ui->cmpCombo->addItem("=",0);

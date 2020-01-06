@@ -10,12 +10,16 @@ class QCompleter;
 class NewFileDlg : public QDialog {
 	Q_OBJECT
 public:
-	explicit NewFileDlg(QString &label, QString &getName, QWidget *parent = 0);
+	explicit NewFileDlg(QString &label, QString &dirName,
+						QWidget *parent = nullptr);
 
-	QString getName() const;
+	[[nodiscard]] QString getName() const;
 
 protected:
-	QLineEdit *m_lineEdit;
+	[[nodiscard]] QLineEdit *getLineEdit() const { return lineEdit; }
+
+private:
+	QLineEdit *lineEdit;
 
 signals:
 

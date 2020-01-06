@@ -14,9 +14,7 @@ public:
 	explicit FileMoverDelegate(QString source, QString destination,
 							   FilleOperation action,
 							   QObject *	  parent = nullptr);
-	~FileMoverDelegate();
-	// void execute();
-	QMetaObject::Connection hz;
+	~FileMoverDelegate() override;
 
 signals:
 	void bytesProgress(uint);
