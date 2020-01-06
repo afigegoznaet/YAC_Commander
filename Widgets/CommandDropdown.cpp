@@ -37,7 +37,7 @@ void CommandDropDown::processCommand() {
 		// QProcess proc;
 		QString dir(mainWindow->getDirInFocus());
 		// QDir::setCurrent(dir);
-		QString program;
+		QString		program;
 		QStringList args;
 #ifdef _WIN32
 
@@ -55,7 +55,8 @@ void CommandDropDown::processCommand() {
 		program = "sh";
 		// args.removeFirst();
 #endif
-		QProcess::startDetached(program, args, dir);
+		auto res = QProcess::startDetached(program, args, dir);
+		assert(res);
 		// qDebug()<<proc.execute(program, args);
 	}
 
@@ -80,7 +81,7 @@ void CommandDropDown::keyPressEvent(QKeyEvent *event) {
 CommandDropDown::~CommandDropDown() {
 
 	QSettings settings;
-	int count = this->count();
+	int		  count = this->count();
 	settings.beginWriteArray("Commands", count);
 	for (int i = 0; i < count && i < 50; i++) {
 		settings.setArrayIndex(i);
@@ -92,8 +93,8 @@ CommandDropDown::~CommandDropDown() {
 void CommandDropDown::readSettings() {
 	// return;
 	QSettings settings;
-	int count = settings.beginReadArray("Commands");
-	int i = 0;
+	int		  count = settings.beginReadArray("Commands");
+	int		  i = 0;
 	while (count-- > 0) {
 		settings.setArrayIndex(i);
 		insertItem(i++, settings.value("command").toString());
