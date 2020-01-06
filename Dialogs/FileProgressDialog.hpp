@@ -8,12 +8,15 @@ namespace Ui {
 	class ProgressDialog;
 }
 
+enum FilleOperation : int { Copy, Move, Delete };
+
+
 class ProgressDialog : public QDialog {
 	Q_OBJECT
 
 	// friend class MainWindow;
 public:
-	explicit ProgressDialog(QWidget *parent = 0,
+	explicit ProgressDialog(QWidget *		parent = nullptr,
 							Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
 	~ProgressDialog();
 
@@ -22,15 +25,16 @@ signals:
 	void hideDialogSignal();
 	void dirMoved(int);
 	void setStatus(int status);
+	void changeWindowTitle(QString);
 
 public slots:
 	void onWrite(uint);
 	void movementResult(int);
 	void dirMovementResult(int);
-	void errorMsg(const QString& errorText);
+	void errorMsg(const QString &errorText);
 	void hideDialogSlot() { this->hide(); }
-	void processFileAction(QFileInfoList fileList, const QString& destination,
-						   Qt::DropAction action);
+	void processFileAction(QFileInfoList fileList, const QString &destination,
+						   FilleOperation action);
 private slots:
 	void on_pauseButton_clicked();
 	void on_removeButton_clicked();
@@ -38,16 +42,16 @@ private slots:
 
 private:
 	Ui::ProgressDialog *progress;
-	QFuture<void> stub;
-	bool status;
-	QWaitCondition cond;
-	QWaitCondition condStatus;
-	QString pauseButtonLabels[2] = {"Continue", "Pause"};
-	QMutex moverBlocker;
+	QFuture<void>		stub;
+	bool				status;
+	QWaitCondition		cond;
+	QWaitCondition		condStatus;
+	QString				pauseButtonLabels[2] = {"Continue", "Pause"};
+	QMutex				moverBlocker;
 
 	void switchText();
 	void processItemsInList(void);
-	void dirParsing(QDir &dir, QString &action, QString &destination,
+	void dirParsing(QDir &dir, FilleOperation action, QString &destination,
 					QList<QString> &createdDirs);
 	QMessageBox::StandardButton showError(int result);
 };

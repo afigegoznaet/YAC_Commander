@@ -7,12 +7,13 @@
 #include <QDebug>
 
 bool isMovable(QString &from, QString &to);
-
+enum FilleOperation : int;
 class FileMoverDelegate : public QObject {
 	Q_OBJECT
 public:
 	explicit FileMoverDelegate(QString source, QString destination,
-							   QString action, QObject *parent = 0);
+							   FilleOperation action,
+							   QObject *	  parent = nullptr);
 	~FileMoverDelegate();
 	// void execute();
 	QMetaObject::Connection hz;
@@ -26,10 +27,10 @@ public slots:
 	void setStatus(int status);
 
 private:
-	QString destination;
-	QString source;
-	QString action;
-	int status;
+	QString		   source;
+	QString		   destination;
+	FilleOperation action;
+	int			   status;
 	QWaitCondition cond;
 
 	int copy();

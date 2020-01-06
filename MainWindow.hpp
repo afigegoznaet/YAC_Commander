@@ -24,6 +24,8 @@
 class SearchDialog;
 class ProgressDialog;
 
+enum FilleOperation : int;
+
 namespace Ui {
 	class MainWindow;
 }
@@ -35,16 +37,16 @@ public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	QString getDirInFocus(bool opposite = false);
 	~MainWindow();
-	FileTableView *focusedTab();
+	FileTableView *	 focusedTab();
 	FileTabSelector *focusedSelector();
-	ProgressDialog *getFileMover() { return movementProgress; }
-	bool showHidden();
-	void parseParams(int argc, char *argv[]);
+	ProgressDialog * getFileMover() { return movementProgress; }
+	bool			 showHidden();
+	void			 parseParams(int argc, char *argv[]);
 
 signals:
 	void setFocus(FileTabSelector *tab);
 	void setFileAction(QFileInfoList fileList, QString destination,
-					   Qt::DropAction action);
+					   FilleOperation action);
 
 public slots:
 	void cdTo(const QString &);
@@ -65,11 +67,11 @@ private slots:
 private:
 	Ui::MainWindow *ui;
 	ProgressDialog *movementProgress;
-	SearchDialog *searchDlg;
-	QString editor;
-	bool leftTabHasFocus;
-	QByteArray cutActionIndicator;
-	QByteArray cutActionPadding;
+	SearchDialog *	searchDlg;
+	QString			editor;
+	bool			leftTabHasFocus;
+	QByteArray		cutActionIndicator;
+	QByteArray		cutActionPadding;
 
 	void copyFiles();
 	void moveFiles();
@@ -84,9 +86,9 @@ private:
 	void pasteFromClipboard();
 
 	QFileInfoList getSelectedFiles();
-	void keyPressEvent(QKeyEvent *event) override;
-	bool getDir(QString &dirName, int numFiles, Qt::DropAction action);
-	bool getFileName(QString &fileName);
+	void		  keyPressEvent(QKeyEvent *event) override;
+	bool		  getDir(QString &dirName, int numFiles, Qt::DropAction action);
+	bool		  getFileName(QString &fileName);
 };
 
 #endif // MAINWINDOW_H
