@@ -77,13 +77,12 @@ private:
 	QMutex addBlocker;
 	QQueue<QString> dirQ;
 	QFuture<void> fut;
-	bool searching;
 	int firstRow{};
 	SearchAttrib attrs;
 	QTime searchTime;
 	QMutex dirListLocker;
 	std::atomic_int counter{};
-    std::atomic_bool stopSearch{};
+	std::atomic_bool searching{};
 
 	QString updateCombo(EditableDropDown *combo);
 	void addFile(const QString &newFile);

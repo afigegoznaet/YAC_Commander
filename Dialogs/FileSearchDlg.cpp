@@ -32,7 +32,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f)
 	ui->listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->searchButton->setFocus();
-	;
+
 	setFocusPolicy(Qt::NoFocus);
 
 	model = new QStringListModel(this);
@@ -60,7 +60,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f)
 }
 
 SearchDialog::~SearchDialog() {
-	stopSearch = true;
+	searching = false;
 	delete ui;
 }
 
@@ -186,7 +186,7 @@ void SearchDialog::on_searchButton_clicked() {
 	if (ui->sizeCheck->isChecked()) {
 		attrs.togglesFlags |= Size;
 		attrs.op = static_cast<SizeOp>(ui->cmpCombo->currentData().toInt());
-		attrs.size = ui->sizeSpin->value();
+		attrs.size = quint64(ui->sizeSpin->value());
 		int mod = 10 * ui->unitCombo->currentData().toInt();
 		attrs.size *= pow(2, mod);
 	}
@@ -219,7 +219,7 @@ void SearchDialog::on_doubleClicked(const QModelIndex &index) {
 }
 
 void SearchDialog::validateFile(const QFileInfo &theFile) {
-	if (stopSearch)
+	if (!searching)
 		return;
 	if (attrs.togglesFlags & TextPattern) {
 		auto file = new QFile(theFile.absoluteFilePath());
@@ -244,7 +244,7 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 
 		bool found = false;
 		while (!in.atEnd()) {
-			if (!searching || stopSearch)
+			if (!searching)
 				break;
 			line = in.readLine();
 			if (searchCond(line, attrs.pattern, caseSens)) {
