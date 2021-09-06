@@ -36,7 +36,7 @@ int FileMoverDelegate::copy() {
 	qint64 totalSize = sourceFile.size();
 	qint64 tempSize = 0;
 
-	std::array<char, MAX_READ> buffer{}; // 1 Mb
+    static std::array<char, MAX_READ> buffer{}; // 1 Mb
 	qint64					   bytesRead = 0;
 	QMutex					   blocker;
 	blocker.lock();

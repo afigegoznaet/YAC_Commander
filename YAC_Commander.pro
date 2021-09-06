@@ -14,8 +14,12 @@ CONFIG += c++17
 #QMAKE_LFLAGS+="-fsanitize=thread -shared"
 
 
-
+macos{
+TARGET = "YAC Commander"
+}else{
 TARGET = yc
+}
+
 TEMPLATE = app
 
 FORMS    +=     mainwindow.ui \
@@ -68,6 +72,7 @@ win32-msvc* {
 }
 
 RC_ICONS = tc_qt.ico
+ICON = tc_qt.icns
 
 linux {
 	target.path = /usr/local/bin
