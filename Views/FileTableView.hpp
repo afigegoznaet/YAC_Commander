@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QTableView>
 #include <QTimer>
+#include <QFileSystemWatcher>
 
 class TableItemDelegate;
 class OrderedFileSystemModel;
@@ -58,6 +59,7 @@ public slots:
 	void updateInfo();
 	void openContextMenu(QPoint);
 	void commitNewName(QWidget *editor);
+    void fileWatcher(const QString&);
 
 protected:
 	void			   keyPressEvent(QKeyEvent *event) override;
@@ -78,6 +80,8 @@ private:
 	QTimer					slowDoubleClickTimer;
 	OrderedFileSystemModel *model{};
 	FileTabSelector *		parent = nullptr;
+
+    QFileSystemWatcher dirWatch;
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;

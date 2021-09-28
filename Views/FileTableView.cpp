@@ -20,13 +20,14 @@
 #include <QTimer>
 #include <QUrl>
 #include <QtConcurrent/QtConcurrent>
+#include <QDebug>
 
 static constexpr auto IN = 1;
 static constexpr auto OUT = 0;
 
 FileTableView::FileTableView(const QDir &directory, QWidget *parent)
 	: QTableView(parent), directory(directory.absolutePath()),
-	  slowDoubleClickTimer(this) {
+      slowDoubleClickTimer(this),dirWatch{this} {
 	connect(&slowDoubleClickTimer, &QTimer::timeout, this,
 			[&] { slowDoubleClick = false; });
 	this->parent = (qobject_cast<FileTabSelector *>(parent));
@@ -34,6 +35,15 @@ FileTableView::FileTableView(const QDir &directory, QWidget *parent)
 	menu = new ItemContextMenu(this);
 	model = new OrderedFileSystemModel(this);
 	prevRow = -1;
+    dirWatch.addPath(directory.absolutePath());
+    connect(&dirWatch, SIGNAL(directoryChanged(const QString&)), this , SLOT(fileWatcher(const QString&)));
+    connect(&dirWatch, SIGNAL(fileChanged(const QString&)), this , SLOT(fileWatcher(const QString&)));
+}
+
+void FileTableView::fileWatcher(const QString& ){
+    //qDebug() << "File changed \n" << file;
+    auto res = model->setRootPath(model->rootPath());
+    qDebug()<<res;
 }
 
 void FileTableView::on_doubleClicked(const QModelIndex &index) {
@@ -67,6 +77,7 @@ void FileTableView::on_doubleClicked(const QModelIndex &index) {
 
 void FileTableView::chDir(const QModelIndex &index, bool in_out) {
 	prevRow = -1;
+    dirWatch.removePath(model->rootPath());
 	if (in_out == IN) {
 		directory = ".."; // clever selection
 		QDir parentDir(model->fileInfo(index).absoluteFilePath());
@@ -74,6 +85,7 @@ void FileTableView::chDir(const QModelIndex &index, bool in_out) {
 		assert(rootIndex.isValid());
 		parentDir.cd(".");
 		setRootIndex(model->getRootIndex());
+        dirWatch.addPath(parentDir.absolutePath());
 	} else {
 		QDir parentDir(model->rootPath());
 		if (parentDir.isRoot())
@@ -81,7 +93,9 @@ void FileTableView::chDir(const QModelIndex &index, bool in_out) {
 		directory = parentDir.dirName();
 		parentDir.cdUp();
 		setRootIndex(model->setRootPath(parentDir.absolutePath()));
+        dirWatch.addPath(parentDir.absolutePath());
 	}
+
 	selectionModel()->clear();
 	updateInfo();
 	emit dirChanged(model->rootPath(), this->index);
