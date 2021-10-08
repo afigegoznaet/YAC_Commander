@@ -50,9 +50,9 @@ ItemContextMenu::ItemContextMenu(QWidget *parent) : QMenu(parent) {
 
 void ItemContextMenu::init() {
 	selectedFiles = parent->getSelectedFiles();
-	if (selectedFiles.length() == 1
+    if (selectedFiles.length() ==0 || (selectedFiles.length() == 1
 		&& (!selectedFiles.first().fileName().compare("..")
-			|| selectedFiles.first().fileName().isEmpty())) {
+            || selectedFiles.first().fileName().isEmpty()))) {
 		cutAction->setDisabled(true);
 		copyAction->setDisabled(true);
 		renameAction->setDisabled(true);
@@ -77,7 +77,6 @@ void ItemContextMenu::initCommon() {
 						   QKeySequence(tr("Ctrl+C")));
 	pasteAction = addAction("Paste", this, &ItemContextMenu::pasteFromClipboard,
 							QKeySequence(tr("Ctrl+V")));
-
 	addSeparator();
 	deleteAction =
 		addAction("Delete selected", this, &ItemContextMenu::deleteItems,
@@ -91,6 +90,8 @@ void ItemContextMenu::initCommon() {
 }
 void ItemContextMenu::initFile() {
 
+    if(selectedFiles.size() == 0)
+        return;
 #ifdef __linux__
 
 	KFileItemActions *fileItemActions = new KFileItemActions(this);
@@ -112,11 +113,9 @@ void ItemContextMenu::initFile() {
 
 	fileItemActions->setItemListProperties(kprops);
 
-	fileItemActions->addOpenWithActionsTo(
-		this, QStringLiteral("DesktopEntryName != '%1'")
-				  .arg(qApp->desktopFileName()));
-	fileItemActions->addServiceActionsTo(this);
-	fileItemActions->addPluginActionsTo(this);
+    fileItemActions->insertOpenWithActionsTo(nullptr,
+                                             this, QStringList{});
+    fileItemActions->addActionsTo(this);
 
 	initProperties(std::move(kList));
 #endif
