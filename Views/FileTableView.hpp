@@ -20,8 +20,8 @@ class FileTableView : public QTableView {
 	enum Action { PLUS, MINUS, ASTERISK };
 
 public:
-	explicit FileTableView(const QDir &directory, QWidget *parent = nullptr);
-	FileTableView(QWidget *parent) : FileTableView(QDir::homePath(), parent) {}
+	explicit FileTableView(QDir &&directory, QWidget *parent = nullptr);
+	FileTableView(QWidget *parent) : FileTableView(QDir(QDir::homePath()), parent) {}
 	//~FileTableView(){delete prevSelection;}
 
 	void init();

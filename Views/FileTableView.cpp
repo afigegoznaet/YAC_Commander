@@ -24,9 +24,12 @@
 static constexpr auto IN = 1;
 static constexpr auto OUT = 0;
 
-FileTableView::FileTableView(const QDir &directory, QWidget *parent)
+FileTableView::FileTableView(QDir &&directory, QWidget *parent)
 	: QTableView(parent), directory(directory.absolutePath()),
 	  slowDoubleClickTimer(this) {
+	while(!directory.exists())
+		directory.cdUp();
+	this->directory = directory.absolutePath();
 	connect(&slowDoubleClickTimer, &QTimer::timeout, this,
 			[&] { slowDoubleClick = false; });
 	this->parent = (qobject_cast<FileTabSelector *>(parent));
