@@ -36,9 +36,10 @@ int FileMoverDelegate::copy() {
 	qint64 totalSize = sourceFile.size();
 	qint64 tempSize = 0;
 
-    static std::array<char, MAX_READ> buffer{}; // 1 Mb
-	qint64					   bytesRead = 0;
-	QMutex					   blocker;
+	static std::array<char, MAX_READ> buffer{}; // 1 Mb
+
+	qint64 bytesRead = 0;
+	QMutex blocker;
 	blocker.lock();
 
 	bytesRead = sourceFile.read(buffer.data(), MAX_READ);
@@ -76,7 +77,6 @@ int FileMoverDelegate::copy() {
 }
 
 int FileMoverDelegate::move() {
-
 	return MOVE_OK + static_cast<int>(QFile::rename(source, destination));
 }
 /*
@@ -87,7 +87,7 @@ void FileMover::execute(){
 FileMoverDelegate::~FileMoverDelegate() {
 
 	int res = 0;
-	if (Copy == action) {
+	if (Qt::CopyAction == action) {
 		res = this->copy();
 	} else {
 		if (isMovable(source, destination))
@@ -103,7 +103,7 @@ FileMoverDelegate::~FileMoverDelegate() {
 }
 
 FileMoverDelegate::FileMoverDelegate(QString _source, QString _destination,
-									 FilleOperation _action, QObject *parent)
+									 Qt::DropAction _action, QObject *parent)
 	: QObject(parent), source(std::move(_source)),
 	  destination(std::move(_destination)), action{_action}, status(true) {
 	// qDebug()<<"Mover constructor"<<thread();

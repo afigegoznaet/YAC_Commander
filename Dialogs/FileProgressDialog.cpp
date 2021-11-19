@@ -47,7 +47,7 @@ ProgressDialog::~ProgressDialog() {
 
 void ProgressDialog::processFileAction(const QFileInfoList &fileList,
 									   const QString &		destination,
-									   FilleOperation		action) {
+									   Qt::DropAction		action) {
 
 	QFileInfo destDir(destination);
 	if (!destDir.isWritable()) {
@@ -78,7 +78,7 @@ void ProgressDialog::processFileAction(const QFileInfoList &fileList,
 		// QString item = "Move " + fileInfo.fileName() + " to " + destination;
 		// QString newName = destination + "/" + fileInfo.fileName();
 
-		auto newItem = [](const QString &_name, FilleOperation _action) {
+		auto newItem = [](const QString &_name, Qt::DropAction _action) {
 			auto item = new QTableWidgetItem(_name);
 			item->setData(Qt::UserRole, _action);
 			return item;
@@ -86,10 +86,10 @@ void ProgressDialog::processFileAction(const QFileInfoList &fileList,
 		progress->tableWidget->insertRow(newRow);
 
 		switch (action) {
-		case Move:
+		case Qt::MoveAction:
 			progress->tableWidget->setItem(newRow, 0, newItem("Move", action));
 			break;
-		case Copy:
+		case Qt::CopyAction:
 			progress->tableWidget->setItem(newRow, 0, newItem("Copy", action));
 			break;
 		default:
@@ -168,7 +168,7 @@ void ProgressDialog::dirMovementResult(int result) {
 	showError(result);
 }
 
-void ProgressDialog::dirParsing(QDir &dir, FilleOperation action, QString &dest,
+void ProgressDialog::dirParsing(QDir &dir, Qt::DropAction action, QString &dest,
 								QList<QString> &createdDirs) {
 
 	if (!dir.exists(dest)) {
@@ -233,9 +233,9 @@ void ProgressDialog::processItemsInList() {
 		QString source(progress->tableWidget->item(0, 1)->text());
 		QString destination(progress->tableWidget->item(0, 2)->text());
 		destination.append("/");
-		QFileInfo	  fileInfo(source);
+		QFileInfo	   fileInfo(source);
 		QString		   fileName(fileInfo.fileName());
-		FilleOperation action = static_cast<FilleOperation>(
+		Qt::DropAction action = static_cast<Qt::DropAction>(
 			progress->tableWidget->item(0, 0)->data(Qt::UserRole).toInt());
 
 		if (fileInfo.isDir()) {
@@ -247,7 +247,7 @@ void ProgressDialog::processItemsInList() {
 			/**
 			  Too many "if"s, gotta do something about it
 			  */
-			if (Move == action) {
+			if (Qt::MoveAction == action) {
 				if (movable) {
 					if (destination.startsWith(source)) {
 						emit   sendErrMsg("Can not move directory into itself");

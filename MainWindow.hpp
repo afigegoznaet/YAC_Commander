@@ -20,7 +20,7 @@ static constexpr auto DEF_EDITOR = "notepad";
 #endif
 #ifdef __APPLE__
 #undef DEF_EDITOR
-static constexpr auto DEF_EDITOR = "TextEdit";
+static constexpr auto DEF_EDITOR = "open";
 #endif
 
 class SearchDialog;
@@ -39,7 +39,7 @@ public:
 	explicit MainWindow(QWidget *parent = nullptr);
 	QString getDirInFocus(bool opposite = false);
 	~MainWindow() final;
-	FileTableView *  focusedTab();
+	FileTableView *	 focusedTab();
 	FileTabSelector *focusedSelector();
 	ProgressDialog * getFileMover() { return movementProgress; }
 	bool			 showHidden();
@@ -48,7 +48,7 @@ public:
 signals:
 	void setFocus(FileTabSelector *tab);
 	void setFileAction(QFileInfoList fileList, QString destination,
-					   FilleOperation action);
+					   Qt::DropAction action);
 
 public slots:
 	void cdTo(const QString &);
@@ -69,7 +69,7 @@ private slots:
 private:
 	Ui::MainWindow *ui;
 	ProgressDialog *movementProgress;
-	SearchDialog *  searchDlg;
+	SearchDialog *	searchDlg;
 	QString			editor;
 	bool			leftTabHasFocus;
 	QByteArray		cutActionIndicator;

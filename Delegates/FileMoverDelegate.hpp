@@ -7,12 +7,11 @@
 #include <QDebug>
 
 bool isMovable(QString &from, QString &to);
-enum FilleOperation : int;
 class FileMoverDelegate : public QObject {
 	Q_OBJECT
 public:
 	explicit FileMoverDelegate(QString source, QString destination,
-							   FilleOperation action,
+							   Qt::DropAction action,
 							   QObject *	  parent = nullptr);
 	~FileMoverDelegate() override;
 
@@ -27,7 +26,7 @@ public slots:
 private:
 	QString		   source;
 	QString		   destination;
-	FilleOperation action;
+	Qt::DropAction action;
 	int			   status;
 	QWaitCondition cond;
 

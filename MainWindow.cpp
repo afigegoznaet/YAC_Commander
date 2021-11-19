@@ -94,9 +94,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->rightTabWidget, SIGNAL(setFocusSig(FileTabSelector *)), this,
 			SLOT(setFocusSlot(FileTabSelector *)));
 
-	connect(this, SIGNAL(setFileAction(QFileInfoList, QString, FilleOperation)),
+	connect(this, SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)),
 			movementProgress,
-			SLOT(processFileAction(QFileInfoList, QString, FilleOperation)));
+			SLOT(processFileAction(QFileInfoList, QString, Qt::DropAction)));
 	connect(ui->leftTabWidget,
 			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)), this,
 			SIGNAL(setFileAction(QFileInfoList, QString, Qt::DropAction)));
@@ -293,7 +293,7 @@ void MainWindow::copyFiles() {
 		dir.mkdir(destination);
 	}
 
-	emit setFileAction(fileList, destination, Copy);
+	emit setFileAction(fileList, destination, Qt::CopyAction);
 }
 
 void MainWindow::moveFiles() {
@@ -316,7 +316,7 @@ void MainWindow::moveFiles() {
 		dir.mkdir(destination);
 	}
 
-	emit setFileAction(fileList, destination, Move);
+	emit setFileAction(fileList, destination, Qt::CopyAction);
 }
 
 
@@ -445,8 +445,8 @@ bool MainWindow::getDir(QString &dirName, int numFiles, Qt::DropAction action) {
 	lbl.show();
 
 	QRect r = geometry();
-	int   x = r.x() + r.width() / 2;
-	int   y = r.y() + r.height() / 2;
+	int	  x = r.x() + r.width() / 2;
+	int	  y = r.y() + r.height() / 2;
 
 	dialog->move(x, y);
 	int hz = dialog->exec();
@@ -471,8 +471,8 @@ bool MainWindow::getFileName(QString &fileName) {
 	lbl.show();
 
 	QRect r = geometry();
-	int   x = r.x() + r.width() / 2;
-	int   y = r.y() + r.height() / 2;
+	int	  x = r.x() + r.width() / 2;
+	int	  y = r.y() + r.height() / 2;
 
 	dialog->move(x, y);
 	int hz = dialog->exec();
@@ -531,7 +531,7 @@ void MainWindow::on_F3_clicked() {
 }
 
 void MainWindow::on_F4_clicked() {
-
+	qDebug() << "F4";
 	QFileInfoList fileList = getSelectedFiles();
 	for (const auto &file : fileList) {
 		if (file.isDir())
@@ -610,7 +610,7 @@ void MainWindow::setupActions() {
 		if (selector->count() <= 1)
 			return;
 		auto curWidget = selector->currentWidget();
-		int  curIndex = selector->currentIndex();
+		int	 curIndex = selector->currentIndex();
 		selector->removeTab(curIndex);
 		delete curWidget;
 		if (curIndex == selector->count())
@@ -683,8 +683,8 @@ void MainWindow::on_actionDefault_editor_triggered() {
 	// qlabel.show();
 
 	QRect r = geometry();
-	int   x = r.x() + r.width() / 2;
-	int   y = r.y() + r.height() / 2;
+	int	  x = r.x() + r.width() / 2;
+	int	  y = r.y() + r.height() / 2;
 
 	edName.move(x, y);
 	edName.exec();

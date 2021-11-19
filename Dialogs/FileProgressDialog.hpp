@@ -9,16 +9,12 @@ namespace Ui {
 	class ProgressDialog;
 }
 
-enum FilleOperation : int { Copy, Move, Delete };
-
-
 class ProgressDialog : public QDialog {
 	Q_OBJECT
 
 	// friend class MainWindow;
 public:
-	explicit ProgressDialog(QWidget *		parent = nullptr,
-							Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
+	explicit ProgressDialog(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags() | Qt::Window);
 	~ProgressDialog() final;
 
 signals:
@@ -34,8 +30,7 @@ public slots:
 	void dirMovementResult(int);
 	void errorMsg(const QString &errorText);
 	void hideDialogSlot() { this->hide(); }
-	void processFileAction(const QFileInfoList &fileList,
-						   const QString &destination, FilleOperation action);
+	void processFileAction(const QFileInfoList &fileList, const QString &destination, Qt::DropAction action);
 private slots:
 	void on_pauseButton_clicked();
 	void on_removeButton_clicked();
@@ -52,8 +47,7 @@ private:
 
 	void switchText();
 	void processItemsInList();
-	void dirParsing(QDir &dir, FilleOperation action, QString &destination,
-					QList<QString> &createdDirs);
+	void dirParsing(QDir &dir, Qt::DropAction action, QString &destination, QList<QString> &createdDirs);
 	QMessageBox::StandardButton showError(int result);
 };
 
