@@ -120,15 +120,17 @@ MainWindow::MainWindow(QWidget *parent)
 	// qDebug()<<QStandardPaths::AppConfigLocation;
 
 	cutActionIndicator.reserve(4);
-	cutActionIndicator[0] = 2;
-	cutActionIndicator[1] = '\0';
-	cutActionIndicator[2] = '\0';
-	cutActionIndicator[3] = '\0';
+	auto data = cutActionIndicator.data();
+	data[0] = 2;
+	data[1] = '\0';
+	data[2] = '\0';
+	data[3] = '\0';
 	cutActionPadding.reserve(1044);
-	cutActionPadding[0] = -1;
-	cutActionPadding[1] = -1;
-	cutActionPadding[2] = -1;
-	cutActionPadding[3] = -1;
+	data = cutActionPadding.data();
+	data[0] = -1;
+	data[1] = -1;
+	data[2] = -1;
+	data[3] = -1;
 }
 
 MainWindow::~MainWindow() {
