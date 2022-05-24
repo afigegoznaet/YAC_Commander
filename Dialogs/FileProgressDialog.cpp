@@ -48,7 +48,6 @@ ProgressDialog::~ProgressDialog() {
 void ProgressDialog::processFileAction(const QFileInfoList &fileList,
 									   const QString &		destination,
 									   Qt::DropAction		action) {
-
 	QFileInfo destDir(destination);
 	if (!destDir.isWritable()) {
 		QMessageBox::warning(

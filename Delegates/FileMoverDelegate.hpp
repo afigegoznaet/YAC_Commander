@@ -7,6 +7,7 @@
 #include <QDebug>
 
 bool isMovable(QString &from, QString &to);
+
 class FileMoverDelegate : public QObject {
 	Q_OBJECT
 public:

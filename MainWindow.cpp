@@ -318,7 +318,7 @@ void MainWindow::moveFiles() {
 		dir.mkdir(destination);
 	}
 
-	emit setFileAction(fileList, destination, Qt::CopyAction);
+	emit setFileAction(fileList, destination, Qt::MoveAction);
 }
 
 

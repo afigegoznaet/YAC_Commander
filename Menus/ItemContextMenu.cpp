@@ -141,13 +141,14 @@ void ItemContextMenu::cutToClipboard() {
 
 void ItemContextMenu::copyToClipboard() {
 	auto data = parent->getModel()->mimeData(parent->getSelectedIndexes());
+	qDebug()<<"Formats: "<<data->formats();
 	QGuiApplication::clipboard()->setMimeData(data);
 }
 
 void ItemContextMenu::pasteFromClipboard() {
 	const auto &clipboard = QGuiApplication::clipboard();
 	auto		data = clipboard->mimeData();
-
+	qDebug()<<"Formats: "<<data->formats();
 	bool move = false;
 #ifdef WIN32
 	move =
