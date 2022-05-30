@@ -14,7 +14,7 @@ namespace Ui {
 	class SearchDialog;
 }
 
-enum FileAttrib { NONE = 0, X_EC = 1, WRITE = 2, READ = 4, DIR = 8 };
+enum FileAttrib { NONE = 0, X_EC = 1, WRITE = 2, READ = 4, DIRECTORY = 8 };
 enum SearchToggles { TextPattern = 1, Date = 2, Size = 4, Attributes = 8 };
 
 enum SizeOp { EQ, G, L };

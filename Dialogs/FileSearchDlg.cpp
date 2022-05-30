@@ -192,10 +192,10 @@ void SearchDialog::on_searchButton_clicked() {
 	}
 	if (ui->attributesCheck->isChecked()) {
 		attrs.togglesFlags |= Attributes;
-		attrs.attrFlags = (ui->executableBox->isChecked() ? X_EC : NONE)
-						  | (ui->writableBox->isChecked() ? WRITE : NONE)
-						  | (ui->readableBox->isChecked() ? READ : NONE)
-						  | (ui->dirBox->isChecked() ? DIR : NONE);
+        attrs.attrFlags = (ui->executableBox->isChecked() ? X_EC : NONE)
+                          | (ui->writableBox->isChecked() ? WRITE : NONE)
+                          | (ui->readableBox->isChecked() ? READ : NONE)
+                          | (ui->dirBox->isChecked() ? DIRECTORY : NONE);
 	}
 	model->setStringList(QStringList{});
 	ui->searchButton->setText("Stop search");
@@ -299,7 +299,7 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 		qDebug()<<theFile.isExecutable();
 		qDebug()<<theFile.isReadable();
 		qDebug()<<theFile.isWritable();*/
-		if (attrs.attrFlags & DIR) {
+        if (attrs.attrFlags & DIRECTORY) {
 			if (!theFile.isDir())
 				return;
 			QRegularExpression re(ui->fileMaskcombo->lineEdit()->text());
@@ -307,9 +307,9 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 				return;
 		}
 
-		if (!(attrs.attrFlags & DIR)
+        if (!(attrs.attrFlags & DIRECTORY)
 			&& !theFile.permission(QFileDevice::Permission(
-				attrs.attrFlags & (X_EC | READ | WRITE))))
+                attrs.attrFlags & (X_EC | READ | WRITE))))
 			return;
 	}
 

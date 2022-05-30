@@ -9,7 +9,7 @@ namespace Ui {
 	class ProgressDialog;
 }
 
-class ProgressDialog : public QDialog {
+class ProgressDialog final : public QDialog {
 	Q_OBJECT
 
 	// friend class MainWindow;
