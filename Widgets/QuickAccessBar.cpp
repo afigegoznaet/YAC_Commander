@@ -1,5 +1,4 @@
 #include "QuickAccessBar.hpp"
-
 #include <QDebug>
 
 #include <QTimer>
@@ -26,7 +25,13 @@ bool DriveButton::event(QEvent *e){
 
 
 QuickAccessBar::QuickAccessBar(QWidget *parent) : QToolBar(parent) {
-	volumes = QStorageInfo::mountedVolumes();
+    volumes.clear();
+    for(const auto& mountPt :  QStorageInfo::mountedVolumes()){
+        if(mountPt.rootPath().startsWith("/snap"))
+            continue;
+        volumes.append(mountPt);
+    }
+
 	refreshMountPoints();
 	auto timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this,
@@ -35,10 +40,15 @@ QuickAccessBar::QuickAccessBar(QWidget *parent) : QToolBar(parent) {
 }
 
 void QuickAccessBar::update() {
-	auto newVols = QStorageInfo::mountedVolumes();
-	if (newVols.size() != volumes.size()) {
-		// do I need to *free* volumes first?
-		volumes = newVols;
+    QList<QStorageInfo> newVols;
+    for(const auto& mountPt :  QStorageInfo::mountedVolumes()){
+        if(mountPt.rootPath().startsWith("/snap"))
+            continue;
+        newVols.append(mountPt);
+    }
+
+    if (newVols.size() != volumes.size()) {
+        std::swap(volumes, newVols);
 		refreshMountPoints();
 	}
 }
