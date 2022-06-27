@@ -176,7 +176,7 @@ void ProgressDialog::dirParsing(QDir &dir, Qt::DropAction action, QString &dest,
 	}
 
 	QFileInfoList dirEntries = dir.entryInfoList(
-		QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst);
+		QDir::AllEntries | QDir::NoDotAndDotDot | QDir::AccessMask, QDir::DirsFirst);
 
 	for (const auto &file : dirEntries) {
 		{
@@ -262,6 +262,8 @@ void ProgressDialog::processItemsInList() {
 			} else
 				dirParsing(dir, action, destination, createdDirs);
 			emit dirMoved(1);
+			if(dir.isEmpty())
+				dir.removeRecursively();
 			return;
 		}
 
