@@ -28,8 +28,10 @@ static constexpr auto OUT = 0;
 FileTableView::FileTableView(QDir &&directory, QWidget *parent)
 	: QTableView(parent), directory(directory.absolutePath()),
 	  slowDoubleClickTimer(this), dirWatch(this) {
-	while(!directory.exists())
-		directory.cdUp();
+	while(!directory.exists()){
+		if(!directory.cdUp())
+			directory = QDir::home();
+	}
 	this->directory = directory.absolutePath();
 
 	connect(&slowDoubleClickTimer, &QTimer::timeout, this,
