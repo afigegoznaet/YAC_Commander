@@ -25,12 +25,7 @@ bool DriveButton::event(QEvent *e){
 
 
 QuickAccessBar::QuickAccessBar(QWidget *parent) : QToolBar(parent) {
-    volumes.clear();
-    for(const auto& mountPt :  QStorageInfo::mountedVolumes()){
-        if(mountPt.rootPath().startsWith("/snap"))
-            continue;
-        volumes.append(mountPt);
-    }
+	volumes.clear();
 
 	refreshMountPoints();
 	auto timer = new QTimer(this);
@@ -40,15 +35,21 @@ QuickAccessBar::QuickAccessBar(QWidget *parent) : QToolBar(parent) {
 }
 
 void QuickAccessBar::update() {
-    QList<QStorageInfo> newVols;
-    for(const auto& mountPt :  QStorageInfo::mountedVolumes()){
-        if(mountPt.rootPath().startsWith("/snap"))
-            continue;
-        newVols.append(mountPt);
-    }
+	QList<QStorageInfo> newVols;
+	for (const auto &mountPt : QStorageInfo::mountedVolumes()) {
+		if (mountPt.rootPath().startsWith("/snap"))
+			continue;
+		if (mountPt.rootPath().startsWith("/var/lib/docker"))
+			continue;
+		if (mountPt.rootPath().startsWith("/run/docker"))
+			continue;
+		if (mountPt.rootPath().startsWith("/run/user"))
+			continue;
+		newVols.append(mountPt);
+	}
 
-    if (newVols.size() != volumes.size()) {
-        std::swap(volumes, newVols);
+	if (newVols.size() != volumes.size()) {
+		std::swap(volumes, newVols);
 		refreshMountPoints();
 	}
 }
