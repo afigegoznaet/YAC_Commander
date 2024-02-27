@@ -2,8 +2,8 @@
 #ifndef TAB_H
 #define TAB_H
 
-//#include <QWidget>
-//#include <QListView>
+// #include <QWidget>
+// #include <QListView>
 #include <QDir>
 #include <QTableView>
 #include <QTimer>
@@ -18,19 +18,21 @@ class FileTabSelector;
 class FileTableView : public QTableView {
 	Q_OBJECT
 
-	enum Action { PLUS, MINUS, ASTERISK };
+	enum Action { PLUS,
+				  MINUS,
+				  ASTERISK };
 
 public:
 	explicit FileTableView(QDir &&directory, QWidget *parent = nullptr);
 	FileTableView(QWidget *parent) : FileTableView(QDir(QDir::homePath()), parent) {}
-	//~FileTableView(){delete prevSelection;}
+	~FileTableView() override;
 
 	void init();
 
 	QFileInfoList					 getSelectedFiles();
 	void							 cdTo(const QString &);
 	[[nodiscard]] TableItemDelegate *itemDelegate() const;
-	OrderedFileSystemModel *		 getModel() { return model; }
+	OrderedFileSystemModel			*getModel() { return model; }
 	QModelIndexList					 getSelectedIndexes();
 	QString							 getDirectory();
 	// QLabel *getLabel() { return infoLabel; }
@@ -54,12 +56,12 @@ public slots:
 	void on_doubleClicked(const QModelIndex &index);
 	void setCurrentSelection(const QString &);
 	void headerClicked(int section);
-	void rowsRemoved(const QModelIndex &, int, int);
+	void rowsRemoved(const QModelIndex &, int first, int last);
 	void rowsInserted(const QModelIndex &parent, int first, int) override;
 	void updateInfo();
 	void openContextMenu(QPoint);
 	void commitNewName(QWidget *editor);
-    void fileWatcher(const QString&);
+	void fileWatcher(const QString &);
 
 protected:
 	void			   keyPressEvent(QKeyEvent *event) override;
@@ -73,15 +75,15 @@ private:
 	int						prevRow = -1;
 	bool					editorIsOpen = false;
 	bool					slowDoubleClick = false;
-	QLabel *				infoLabel = nullptr;
-	TableItemDelegate *		delegate = nullptr;
-	ItemContextMenu *		menu;
+	QLabel				   *infoLabel = nullptr;
+	TableItemDelegate	   *delegate = nullptr;
+	ItemContextMenu		   *menu;
 	QString					directory;
 	QTimer					slowDoubleClickTimer;
 	OrderedFileSystemModel *model{};
-	FileTabSelector *		parent = nullptr;
+	FileTabSelector		   *parent = nullptr;
 
-    QFileSystemWatcher dirWatch;
+	QFileSystemWatcher dirWatch;
 
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;

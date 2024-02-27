@@ -28,8 +28,8 @@ static constexpr auto OUT = 0;
 FileTableView::FileTableView(QDir &&directory, QWidget *parent)
 	: QTableView(parent), directory(directory.absolutePath()),
 	  slowDoubleClickTimer(this), dirWatch(this) {
-	while(!directory.exists()){
-		if(!directory.cdUp())
+	while (!directory.exists()) {
+		if (!directory.cdUp())
 			directory = QDir::home();
 	}
 	this->directory = directory.absolutePath();
@@ -41,15 +41,19 @@ FileTableView::FileTableView(QDir &&directory, QWidget *parent)
 	menu = new ItemContextMenu(this);
 	model = new OrderedFileSystemModel(this);
 	prevRow = -1;
-    dirWatch.addPath(directory.absolutePath());
-    connect(&dirWatch, SIGNAL(directoryChanged(const QString&)), this , SLOT(fileWatcher(const QString&)));
-    connect(&dirWatch, SIGNAL(fileChanged(const QString&)), this , SLOT(fileWatcher(const QString&)));
+	dirWatch.addPath(directory.absolutePath());
+	connect(&dirWatch, SIGNAL(directoryChanged(const QString &)), this, SLOT(fileWatcher(const QString &)));
+	connect(&dirWatch, SIGNAL(fileChanged(const QString &)), this, SLOT(fileWatcher(const QString &)));
 }
 
-void FileTableView::fileWatcher(const QString& ){
-    //qDebug() << "File changed \n" << file;
-    auto res = model->setRootPath(model->rootPath());
-    qDebug()<<res;
+FileTableView::~FileTableView() {
+	assert(true);
+}
+
+void FileTableView::fileWatcher(const QString &) {
+	// qDebug() << "File changed \n" << file;
+	auto res = model->setRootPath(model->rootPath());
+	qDebug() << res;
 }
 
 void FileTableView::on_doubleClicked(const QModelIndex &index) {
@@ -83,7 +87,7 @@ void FileTableView::on_doubleClicked(const QModelIndex &index) {
 
 void FileTableView::chDir(const QModelIndex &index, bool in_out) {
 	prevRow = -1;
-    dirWatch.removePath(model->rootPath());
+	dirWatch.removePath(model->rootPath());
 	if (in_out == IN) {
 		directory = ".."; // clever selection
 		QDir parentDir(model->fileInfo(index).absoluteFilePath());
@@ -91,7 +95,7 @@ void FileTableView::chDir(const QModelIndex &index, bool in_out) {
 		assert(rootIndex.isValid());
 		parentDir.cd(".");
 		setRootIndex(model->getRootIndex());
-        dirWatch.addPath(parentDir.absolutePath());
+		dirWatch.addPath(parentDir.absolutePath());
 	} else {
 		QDir parentDir(model->rootPath());
 		if (parentDir.isRoot())
@@ -99,7 +103,7 @@ void FileTableView::chDir(const QModelIndex &index, bool in_out) {
 		directory = parentDir.dirName();
 		parentDir.cdUp();
 		setRootIndex(model->setRootPath(parentDir.absolutePath()));
-        dirWatch.addPath(parentDir.absolutePath());
+		dirWatch.addPath(parentDir.absolutePath());
 	}
 
 	selectionModel()->clear();
@@ -230,7 +234,7 @@ void FileTableView::init() {
 	});
 	connect(model, SIGNAL(directoryLoaded(QString)), this,
 			SLOT(setCurrentSelection(QString)));
-	connect(fModel, SIGNAL(rowsRemoved(QModelIndex, int, int)), this,
+	connect(model, SIGNAL(rowsAboutToBeRemoved(QModelIndex, int, int)), this,
 			SLOT(rowsRemoved(QModelIndex, int, int)));
 
 	connect(selectionModel(), &QItemSelectionModel::selectionChanged, this,
@@ -276,10 +280,10 @@ void FileTableView::setCurrentSelection(const QString &) {
 		// scrollTo(currentIndex());
 		return;
 	}
-	int  rows = model->rowCount(rootIndex());
+	int	 rows = model->rowCount(rootIndex());
 	auto rootIndex = model->getRootIndex();
 	auto index = model->index(0, 0, rootIndex);
-	int  i;
+	int	 i;
 	for (i = 0; i < rows; i++) {
 		auto ind = model->index(i, 0, rootIndex);
 		if (!directory.compare(model->fileInfo(ind).fileName())) {
@@ -315,7 +319,7 @@ void FileTableView::focusOutEvent(QFocusEvent *event) {
 }
 
 QFileInfoList FileTableView::getSelectedFiles() {
-	QFileInfoList   selectedFiles;
+	QFileInfoList	selectedFiles;
 	QModelIndexList items = getSelectedIndexes();
 
 	for (const auto &fileIndex : items)
@@ -444,11 +448,14 @@ void FileTableView::setSelectionAction(Action act) {
 	repaint();
 }
 
-void FileTableView::rowsRemoved(const QModelIndex &, int, int) {
+void FileTableView::rowsRemoved(const QModelIndex &idx, int first, int last) {
 
-	auto ind =
-		model->mapFromSource(model->getSourceRootIndex().child(prevRow, 0));
-	setCurrentIndex(ind);
+	if (model->rowCount(idx) > last + 1) {
+		selectionModel()->setCurrentIndex(model->index(last + 1, 0, idx), QItemSelectionModel::Current | QItemSelectionModel::Rows);
+	} else {
+		selectionModel()->setCurrentIndex(model->index(first - 1, 0, idx), QItemSelectionModel::Current | QItemSelectionModel::Rows);
+	}
+
 	delegate->currentChanged(currentIndex(), currentIndex());
 	updateInfo();
 }
@@ -505,7 +512,7 @@ void FileTableView::commitNewName(QWidget *editor) {
 	QString newName = editor->property("text").toString();
 
 	QFileInfo renamedFile = model->fileInfo(currentIndex());
-	QFile	 file(renamedFile.absoluteFilePath());
+	QFile	  file(renamedFile.absoluteFilePath());
 	newName = renamedFile.absolutePath() + "/" + newName;
 	// qDebug()<<newName;
 	file.rename(newName);
@@ -533,7 +540,7 @@ void FileTableView::deleteSelectedFiles() {
 	prevRow = model->mapToSource(index).row();
 
 	bool status;
-	int  counter = 0;
+	int	 counter = 0;
 	bool noToAll = false;
 	bool yesToAll = false;
 	foreach (auto fileInfo, fileList) {
