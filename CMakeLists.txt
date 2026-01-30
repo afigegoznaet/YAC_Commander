@@ -15,8 +15,8 @@ if(NOT DEFINED INSTALL_EXAMPLESDIR)
 endif()
 
 
-find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core)
-find_package(Qt5 REQUIRED COMPONENTS Gui Network Widgets)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Gui Network Widgets)
 
 message("${CMAKE_SOURCE_DIR}")
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR})
@@ -70,17 +70,19 @@ add_executable(YAC_Commander
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "yc")
 if(UNIX)
-    find_package(KF5KIO)
-    find_package(KF5Archive)
-    find_package(KF5CoreAddons)
+    find_package(KF6KIO)
+    find_package(KF6Archive)
+    find_package(KF6CoreAddons)
+    find_package(KF6XmlGui)
 
     target_link_libraries(YAC_Commander PUBLIC
-        KF5Archive
-        KF5CoreAddons
-        KF5::KIOCore
-        KF5::KIOFileWidgets
-        KF5::KIOWidgets
-        KF5::KIONTLM
+        KF6Archive
+        KF6CoreAddons
+        KF6::KIOCore
+        KF6::KIOFileWidgets
+        KF6::KIOWidgets
+        KF6::XmlGui
+        #KF6::KIONTLM
         Qt::Core
         Qt::Gui
         Qt::Network
@@ -101,17 +103,17 @@ else()
     )
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL Debug AND LINUX)
-    target_compile_options(YAC_Commander
-        -fsanitize=address
-    )
-endif()
+# if(CMAKE_BUILD_TYPE STREQUAL Debug AND LINUX)
+#     target_compile_options(YAC_Commander
+#         -fsanitize=address
+#     )
+# endif()
 
 install(TARGETS YAC_Commander
     RUNTIME DESTINATION "/usr/local/bin"
 )
 
-install(FILES "${CMAKE_SOURCE_DIR}/yc.desktop"
+install(FILES "${CMAKE_SOURCE_DIR}/darkstar.yc.desktop"
      DESTINATION "/usr/share/applications"
 )
 

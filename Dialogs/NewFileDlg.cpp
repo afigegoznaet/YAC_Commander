@@ -7,7 +7,6 @@
 #include <QLabel>
 #include <QDebug>
 #include <QCompleter>
-#include <QDirModel>
 #include <QFileSystemModel>
 
 NewFileDlg::NewFileDlg(QString &label, QString &dirName, QWidget *parent)

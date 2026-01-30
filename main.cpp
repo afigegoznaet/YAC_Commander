@@ -2,10 +2,12 @@
 #include <QSettings>
 
 int main(int argc, char *argv[]) {
+	QGuiApplication::setDesktopFileName(QStringLiteral("darkstar.yc"));
 	QApplication a(argc, argv);
 	QCoreApplication::setOrganizationName("Roman's Dark Star Laptop");
 	QCoreApplication::setApplicationName("YAC Commander");
-	QSettings settings;
+
+	QSettings  settings;
 	MainWindow w;
 	w.setWindowTitle("YAC Commander");
 	w.show();

@@ -41,7 +41,7 @@ SearchDialog::SearchDialog(QWidget *parent, Qt::WindowFlags f)
 	connect(
 		this, &SearchDialog::startSearchRecursion, this,
 		[&](const QString &pattern, const QString &dir) {
-			fut = QtConcurrent::run(this, &SearchDialog::searchRecursion,
+			fut = QtConcurrent::run(&SearchDialog::searchRecursion, this,
 									pattern, dir, NAME);
 		},
 		Qt::QueuedConnection);
@@ -192,14 +192,14 @@ void SearchDialog::on_searchButton_clicked() {
 	}
 	if (ui->attributesCheck->isChecked()) {
 		attrs.togglesFlags |= Attributes;
-        attrs.attrFlags = (ui->executableBox->isChecked() ? X_EC : NONE)
-                          | (ui->writableBox->isChecked() ? WRITE : NONE)
-                          | (ui->readableBox->isChecked() ? READ : NONE)
-                          | (ui->dirBox->isChecked() ? DIRECTORY : NONE);
+		attrs.attrFlags = (ui->executableBox->isChecked() ? X_EC : NONE)
+						  | (ui->writableBox->isChecked() ? WRITE : NONE)
+						  | (ui->readableBox->isChecked() ? READ : NONE)
+						  | (ui->dirBox->isChecked() ? DIRECTORY : NONE);
 	}
 	model->setStringList(QStringList{});
 	ui->searchButton->setText("Stop search");
-	fut = QtConcurrent::run(this, &SearchDialog::searchRecursion, fileMask,
+	fut = QtConcurrent::run(&SearchDialog::searchRecursion, this, fileMask,
 							startDir, NAME);
 }
 
@@ -230,17 +230,17 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 		bool		caseSens = ui->caseCheckBox->isChecked();
 		bool		regEx = ui->regExpCheckBox->isChecked();
 		auto		searchCond =
-			regEx ? std::function<bool(const QString &, const QString &, bool)>(
-				[](const QString &line, const QString &pattern, bool) {
-					QRegularExpression rx(pattern);
-					return rx.globalMatch(line).hasNext();
-				})
-				  : std::function<bool(const QString &, const QString &, bool)>(
-					  [](const QString &line, const QString &pattern,
-						 bool caseSens) {
-						  return line.contains(pattern,
-											   Qt::CaseSensitivity(caseSens));
-					  });
+			   regEx ? std::function<bool(const QString &, const QString &, bool)>(
+						   [](const QString &line, const QString &pattern, bool) {
+							   QRegularExpression rx(pattern);
+							   return rx.globalMatch(line).hasNext();
+						   })
+						 : std::function<bool(const QString &, const QString &, bool)>(
+						   [](const QString &line, const QString &pattern,
+							  bool caseSens) {
+							   return line.contains(pattern,
+														Qt::CaseSensitivity(caseSens));
+						   });
 
 		bool found = false;
 		while (!in.atEnd()) {
@@ -299,7 +299,7 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 		qDebug()<<theFile.isExecutable();
 		qDebug()<<theFile.isReadable();
 		qDebug()<<theFile.isWritable();*/
-        if (attrs.attrFlags & DIRECTORY) {
+		if (attrs.attrFlags & DIRECTORY) {
 			if (!theFile.isDir())
 				return;
 			QRegularExpression re(ui->fileMaskcombo->lineEdit()->text());
@@ -307,9 +307,9 @@ void SearchDialog::validateFile(const QFileInfo &theFile) {
 				return;
 		}
 
-        if (!(attrs.attrFlags & DIRECTORY)
+		if (!(attrs.attrFlags & DIRECTORY)
 			&& !theFile.permission(QFileDevice::Permission(
-                attrs.attrFlags & (X_EC | READ | WRITE))))
+				attrs.attrFlags & (X_EC | READ | WRITE))))
 			return;
 	}
 

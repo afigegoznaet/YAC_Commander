@@ -578,7 +578,7 @@ void MainWindow::setupActions() {
 			[&]() { QApplication::quit(); });
 
 	ui->actionExit->setShortcut(QKeySequence::Quit);
-	ui->actionExit->setShortcut(QKeySequence(Qt::ALT + Qt::Key_X));
+	ui->actionExit->setShortcut(QKeySequence(Qt::ALT | Qt::Key_X));
 
 	/***
 	 * End of file menu
@@ -592,11 +592,11 @@ void MainWindow::setupActions() {
 	QAction *closeTabAction = ui->actionClose_tab;
 	QAction *copyTabPath = ui->actionCopy_path;
 
-	addTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
+	addTabAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_T));
 	duplicateTabAction->setShortcut(
-		QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_T));
-	closeTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_W));
-	copyTabPath->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_C));
+		QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_T));
+	closeTabAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
+	copyTabPath->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_C));
 
 	addAction(addTabAction);
 	addAction(duplicateTabAction);

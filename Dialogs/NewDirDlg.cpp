@@ -5,13 +5,13 @@
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QCompleter>
-#include <QDirModel>
+#include <QFileSystemModel>
 
 NewDirDlg::NewDirDlg(QString &label, QString &dirName, QWidget *parent)
 	: NewFileDlg(label, dirName, parent) {
 
 	fileCompleter = new QCompleter(this);
-	auto dm = new QDirModel(fileCompleter);
+	auto dm = new QFileSystemModel(fileCompleter);
 	fileCompleter->setModel(dm);
 	fileCompleter->setCompletionMode(QCompleter::PopupCompletion);
 	if (!dirName.isEmpty())

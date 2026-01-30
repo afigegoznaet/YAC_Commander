@@ -42,13 +42,13 @@ FileTableView::FileTableView(QDir &&directory, QWidget *parent)
 	model = new OrderedFileSystemModel(this);
 	prevRow = -1;
 	dirWatch.addPath(directory.absolutePath());
-	connect(&dirWatch, SIGNAL(directoryChanged(const QString &)), this, SLOT(fileWatcher(const QString &)));
-	connect(&dirWatch, SIGNAL(fileChanged(const QString &)), this, SLOT(fileWatcher(const QString &)));
+	connect(&dirWatch, SIGNAL(directoryChanged(const QString &)), this,
+			SLOT(fileWatcher(const QString &)));
+	connect(&dirWatch, SIGNAL(fileChanged(const QString &)), this,
+			SLOT(fileWatcher(const QString &)));
 }
 
-FileTableView::~FileTableView() {
-	assert(true);
-}
+FileTableView::~FileTableView() { assert(true); }
 
 void FileTableView::fileWatcher(const QString &) {
 	// qDebug() << "File changed \n" << file;
@@ -215,7 +215,7 @@ void FileTableView::init() {
 	model->setFilter(filters);
 	setSelectionMode(QAbstractItemView::NoSelection);
 	setModel(model);
-	model->setFilterRegExp("");
+	model->setFilterRegularExpression(QRegularExpression{});
 	setRootIndex(modelRootIndex);
 	verticalHeader()->setVisible(false);
 
@@ -424,7 +424,9 @@ void FileTableView::setSelectionAction(Action act) {
 	//		filter, QRegularExpression::DontCaptureOption
 	//					|
 	// QRegularExpression::OptimizeOnFirstUsageOption);
-	QRegExp reg(filter, Qt::CaseSensitive, QRegExp::Wildcard);
+	QRegularExpression reg(
+		QRegularExpression::wildcardToRegularExpression(filter),
+		QRegularExpression::CaseInsensitiveOption);
 	{
 		const QSignalBlocker blocker(selectionModel());
 		for (int i = 1; i < rowCount; i++) {
@@ -443,17 +445,21 @@ void FileTableView::setSelectionAction(Action act) {
 			}
 		}
 	}
-	emit selectionModel()->selectionChanged(selectionModel()->selection(),
-											QItemSelection());
+	emit selectionModel()
+		-> selectionChanged(selectionModel()->selection(), QItemSelection());
 	repaint();
 }
 
 void FileTableView::rowsRemoved(const QModelIndex &idx, int first, int last) {
 
 	if (model->rowCount(idx) > last + 1) {
-		selectionModel()->setCurrentIndex(model->index(last + 1, 0, idx), QItemSelectionModel::Current | QItemSelectionModel::Rows);
+		selectionModel()->setCurrentIndex(model->index(last + 1, 0, idx),
+										  QItemSelectionModel::Current
+											  | QItemSelectionModel::Rows);
 	} else {
-		selectionModel()->setCurrentIndex(model->index(first - 1, 0, idx), QItemSelectionModel::Current | QItemSelectionModel::Rows);
+		selectionModel()->setCurrentIndex(model->index(first - 1, 0, idx),
+										  QItemSelectionModel::Current
+											  | QItemSelectionModel::Rows);
 	}
 
 	delegate->currentChanged(currentIndex(), currentIndex());

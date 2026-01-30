@@ -46,7 +46,7 @@ ProgressDialog::~ProgressDialog() {
 }
 
 void ProgressDialog::processFileAction(const QFileInfoList &fileList,
-									   const QString &		destination,
+									   const QString	   &destination,
 									   Qt::DropAction		action) {
 	QFileInfo destDir(destination);
 	if (!destDir.isWritable()) {
@@ -103,7 +103,7 @@ void ProgressDialog::processFileAction(const QFileInfoList &fileList,
 
 
 	if (0 == initialCount)
-		QtConcurrent::run(this, &ProgressDialog::processItemsInList);
+		QtConcurrent::run(&ProgressDialog::processItemsInList, this);
 }
 
 void ProgressDialog::onWrite(uint percentsWritten) {
@@ -157,7 +157,7 @@ void ProgressDialog::movementResult(int result) {
 	auto reply = showError(result);
 	if (reply == QMessageBox::Yes) {
 		// status = 1;
-		QtConcurrent::run(this, &ProgressDialog::processItemsInList);
+		QtConcurrent::run(&ProgressDialog::processItemsInList, this);
 	}
 }
 
@@ -176,7 +176,8 @@ void ProgressDialog::dirParsing(QDir &dir, Qt::DropAction action, QString &dest,
 	}
 
 	QFileInfoList dirEntries = dir.entryInfoList(
-		QDir::AllEntries | QDir::NoDotAndDotDot | QDir::AccessMask, QDir::DirsFirst);
+		QDir::AllEntries | QDir::NoDotAndDotDot | QDir::AccessMask,
+		QDir::DirsFirst);
 
 	for (const auto &file : dirEntries) {
 		{
@@ -262,7 +263,7 @@ void ProgressDialog::processItemsInList() {
 			} else
 				dirParsing(dir, action, destination, createdDirs);
 			emit dirMoved(1);
-			if(dir.isEmpty())
+			if (dir.isEmpty())
 				dir.removeRecursively();
 			return;
 		}

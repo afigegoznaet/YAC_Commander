@@ -43,7 +43,7 @@ QByteArray DataStorageArray::getData(std::size_t position, std::size_t length) {
 }
 
 
-unsigned long long DataStorageArray::size() { return m_data.count(); }
+unsigned long long DataStorageArray::size() { return m_data.size(); }
 
 
 DataStorageFile::DataStorageFile(const QString &fileName) : m_file(fileName) {

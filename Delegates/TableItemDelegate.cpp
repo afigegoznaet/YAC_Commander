@@ -26,24 +26,24 @@ TableItemDelegate::TableItemDelegate(QObject *parent)
 	gradFocused.setColorAt(1.0, dark);
 }
 
-void TableItemDelegate::paint(QPainter *				  painter,
+void TableItemDelegate::paint(QPainter					 *painter,
 							  const QStyleOptionViewItem &option,
-							  const QModelIndex &		  index) const {
+							  const QModelIndex			 &index) const {
 	grad.setStart(option.rect.topLeft());
 	grad.setFinalStop(option.rect.bottomLeft());
 	gradFocused.setStart(option.rect.topLeft());
 	gradFocused.setFinalStop(option.rect.bottomLeft());
-#if QT_VERSION_MAJOR == 5
-#if QT_VERSION_MINOR < 9
-	QRect tempRect;
-	tempRect.setLeft(rect.left());
-	tempRect.setTop(option.rect.top());
-	tempRect.setRight(rect.right());
-	tempRect.setBottom(option.rect.bottom());
-#else
+	// #if QT_VERSION_MAJOR == 5
+	// #if QT_VERSION_MINOR < 9
+	// 	QRect tempRect;
+	// 	tempRect.setLeft(rect.left());
+	// 	tempRect.setTop(option.rect.top());
+	// 	tempRect.setRight(rect.right());
+	// 	tempRect.setBottom(option.rect.bottom());
+	// #else
 	const QRect &tempRect = option.rect;
-#endif
-#endif
+	// #endif
+	// #endif
 	if (index.row() == current.row()) {
 		// painter->setBackground(grad);
 		// painter->setPen(QPen(Qt::blue));

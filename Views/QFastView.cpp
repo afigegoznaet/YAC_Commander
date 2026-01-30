@@ -1,22 +1,22 @@
 #include "QFastView.hpp"
-//#include "../Dialogs/TextViewerDlg.hpp"
+// #include "../Dialogs/TextViewerDlg.hpp"
 
-//#include "Views/QFastView.hpp"
+// #include "Views/QFastView.hpp"
 #include <QScrollBar>
 #include <QPainter>
 #include <QSize>
-//#include <QPaintEvent>
+// #include <QPaintEvent>
 #include <QKeyEvent>
-//#include <QClipboard>
-//#include <QApplication>
+// #include <QClipboard>
+// #include <QApplication>
 #include <QtConcurrent/QtConcurrent>
 #include <QDebug>
-//#include <stdexcept>
+// #include <stdexcept>
 #include "../Dialogs/TextViewerDlg.hpp"
 
 QFastView::QFastView(QWidget *parent)
 	: QAbstractScrollArea(parent), pdata(nullptr) {
-	QFont theFont("DejaVu Sans Mono", 12);
+	QFont		 theFont("DejaVu Sans Mono", 12);
 	QFontMetrics metrix(theFont);
 	setFont(theFont);
 	setFocusPolicy(Qt::StrongFocus);
@@ -163,8 +163,8 @@ int QFastView::getNextPageStart() {
 int QFastView::getPrevPageStart() {
 	if (firstLineIdx - maxChars - 1 <= 0)
 		return 0;
-	int linesRemaining = linesPerPage;
-	int pos = maxChars;
+	int	 linesRemaining = linesPerPage;
+	int	 pos = maxChars;
 	auto data = pdata->getData(firstLineIdx - maxChars - 1, maxChars);
 	while (linesRemaining > 0) {
 		auto newLinePos = data.toStdString().find_last_of('\n', pos - 1);
@@ -181,8 +181,8 @@ void QFastView::paintEvent(QPaintEvent *event) {
 		return;
 
 	QPainter painter(viewport());
-	QRect rect(event->rect().left(), event->rect().top(),
-			   charsPerLine * charWidth, event->rect().height());
+	QRect	 rect(event->rect().left(), event->rect().top(),
+				  charsPerLine * charWidth, event->rect().height());
 
 
 	// QBrush def = painter.brush();
@@ -236,7 +236,7 @@ void QFastView::keyPressEvent(QKeyEvent *event) {
 		QAbstractScrollArea::keyPressEvent(event);
 	}
 
-	atomicLineNum.store(verticalScrollBar()->value());
+	atomicLineNum.storeRelaxed(verticalScrollBar()->value());
 
 	viewport()->update();
 }

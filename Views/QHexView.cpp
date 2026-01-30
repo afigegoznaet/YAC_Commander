@@ -1,14 +1,14 @@
 #include "Views/QHexView.hpp"
 #include <QScrollBar>
 #include <QPainter>
-//#include <QSize>
+// #include <QSize>
 #include <QPaintEvent>
-//#include <QKeyEvent>
+// #include <QKeyEvent>
 #include <QClipboard>
 #include <QApplication>
 
 #include <QDebug>
-//#include <stdexcept>
+// #include <stdexcept>
 #include "../Dialogs/TextViewerDlg.hpp"
 
 const int HEXCHARS_IN_LINE = 47;
@@ -21,7 +21,7 @@ QHexView::QHexView(QWidget *parent)
 	: QAbstractScrollArea(parent), m_pdata(nullptr) {
 	setFont(QFont("DejaVu Sans Mono", 12));
 
-	m_charWidth = fontMetrics().width(QLatin1Char('9'));
+	m_charWidth = fontMetrics().horizontalAdvance(QLatin1Char('9'));
 	m_charHeight = fontMetrics().height();
 
 	m_posAddr = 0;
@@ -109,8 +109,8 @@ void QHexView::paintEvent(QPaintEvent *event) {
 
 	int yPosStart = m_charHeight;
 
-	QBrush def = painter.brush();
-	QBrush selected = QBrush(QColor(0x6d, 0x9e, 0xff, 0xff));
+	QBrush	   def = painter.brush();
+	QBrush	   selected = QBrush(QColor(0x6d, 0x9e, 0xff, 0xff));
 	QByteArray data =
 		m_pdata->getData(firstLineIdx * BYTES_PER_LINE,
 						 (lastLineIdx - firstLineIdx) * BYTES_PER_LINE);
@@ -324,8 +324,8 @@ void QHexView::keyPressEvent(QKeyEvent *event) {
 	if (event->matches(QKeySequence::Copy)) {
 		if (m_pdata) {
 			QString res;
-			int idx = 0;
-			int copyOffset = 0;
+			int		idx = 0;
+			int		copyOffset = 0;
 
 			QByteArray data = m_pdata->getData(
 				m_selectBegin / 2, (m_selectEnd - m_selectBegin) / 2 + 1);

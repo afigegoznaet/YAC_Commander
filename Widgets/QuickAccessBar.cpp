@@ -35,17 +35,22 @@ QuickAccessBar::QuickAccessBar(QWidget *parent) : QToolBar(parent) {
 }
 
 void QuickAccessBar::update() {
+	static std::array excludes{
+		"/snap",	   "/var/lib/docker", "/var/lib/snapd",
+		"/run/docker", "/run/user",		  "/run/credentials",
+		"/tmp",		   "/home",			  "/boot"};
 	QList<QStorageInfo> newVols;
 	for (const auto &mountPt : QStorageInfo::mountedVolumes()) {
-		if (mountPt.rootPath().startsWith("/snap"))
-			continue;
-		if (mountPt.rootPath().startsWith("/var/lib/docker"))
-			continue;
-		if (mountPt.rootPath().startsWith("/run/docker"))
-			continue;
-		if (mountPt.rootPath().startsWith("/run/user"))
-			continue;
-		newVols.append(mountPt);
+		bool exclude{};
+		for (const auto &ex : excludes) {
+			if (mountPt.rootPath().startsWith(ex)) {
+				exclude = true;
+				break;
+			}
+		}
+		if (!exclude) {
+			newVols.append(mountPt);
+		}
 	}
 
 	if (newVols.size() != volumes.size()) {

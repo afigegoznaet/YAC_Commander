@@ -4,8 +4,7 @@
 #include <QFileSystemModel>
 
 OrderedFileSystemModel::OrderedFileSystemModel(QObject *parent)
-	: QSortFilterProxyModel(parent) {
-}
+	: QSortFilterProxyModel(parent) {}
 
 bool OrderedFileSystemModel::lessThan(const QModelIndex &left,
 									  const QModelIndex &right) const {
@@ -33,7 +32,7 @@ bool OrderedFileSystemModel::lessThan(const QModelIndex &left,
 			res = leftFile.suffix().compare(rightFile.suffix()) < 0;
 		break;
 	case 3:
-		res = leftFile.created().toTime_t() < rightFile.created().toTime_t();
+		res = leftFile.birthTime() < rightFile.birthTime();
 		break;
 	case 1:
 		res = leftFile.size() < rightFile.size();
@@ -51,7 +50,8 @@ void OrderedFileSystemModel::sort(int column, Qt::SortOrder order) {
 }
 
 QFileSystemModel *OrderedFileSystemModel::sourceModel() const {
-	return dynamic_cast<QFileSystemModel *>(QSortFilterProxyModel::sourceModel());
+	return dynamic_cast<QFileSystemModel *>(
+		QSortFilterProxyModel::sourceModel());
 }
 
 bool OrderedFileSystemModel::dropMimeData(const QMimeData *data,
@@ -63,7 +63,7 @@ bool OrderedFileSystemModel::dropMimeData(const QMimeData *data,
 	auto dir = rootPath();
 
 	for (const auto &uri : uriList)
-		itemsToMove << uri.toLocalFile();
+		itemsToMove << QFileInfo{uri.toLocalFile()};
 	if (0 == row) // selection is ".."
 		dir.truncate(dir.lastIndexOf('/'));
 	emit setFileAction(itemsToMove, dir, action);
